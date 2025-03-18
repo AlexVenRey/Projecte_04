@@ -16,26 +16,26 @@ class UserSeeder extends Seeder
         $admins = [
             [
                 'nombre' => 'Alejandro González',
-                'email' => 'alejandro.gonzalez@admin.com',
-                'password' => hash('sha256', 'password123'),
+                'email' => 'alejandro@admin.com',
+                'password' => hash('sha256', 'qweQWE123'),
                 'rol' => 'admin',
             ],
             [
-                'nombre' => 'Sergi Masi',
-                'email' => 'sergi.masi@admin.com',
-                'password' => hash('sha256', 'password123'),
+                'nombre' => 'Sergi Masip',
+                'email' => 'sergi@admin.com',
+                'password' => hash('sha256', 'qweQWE123'),
                 'rol' => 'admin',
             ],
             [
                 'nombre' => 'Adrián Vazquez',
-                'email' => 'adrian.vazquez@admin.com',
-                'password' => hash('sha256', 'password123'),
+                'email' => 'adrian@admin.com',
+                'password' => hash('sha256', 'qweQWE123'),
                 'rol' => 'admin',
             ],
             [
                 'nombre' => 'Àlex Ventura',
-                'email' => 'alex.ventura@admin.com',
-                'password' => hash('sha256', 'password123'),
+                'email' => 'alex@admin.com',
+                'password' => hash('sha256', 'qweQWE123'),
                 'rol' => 'admin',
             ],
         ];
@@ -48,26 +48,26 @@ class UserSeeder extends Seeder
         $usuarios = [
             [
                 'nombre' => 'María García',
-                'email' => 'maria.garcia@example.com',
-                'password' => hash('sha256', 'password123'),
+                'email' => 'maria@example.com',
+                'password' => hash('sha256', 'qweQWE123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Juan Rodríguez',
-                'email' => 'juan.rodriguez@example.com',
-                'password' => hash('sha256', 'password123'),
+                'email' => 'juan@example.com',
+                'password' => hash('sha256', 'qweQWE123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Laura Martínez',
-                'email' => 'laura.martinez@example.com',
-                'password' => hash('sha256', 'password123'),
+                'email' => 'laura@example.com',
+                'password' => hash('sha256', 'qweQWE123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Carlos López',
-                'email' => 'carlos.lopez@example.com',
-                'password' => hash('sha256', 'password123'),
+                'email' => 'carlos@example.com',
+                'password' => hash('sha256', 'qweQWE123'),
                 'rol' => 'usuario',
             ],
         ];
