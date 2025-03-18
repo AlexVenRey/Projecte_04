@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <script src="{{ asset('js/register.js') }}"></script>
 </head>
 <body>
     <div class="login-container">
@@ -18,10 +19,10 @@
             <h2>Regístrate</h2>
             <form action="{{ url('/register') }}" method="POST">
                 @csrf
-                <input type="text" name="name" placeholder="Nombre completo" required>
-                <input type="email" name="email" placeholder="Correo electrónico" required>
-                <input type="password" name="password" placeholder="Contraseña" required>
-                <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required>
+                <input type="text" name="name" placeholder="Nombre completo">
+                <input type="email" name="email" placeholder="Correo electrónico">
+                <input type="password" name="password" placeholder="Contraseña">
+                <input type="password" name="password_confirmation" placeholder="Confirmar contraseña">
                 <button type="submit">Registrarse</button>
             </form>
 
