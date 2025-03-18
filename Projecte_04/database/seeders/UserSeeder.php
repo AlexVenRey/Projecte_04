@@ -21,8 +21,8 @@ class UserSeeder extends Seeder
                 'rol' => 'admin',
             ],
             [
-                'nombre' => 'Sergi Masi',
-                'email' => 'sergi.masi@admin.com',
+                'nombre' => 'Sergi Masip',
+                'email' => 'sergi.masip@admin.com',
                 'password' => hash('sha256', 'password123'),
                 'rol' => 'admin',
             ],
