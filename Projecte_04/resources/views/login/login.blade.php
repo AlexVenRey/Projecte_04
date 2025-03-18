@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <script src="{{ asset('js/login.js') }}"></script>
 </head>
 <body>
     <div class="login-container">
@@ -18,8 +19,8 @@
             <h2>Iniciar Sesión</h2>
             <form action="{{ url('/login') }}" method="POST">
                 @csrf
-                <input type="email" name="email" placeholder="Correo electrónico" required>
-                <input type="password" name="password" placeholder="Contraseña" required>
+                <input type="email" name="email" placeholder="Correo electrónico">
+                <input type="password" name="password" placeholder="Contraseña">
                 <button type="submit">Acceder</button>
             </form>
 
