@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Lugar extends Model
 {
     use HasFactory;
-    protected $table = 'lugares_etiquetas';
-    protected $fillable = ['nombre', 'descripcion', 'direccion', 'coordenadas', 'icono', 'color_marcador', 'creado_por'];
+    protected $table = 'lugares';
+
+    protected $fillable = ['nombre', 'descripcion', 'direccion', 'latitud', 'longitud', 'icono', 'color_marcador', 'creado_por'];
 
     public function etiquetas()
     {

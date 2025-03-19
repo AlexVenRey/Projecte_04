@@ -12,7 +12,7 @@
         <header>
             <div class="logo-container">
                 <img src="{{ asset('img/logo.webp') }}" alt="Logo">
-                <span class="user-name">{{ Auth::user()->name }}</span>
+                <span class="user-name">{{ Auth::user()->nombre }}</span>
             </div>
             <nav>
                 <ul>
@@ -39,8 +39,8 @@
                 @foreach($lugares as $lugar)
                 <tr>
                     <td>{{ $lugar->nombre }}</td>
-                    <td>{{ $lugar->coordenadas->getLat() }}</td>
-                    <td>{{ $lugar->coordenadas->getLng() }}</td>
+                    <td>{{ $lugar->latitud }}</td>
+                    <td>{{ $lugar->longitud }}</td>
                     <td>{{ $lugar->descripcion }}</td>
                     <td><img src="{{ asset('img/icons/' . $lugar->icono) }}" alt="Icono"></td>
                     <td>
