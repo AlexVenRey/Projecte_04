@@ -16,9 +16,10 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-            L.marker(joan23).addTo(map)
-                .bindPopup('Colegio Joan XXIII de Bellvitge')
-                .openPopup();
+            @foreach($lugares as $lugar)
+                var marker = L.marker([{{ $lugar->latitud }}, {{ $lugar->longitud }}]).addTo(map)
+                    .bindPopup('{{ $lugar->nombre }}<br>{{ $lugar->descripcion }}');
+            @endforeach
         }
     </script>
 </head>
