@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LugarController;
 
 // Ruta de inicio (login)
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
@@ -21,3 +22,6 @@ Route::get('/admin/index', function () {
 Route::get('/cliente/index', function () {
     return view('cliente.index'); // Ruta correcta para el archivo cliente.index.blade.php
 })->name('cliente.index');  // Le damos un nombre a la ruta para redirigir correctamente
+
+// Ruta para puntos de interés
+Route::get('/admin/puntos', [LugarController::class, 'index'])->name('admin.puntos');  // Le damos un nombre a la ruta para redirigir correctamente
