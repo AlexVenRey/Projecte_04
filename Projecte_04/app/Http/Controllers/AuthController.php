@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -22,7 +23,7 @@ class AuthController extends Controller
         $user = User::where('email', $credentials['email'])->first();
 
         // Verificamos si el usuario existe y si la contraseña SHA-256 es correcta
-        if ($user && hash('sha256', $credentials['password']) === $user->password) {
+        if ($user && Hash::check($credentials['password'], $user->password)) {
             // Si la contraseña es correcta, iniciamos la sesión
             Auth::login($user);
 
