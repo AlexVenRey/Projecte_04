@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -17,25 +18,25 @@ class UserSeeder extends Seeder
             [
                 'nombre' => 'Alejandro González',
                 'email' => 'alejandro@admin.com',
-                'password' => hash('sha256', 'qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'admin',
             ],
             [
                 'nombre' => 'Sergi Masip',
                 'email' => 'sergi@admin.com',
-                'password' => hash('sha256', 'qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'admin',
             ],
             [
                 'nombre' => 'Adrián Vazquez',
                 'email' => 'adrian@admin.com',
-                'password' => hash('sha256', 'qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'admin',
             ],
             [
                 'nombre' => 'Àlex Ventura',
                 'email' => 'alex@admin.com',
-                'password' => hash('sha256', 'qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'admin',
             ],
         ];
@@ -49,25 +50,25 @@ class UserSeeder extends Seeder
             [
                 'nombre' => 'María García',
                 'email' => 'maria@example.com',
-                'password' => hash('sha256', 'qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Juan Rodríguez',
                 'email' => 'juan@example.com',
-                'password' => hash('sha256', 'qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Laura Martínez',
                 'email' => 'laura@example.com',
-                'password' => hash('sha256', 'qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Carlos López',
                 'email' => 'carlos@example.com',
-                'password' => hash('sha256', 'qweQWE123'),
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'usuario',
             ],
         ];
