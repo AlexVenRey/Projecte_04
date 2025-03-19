@@ -1,9 +1,9 @@
 <?php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -17,25 +17,25 @@ class UserSeeder extends Seeder
             [
                 'nombre' => 'Alejandro González',
                 'email' => 'alejandro.gonzalez@admin.com',
-                'password' => hash('sha256', 'password123'),
+                'password' => Hash::make('password123'), // Usar Hash::make en lugar de hash('sha256', ...)
                 'rol' => 'admin',
             ],
             [
-                'nombre' => 'Sergi Masi',
-                'email' => 'sergi.masi@admin.com',
-                'password' => hash('sha256', 'password123'),
+                'nombre' => 'Sergi Masip',
+                'email' => 'sergi.masip@admin.com',
+                'password' => Hash::make('password123'),
                 'rol' => 'admin',
             ],
             [
-                'nombre' => 'Adrián Vazquez',
+                'nombre' => 'Adrián Vázquez',
                 'email' => 'adrian.vazquez@admin.com',
-                'password' => hash('sha256', 'password123'),
+                'password' => Hash::make('password123'),
                 'rol' => 'admin',
             ],
             [
                 'nombre' => 'Àlex Ventura',
                 'email' => 'alex.ventura@admin.com',
-                'password' => hash('sha256', 'password123'),
+                'password' => Hash::make('password123'),
                 'rol' => 'admin',
             ],
         ];
@@ -49,25 +49,25 @@ class UserSeeder extends Seeder
             [
                 'nombre' => 'María García',
                 'email' => 'maria.garcia@example.com',
-                'password' => hash('sha256', 'password123'),
+                'password' => Hash::make('password123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Juan Rodríguez',
                 'email' => 'juan.rodriguez@example.com',
-                'password' => hash('sha256', 'password123'),
+                'password' => Hash::make('password123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Laura Martínez',
                 'email' => 'laura.martinez@example.com',
-                'password' => hash('sha256', 'password123'),
+                'password' => Hash::make('password123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Carlos López',
                 'email' => 'carlos.lopez@example.com',
-                'password' => hash('sha256', 'password123'),
+                'password' => Hash::make('password123'),
                 'rol' => 'usuario',
             ],
         ];
@@ -77,3 +77,5 @@ class UserSeeder extends Seeder
         }
     }
 }
+
+?>
