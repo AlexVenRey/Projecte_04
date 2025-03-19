@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #e9ecef;
 }
 
 .admin-container {
@@ -17,7 +17,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #e0e0e0;
+    background-color: #343a40;
     padding: 10px 20px;
     border-bottom: 1px solid #ccc;
 }
@@ -35,7 +35,7 @@ header {
 .user-name {
     font-size: 18px;
     font-weight: bold;
-    color: #333;
+    color: #fff;
 }
 
 nav {
@@ -49,20 +49,27 @@ nav ul {
     margin: 0;
     padding: 0;
     display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 nav ul li {
-    margin-right: 20px;
+    margin: 0 20px;
 }
 
 nav ul li a {
     text-decoration: none;
-    color: #333;
+    color: #fff;
     font-weight: bold;
+    text-align: center;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 nav ul li a:hover {
-    color: #007BFF;
+    background-color: #007BFF;
+    color: #fff;
 }
 
 h1 {
@@ -76,4 +83,49 @@ h1 {
     height: 500px;
     width: 100%;
     border: 1px solid #ccc;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f8f9fa;
+}
+
+table td img {
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.edit-btn, .delete-btn {
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    background: none;
+}
+
+.edit-btn img, .delete-btn img {
+    height: 20px;
+    width: 20px;
+}
+
+.edit-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.delete-btn:hover {
+    background-color: #e0e0e0;
 }

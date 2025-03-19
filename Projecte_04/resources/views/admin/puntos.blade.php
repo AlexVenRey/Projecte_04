@@ -1,4 +1,3 @@
-<!-- filepath: c:\wamp64\www\M12\Projecte_04\Projecte_04\resources\views\admin\puntos.blade.php -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,7 +16,6 @@
             <nav>
                 <ul>
                     <li><a href="{{ url('admin/index') }}">Inicio</a></li>
-                    <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
                     <li><a href="{{ url('admin/etiquetas') }}">Etiquetas</a></li>
                 </ul>
             </nav>
@@ -42,15 +40,19 @@
                     <td>{{ $lugar->latitud }}</td>
                     <td>{{ $lugar->longitud }}</td>
                     <td>{{ $lugar->descripcion }}</td>
-                    <td><img src="{{ asset('img/icons/' . $lugar->icono) }}" alt="Icono"></td>
+                    <td><img src="{{ asset('img/' . $lugar->icono) }}" alt="Icono"></td>
                     <td>
                         @foreach($lugar->etiquetas as $etiqueta)
                             {{ $etiqueta->nombre }}
                         @endforeach
                     </td>
                     <td>
-                        <button class="edit-btn">Editar</button>
-                        <button class="delete-btn">Eliminar</button>
+                        <button class="edit-btn">
+                            <img src="{{ asset('img/editar.png') }}" alt="Editar">
+                        </button>
+                        <button class="delete-btn">
+                            <img src="{{ asset('img/eliminar.png') }}" alt="Eliminar">
+                        </button>
                     </td>
                 </tr>
                 @endforeach
