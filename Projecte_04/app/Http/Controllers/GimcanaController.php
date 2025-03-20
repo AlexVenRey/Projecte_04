@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Gimcana;
 use App\Models\Ruta;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Lugar;
 
 class GimcanaController extends Controller
 {

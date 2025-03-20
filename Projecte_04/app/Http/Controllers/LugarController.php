@@ -52,7 +52,8 @@ class LugarController extends Controller
 
     public function showAdminMap()
     {
-        return view('admin.index');
+        $lugares = Lugar::all();
+        return view('admin.index', compact('lugares'));
     }
 
     public function showClientMap()
