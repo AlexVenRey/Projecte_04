@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LugarController;
 use App\Http\Controllers\EtiquetaController;
+use App\Http\Controllers\GimcanaController;
 
 // Ruta de inicio (login)
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
@@ -18,9 +19,7 @@ Route::get('/register', function () {
 Route::get('/admin/index', [LugarController::class, 'showMap'])->name('admin.index');
 
 // Ruta del cliente (index)
-Route::get('/cliente/index', function () {
-    return view('cliente.index');
-})->name('cliente.index');
+Route::get('/cliente/index', [LugarController::class, 'showMap'])->name('cliente.index');
 
 // Ruta para puntos de interés
 Route::get('/admin/puntos', [LugarController::class, 'index'])->name('admin.puntos');
@@ -31,5 +30,8 @@ Route::get('/admin/añadirpunto', function () {
     $etiquetas = App\Models\Etiqueta::all();
     return view('admin.añadirpunto', compact('etiquetas'));
 })->name('admin.añadirpunto');
+
+// Ruta para ver las gimkanas
+Route::get('/cliente/gimcanas', [GimcanaController::class, 'index'])->name('cliente.gimcanas');
 
 
