@@ -35,10 +35,14 @@ Route::get('/admin/añadirpunto', function () {
 })->name('admin.añadirpunto');
 
 // Ruta para crear gimcana
-Route::get('/admin/creargimcana', function () {
-    return view('admin.creargimcana');
-})->name('admin.creargimcana');
-
-// Inputs necesarios para el formulario de creación de la gimcana
 Route::get('/admin/creargimcana', [GimcanaController::class, 'create'])->name('admin.creargimcana');
 Route::post('/admin/creargimcana', [GimcanaController::class, 'store'])->name('admin.creargimcana.store');
+
+// Ruta para editar gimcana (nueva ruta añadida)
+Route::get('/admin/gimcana/{gimcana}/editar', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
+
+// Ruta para actualizar gimcana (nueva ruta añadida)
+Route::put('/admin/gimcana/{gimcana}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
+
+// Ruta para eliminar gimcana (nueva ruta añadida)
+Route::delete('/admin/gimcana/{gimcana}', [GimcanaController::class, 'destroy'])->name('admin.gimcana.delete');

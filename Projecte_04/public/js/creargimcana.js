@@ -15,12 +15,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const errors = [];
         const nombre = document.getElementById("nombre");
         const descripcion = document.getElementById("descripcion");
-        const lugares = document.getElementById("lugares");
+        const lugares = document.querySelectorAll('input[name="lugares[]"]:checked'); // Obtener los checkboxes seleccionados
 
         // Limpiar errores previos
         errorContainer.innerHTML = "";
         errorContainer.style.display = "none";
-        [nombre, descripcion, lugares].forEach((field) => {
+        [nombre, descripcion].forEach((field) => {
             field.style.borderColor = "";
         });
 
@@ -35,9 +35,9 @@ document.addEventListener("DOMContentLoaded", function () {
             descripcion.style.borderColor = "red";
         }
 
-        if (lugares.selectedOptions.length === 0) {
+        if (lugares.length === 0) { // Verificar si no se seleccionaron lugares
             errors.push("Debe seleccionar al menos un punto de interés.");
-            lugares.style.borderColor = "red";
+            document.getElementById("lugares").style.borderColor = "red"; // Resaltar la sección de lugares
         }
 
         // Mostrar errores si los hay

@@ -38,15 +38,15 @@
             </div>
 
             <div>
-                <label for="lugares">Seleccionar Puntos de Interés:</label>
-                <select id="lugares" name="lugares[]" multiple>
-                    @foreach($lugares as $lugar)
-                        <option value="{{ $lugar->id }}">{{ $lugar->nombre }}</option>
-                    @endforeach
-                </select>
-                <p style="font-size: 12px;">Mantén presionada la tecla Ctrl (o Cmd en Mac) para seleccionar varios.</p>
+                <label for="lugares">Selecciona los puntos de interés:</label>
+                @foreach($lugares as $lugar)
+                    <div style="display: flex; align-items: center; margin-right: 10px; margin-bottom: 5px;">
+                        <input type="checkbox" id="lugar_{{ $lugar->id }}" name="lugares[]" value="{{ $lugar->id }}" style="margin-right: 5px;">
+                        <label for="lugar_{{ $lugar->id }}" style="font-weight: normal;">{{ $lugar->nombre }}</label>
+                    </div>
+                @endforeach
             </div>
-
+                                    
             <button type="submit">Crear Gimcana</button>
         </form>
     </div>
