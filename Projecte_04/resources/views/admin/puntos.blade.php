@@ -21,6 +21,9 @@
             </nav>
         </header>
         <h1>Puntos de Interés</h1>
+        <a href="{{ url('admin/añadirpunto') }}" class="add-btn">
+            <img src="{{ asset('img/añadir.png') }}" alt="Añadir">
+        </a>
         <table>
             <thead>
                 <tr>
