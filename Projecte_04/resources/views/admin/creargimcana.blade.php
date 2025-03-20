@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Gimcana</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <script src="{{ asset('js/creargimcana.js') }}"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -28,17 +29,17 @@
             @csrf
             <div>
                 <label for="nombre">Nombre de la Gimcana:</label>
-                <input type="text" id="nombre" name="nombre" required>
+                <input type="text" id="nombre" name="nombre">
             </div>
 
             <div>
                 <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" required></textarea>
+                <textarea id="descripcion" name="descripcion"></textarea>
             </div>
 
             <div>
                 <label for="lugares">Seleccionar Puntos de Interés:</label>
-                <select id="lugares" name="lugares[]" multiple required>
+                <select id="lugares" name="lugares[]" multiple>
                     @foreach($lugares as $lugar)
                         <option value="{{ $lugar->id }}">{{ $lugar->nombre }}</option>
                     @endforeach

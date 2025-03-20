@@ -16,4 +16,8 @@ class Lugar extends Model
     {
         return $this->belongsToMany(Etiqueta::class, 'lugares_etiquetas', 'lugar_id', 'etiqueta_id');
     }
+    public function gimcanas()
+    {
+        return $this->belongsToMany(Gimcana::class, 'gimcana_lugar', 'lugar_id', 'gimcana_id');
+    }
 }
