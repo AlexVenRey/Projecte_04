@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LugarController;
+use App\Http\Controllers\EtiquetaController;
 
 // Ruta de inicio (login)
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
@@ -23,3 +24,12 @@ Route::get('/cliente/index', function () {
 
 // Ruta para puntos de interés
 Route::get('/admin/puntos', [LugarController::class, 'index'])->name('admin.puntos');
+Route::post('/admin/puntos', [LugarController::class, 'store'])->name('admin.puntos.store');
+
+// Ruta para añadir punto de interés
+Route::get('/admin/añadirpunto', function () {
+    $etiquetas = App\Models\Etiqueta::all();
+    return view('admin.añadirpunto', compact('etiquetas'));
+})->name('admin.añadirpunto');
+
+

@@ -33,7 +33,7 @@
             <nav>
                 <ul>
                     <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
-                    <li><a href="{{ url('admin/etiquetas') }}">Etiquetas</a></li>
+                    <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
                 </ul>
             </nav>
         </header>

@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Etiqueta extends Model
 {
     use HasFactory;
+    protected $table = 'etiquetas';
 
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre', 'icono'];
 
     public function lugares()
     {
