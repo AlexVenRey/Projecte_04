@@ -49,4 +49,15 @@ class LugarController extends Controller
 
         return redirect()->route('admin.puntos')->with('success', 'Punto de interés añadido correctamente.');
     }
+
+    public function showAdminMap()
+    {
+        return view('admin.index');
+    }
+
+    public function showClientMap()
+    {
+        $lugares = Lugar::all();
+        return view('cliente.index', compact('lugares'));
+    }
 }

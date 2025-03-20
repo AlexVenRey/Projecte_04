@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cliente Dashboard</title>
-    <link rel="stylesheet" href="{{ asset('css/cliente.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
     <script>
@@ -24,9 +24,17 @@
     </script>
 </head>
 <body onload="initMap()">
-    <div class="cliente-container">
+    <div class="admin-container">
         <header>
-            <button onclick="window.location.href='{{ route('cliente.gimkanas') }}'">Ver Gimkanas</button>
+            <div class="logo-container">
+                <img src="{{ asset('img/logo.webp') }}" alt="Logo">
+                <span class="user-name">{{ Auth::user()->nombre }}</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ route('cliente.gimcanas') }}">Ver Gimcanas</a></li>
+                </ul>
+            </nav>
         </header>
         <h1>Bienvenido Cliente</h1>
         <!-- Aquí va el contenido del panel de cliente -->

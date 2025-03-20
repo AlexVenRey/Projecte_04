@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Gimkanas</title>
+    <title>Lista de GimCanas</title>
     <link rel="stylesheet" href="{{ asset('css/cliente.css') }}">
 </head>
 <body>
     <div class="cliente-container">
-        <h1>Lista de Gimkanas</h1>
+        <h1>Lista de Gimcanas</h1>
         <ul>
             @foreach($gimkanas as $gimkana)
                 <li>

@@ -16,10 +16,10 @@ Route::get('/register', function () {
 });
 
 // Ruta del admin (index)
-Route::get('/admin/index', [LugarController::class, 'showMap'])->name('admin.index');
+Route::get('/admin/index', [LugarController::class, 'showAdminMap'])->name('admin.index');
 
 // Ruta del cliente (index)
-Route::get('/cliente/index', [LugarController::class, 'showMap'])->name('cliente.index');
+Route::get('/cliente/index', [LugarController::class, 'showClientMap'])->name('cliente.index');
 
 // Ruta para puntos de interés
 Route::get('/admin/puntos', [LugarController::class, 'index'])->name('admin.puntos');
@@ -31,7 +31,7 @@ Route::get('/admin/añadirpunto', function () {
     return view('admin.añadirpunto', compact('etiquetas'));
 })->name('admin.añadirpunto');
 
-// Ruta para ver las gimkanas
+// Ruta para ver las gimcanas
 Route::get('/cliente/gimcanas', [GimcanaController::class, 'index'])->name('cliente.gimcanas');
 
 
