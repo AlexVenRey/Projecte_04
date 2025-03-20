@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Puntos de Interés</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -50,17 +51,40 @@
                         @endforeach
                     </td>
                     <td>
-                        <button class="edit-btn">
+                        <a href="{{ route('admin.puntos.edit', $lugar->id) }}" class="edit-btn">
                             <img src="{{ asset('img/editar.png') }}" alt="Editar">
-                        </button>
-                        <button class="delete-btn">
+                        </a>
+                        <button type="button" class="delete-btn" onclick="confirmDelete({{ $lugar->id }})">
                             <img src="{{ asset('img/eliminar.png') }}" alt="Eliminar">
                         </button>
+                        <form id="delete-form-{{ $lugar->id }}" action="{{ route('admin.puntos.destroy', $lugar->id) }}" method="POST" style="display: none;">
+                            @csrf
+                            @method('DELETE')
+                        </form>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Enviar el formulario de eliminación
+                    document.getElementById(`delete-form-${id}`).submit();
+                }
+            });
+        }
+    </script>
 </body>
 </html>
