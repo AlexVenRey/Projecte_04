@@ -34,4 +34,11 @@ Route::get('/admin/añadirpunto', function () {
     return view('admin.añadirpunto', compact('etiquetas'));
 })->name('admin.añadirpunto');
 
+// Ruta para crear gimcana
+Route::get('/admin/creargimcana', function () {
+    return view('admin.creargimcana');
+})->name('admin.creargimcana');
 
+// Inputs necesarios para el formulario de creación de la gimcana
+Route::get('/admin/creargimcana', [GimcanaController::class, 'create'])->name('admin.creargimcana');
+Route::post('/admin/creargimcana', [GimcanaController::class, 'store'])->name('admin.creargimcana.store');
