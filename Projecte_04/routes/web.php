@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LugarController;
 use App\Http\Controllers\EtiquetaController;
+use App\Http\Controllers\GimcanaController;
 
 // Ruta de inicio (login)
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
@@ -16,6 +17,7 @@ Route::get('/register', function () {
 
 // Ruta del admin (index)
 Route::get('/admin/index', [LugarController::class, 'showMap'])->name('admin.index');
+Route::get('/admin/gimcana', [GimcanaController::class, 'index'])->name('admin.gimcana');
 
 // Ruta del cliente (index)
 Route::get('/cliente/index', function () {

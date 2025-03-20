@@ -16,7 +16,7 @@
             <nav>
                 <ul>
                     <li><a href="{{ url('admin/index') }}">Inicio</a></li>
-                    <li><a href="{{ url('admin/etiquetas') }}">Etiquetas</a></li>
+                    <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
                 </ul>
             </nav>
         </header>
