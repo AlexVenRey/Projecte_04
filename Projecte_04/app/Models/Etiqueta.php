@@ -2,20 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Etiqueta extends Model
 {
+    use HasFactory;
     protected $table = 'etiquetas';
-    
-    protected $fillable = [
-        'nombre',
-        'descripcion'
-    ];
 
-    public function lugares(): BelongsToMany
+    protected $fillable = ['nombre', 'icono'];
+
+    public function lugares()
     {
-        return $this->belongsToMany(Lugar::class, 'lugar_etiqueta');
+        return $this->belongsToMany(Lugar::class, 'lugares_etiquetas', 'etiqueta_id', 'lugar_id');
     }
 }

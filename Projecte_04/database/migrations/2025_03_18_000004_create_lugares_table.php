@@ -13,10 +13,11 @@ class CreateLugaresTable extends Migration
             $table->string('nombre', 150);
             $table->text('descripcion')->nullable();
             $table->string('direccion', 255)->nullable();
-            $table->geometry('coordenadas'); // Cambiado a 'geometry' en lugar de 'point'
+            $table->decimal('latitud', 10, 7);
+            $table->decimal('longitud', 10, 7);
             $table->string('icono', 100)->nullable();
             $table->string('color_marcador', 7)->nullable();
-            $table->foreignId('creado_por')->nullable()->constrained('usuarios')->onDelete('set null'); // Hacer que sea nullable
+            $table->foreignId('creado_por')->nullable()->constrained('usuarios')->nullOnDelete();
             $table->timestamps();
         });
     }

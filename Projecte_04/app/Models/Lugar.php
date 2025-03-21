@@ -2,40 +2,30 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Lugar extends Model
 {
+    use HasFactory;
+
     protected $table = 'lugares';
-    
-    protected $fillable = [
-        'nombre',
-        'direccion',
-        'latitud',
-        'longitud',
-        'descripcion',
-        'icono',
-        'color'
-    ];
 
-    protected $casts = [
-        'latitud' => 'float',
-        'longitud' => 'float'
-    ];
+    protected $fillable = ['nombre', 'descripcion', 'direccion', 'latitud', 'longitud', 'icono', 'color_marcador', 'creado_por'];
 
-    public function etiquetas(): BelongsToMany
+    /**
+     * Relación Many-to-Many con las etiquetas.
+     */
+    public function etiquetas()
     {
-        return $this->belongsToMany(Etiqueta::class, 'lugar_etiqueta');
+        return $this->belongsToMany(Etiqueta::class, 'lugares_etiquetas', 'lugar_id', 'etiqueta_id');
     }
 
-    public function pruebas()
+    /**
+     * Relación Many-to-Many con las gimcanas.
+     */
+    public function gimcanas()
     {
-        return $this->hasMany(Prueba::class);
-    }
-
-    public function usuarios(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'favoritos');
+        return $this->belongsToMany(Gimcana::class, 'gimcana_lugar', 'lugar_id', 'gimcana_id');
     }
 }

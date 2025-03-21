@@ -16,26 +16,26 @@ class UserSeeder extends Seeder
         $admins = [
             [
                 'nombre' => 'Alejandro González',
-                'email' => 'alejandro.gonzalez@admin.com',
-                'password' => Hash::make('password123'), // Usar Hash::make en lugar de hash('sha256', ...)
+                'email' => 'alejandro@admin.com',
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'admin',
             ],
             [
                 'nombre' => 'Sergi Masip',
-                'email' => 'sergi.masip@admin.com',
-                'password' => Hash::make('password123'),
+                'email' => 'sergi@admin.com',
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'admin',
             ],
             [
-                'nombre' => 'Adrián Vázquez',
-                'email' => 'adrian.vazquez@admin.com',
-                'password' => Hash::make('password123'),
+                'nombre' => 'Adrián Vazquez',
+                'email' => 'adrian@admin.com',
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'admin',
             ],
             [
                 'nombre' => 'Àlex Ventura',
-                'email' => 'alex.ventura@admin.com',
-                'password' => Hash::make('password123'),
+                'email' => 'alex@admin.com',
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'admin',
             ],
         ];
@@ -48,26 +48,26 @@ class UserSeeder extends Seeder
         $usuarios = [
             [
                 'nombre' => 'María García',
-                'email' => 'maria.garcia@example.com',
-                'password' => Hash::make('password123'),
+                'email' => 'maria@example.com',
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Juan Rodríguez',
-                'email' => 'juan.rodriguez@example.com',
-                'password' => Hash::make('password123'),
+                'email' => 'juan@example.com',
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Laura Martínez',
-                'email' => 'laura.martinez@example.com',
-                'password' => Hash::make('password123'),
+                'email' => 'laura@example.com',
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'usuario',
             ],
             [
                 'nombre' => 'Carlos López',
-                'email' => 'carlos.lopez@example.com',
-                'password' => Hash::make('password123'),
+                'email' => 'carlos@example.com',
+                'password' => Hash::make('qweQWE123'),
                 'rol' => 'usuario',
             ],
         ];
@@ -77,5 +77,3 @@ class UserSeeder extends Seeder
         }
     }
 }
-
-?>
