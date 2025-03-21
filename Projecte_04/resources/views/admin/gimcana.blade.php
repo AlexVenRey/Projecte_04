@@ -43,11 +43,7 @@
                         <td>{{ $gimcana->nombre }}</td>
                         <td>{{ $gimcana->descripcion }}</td>
                         <td>
-                            <!-- Mostrar los lugares asociados -->
-                            @foreach ($gimcana->lugares as $lugar)
-                                <span>{{ $lugar->nombre }}</span>
-                                @if (!$loop->last), @endif <!-- Para agregar una coma entre los lugares, menos en el último -->
-                            @endforeach
+                            {{ $gimcana->lugares->pluck('nombre')->implode(', ') }}
                         </td>
                         <td>
                             <!-- Botón de Editar -->
