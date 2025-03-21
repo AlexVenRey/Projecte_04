@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Lugar;
 use App\Models\Etiqueta;
 use Illuminate\Support\Facades\File;
-
+use Illuminate\Support\Facades\Auth;
 class LugarController extends Controller
 {
     public function index()
@@ -43,6 +43,7 @@ class LugarController extends Controller
             'longitud' => $request->longitud,
             'descripcion' => $request->descripcion,
             'icono' => $iconoName,
+            'creado_por' => Auth::id(),
         ]);
 
         $lugar->etiquetas()->attach($request->etiquetas);

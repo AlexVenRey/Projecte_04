@@ -73,3 +73,9 @@ Route::put('/admin/gimcana/{gimcana}', [GimcanaController::class, 'update'])->na
 
 // Ruta para eliminar gimcana (nueva ruta añadida)
 Route::delete('/admin/gimcana/{gimcana}', [GimcanaController::class, 'destroy'])->name('admin.gimcana.delete');
+
+// Ruta para mostrar el formulario de registro
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+
+// Ruta para registrar el usuario
+Route::post('/register', [AuthController::class, 'register'])->name('register.store');

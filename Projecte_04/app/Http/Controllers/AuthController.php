@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
-        // Ruta del archivo login.blade.php
         return view('login.login');
     }
 
@@ -22,22 +22,49 @@ class AuthController extends Controller
         // Intentamos encontrar al usuario por su email
         $user = User::where('email', $credentials['email'])->first();
 
-        // Verificamos si el usuario existe y si la contraseña SHA-256 es correcta
+        // Verificamos si el usuario existe y si la contraseña es correcta
         if ($user && Hash::check($credentials['password'], $user->password)) {
             // Si la contraseña es correcta, iniciamos la sesión
             Auth::login($user);
 
             // Verificar el rol del usuario y redirigir
             if ($user->rol === 'admin') {
-                // Redirigir a la página de admin si el rol es 'admin'
                 return redirect()->route('admin.index');
             } elseif ($user->rol === 'usuario') {
-                // Redirigir a la página de cliente si el rol es 'usuario'
                 return redirect()->route('cliente.index');
             }
         }
 
-        // Si las credenciales no son correctas, mostramos un error
         return back()->withErrors(['email' => 'Credenciales incorrectas.'])->withInput();
+    }
+
+    public function showRegister()
+    {
+        // Retorna la vista de registro
+        return view('register.register');
+    }
+
+    public function register(Request $request)
+    {
+        // Validar los datos del registro
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'email' => 'required|email|unique:usuarios,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Crear el usuario
+        $user = User::create([
+            'nombre' => $validated['nombre'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'rol' => 'usuario',  // Asigna el rol de usuario por defecto
+        ]);
+
+        // Iniciar sesión con el nuevo usuario
+        Auth::login($user);
+
+        // Redirigir a la página del cliente después del registro
+        return redirect()->route('cliente.index');
     }
 }
