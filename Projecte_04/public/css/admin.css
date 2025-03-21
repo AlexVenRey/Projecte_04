@@ -306,3 +306,141 @@ header nav ul li form button:hover {
 .form-punto button:hover {
     background-color: #0056b3;
 }
+
+/* Responsive Design */
+
+/* Para pantallas pequeñas (teléfonos móviles) */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    .admin-container {
+        padding: 10px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .logo-container {
+        margin-bottom: 10px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    nav ul li a {
+        width: 100%;
+        text-align: left;
+        padding: 10px;
+    }
+
+    .logout-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    h1 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    #map {
+        height: 300px;
+    }
+
+    .form-punto {
+        padding: 15px;
+    }
+
+    .form-punto input[type="text"],
+    .form-punto input[type="file"],
+    .form-punto textarea,
+    .form-punto select {
+        font-size: 14px;
+    }
+
+    .form-punto button {
+        width: 100%;
+        padding: 10px;
+    }
+}
+
+/* Responsive Design para pantallas de 700px o menos */
+@media (max-width: 700px) {
+    /* Ajustar el contenedor principal */
+    .admin-container {
+        padding: 10px;
+    }
+
+    /* Ajustar el encabezado */
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .logo-container {
+        margin-bottom: 10px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 80%;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    nav ul li a {
+        width: 80%;
+        text-align: left;
+        padding: 10px;
+    }
+
+    /* Ajustar el botón de cerrar sesión */
+    .logout-button {
+        width: 80%;
+        justify-content: center;
+    }
+
+    /* Ajustar el título */
+    h1 {
+        font-size: 18px;
+        text-align: center;
+    }
+
+    /* Ajustar la tabla */
+    table {
+        width: 90%;
+        font-size: 12px; /* Reducir el tamaño del texto */
+        border-collapse: collapse;
+    }
+
+    table th, table td {
+        padding: 8px;
+        word-wrap: break-word; /* Ajustar el texto dentro de las celdas */
+    }
+
+    table td img {
+        height: 30px;
+        width: 30px;
+    }
+
+    /* Ajustar el botón de añadir */
+    .add-btn {
+        width: 80%;
+        text-align: center;
+        margin: 10px 0;
+    }
+}
