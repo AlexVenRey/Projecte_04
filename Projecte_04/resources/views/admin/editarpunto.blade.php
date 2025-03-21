@@ -23,24 +23,24 @@
             </nav>
         </header>
         <h1>Editar Punto de Interés</h1>
-        <form action="{{ url('admin/puntos/' . $punto->id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ url('admin/puntos/' . $punto->id) }}" method="POST" enctype="multipart/form-data" class="form-punto">
             @csrf
             @method('PUT')
             <div>
                 <label for="nombre">Nombre del sitio:</label>
-                <input type="text" id="nombre" name="nombre" value="{{ $punto->nombre }}" >
+                <input type="text" id="nombre" name="nombre" value="{{ $punto->nombre }}">
             </div>
             <div>
                 <label for="latitud">Latitud:</label>
-                <input type="text" id="latitud" name="latitud" value="{{ $punto->latitud }}" >
+                <input type="text" id="latitud" name="latitud" value="{{ $punto->latitud }}">
             </div>
             <div>
                 <label for="longitud">Longitud:</label>
-                <input type="text" id="longitud" name="longitud" value="{{ $punto->longitud }}" >
+                <input type="text" id="longitud" name="longitud" value="{{ $punto->longitud }}">
             </div>
             <div>
                 <label for="descripcion">Pista:</label>
-                <textarea id="descripcion" name="descripcion" >{{ $punto->descripcion }}</textarea>
+                <textarea id="descripcion" name="descripcion">{{ $punto->descripcion }}</textarea>
             </div>
             <div>
                 <label for="icono">Icono:</label>
@@ -49,10 +49,9 @@
             </div>
             <div>
                 <label for="etiquetas">Etiquetas:</label>
-                <select id="etiquetas" name="etiquetas[]" multiple >
+                <select id="etiquetas" name="etiquetas[]" multiple>
                     @foreach($etiquetas as $etiqueta)
-                        <option value="{{ $etiqueta->id }}" 
-                            {{ $punto->etiquetas->contains($etiqueta->id) ? 'selected' : '' }}>
+                        <option value="{{ $etiqueta->id }}" {{ $punto->etiquetas->contains($etiqueta->id) ? 'selected' : '' }}>
                             {{ $etiqueta->nombre }}
                         </option>
                     @endforeach

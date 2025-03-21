@@ -22,7 +22,7 @@
             </nav>
         </header>
         <h1>Añadir Punto de Interés</h1>
-        <form action="{{ url('admin/puntos') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ url('admin/puntos') }}" method="POST" enctype="multipart/form-data" class="form-punto">
             @csrf
             <div>
                 <label for="nombre">Nombre del sitio:</label>
@@ -30,7 +30,7 @@
             </div>
             <div>
                 <label for="latitud">Latitud:</label>
-                <input type="text" id="latitud" name="latitud" >
+                <input type="text" id="latitud" name="latitud">
             </div>
             <div>
                 <label for="longitud">Longitud:</label>
