@@ -1,0 +1,109 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+
+.cliente-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #343a40;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-container img {
+    height: 50px;
+    margin-right: 10px;
+}
+
+.user-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+}
+
+nav {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav ul li {
+    margin: 0 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+nav ul li a:hover {
+    background-color: #007BFF;
+    color: #fff;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+}
+
+#map {
+    margin-top: 20px;
+    height: 500px;
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+/* Estilo para el botón de cerrar sesión */
+.logout-button {
+    background-color: #dc3545; /* Fondo rojo */
+    color: #fff; /* Texto blanco */
+    font-weight: bold;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el texto y la imagen */
+    transition: background-color 0.3s ease;
+}
+
+.logout-icon {
+    height: 20px;
+    width: 20px;
+}
+
+.logout-button:hover {
+    background-color: #c82333; /* Rojo más oscuro al pasar el mouse */
+}
