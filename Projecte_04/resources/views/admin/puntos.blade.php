@@ -46,10 +46,9 @@
                     <td>{{ $lugar->descripcion }}</td>
                     <td><img src="{{ asset('img/' . $lugar->icono) }}" alt="Icono"></td>
                     <td>
-                        @foreach($lugar->etiquetas as $etiqueta)
-                            {{ $etiqueta->nombre }}
-                        @endforeach
+                        {{ $lugar->etiquetas->pluck('nombre')->implode(', ') }}
                     </td>
+
                     <td>
                         <a href="{{ route('admin.puntos.edit', $lugar->id) }}" class="edit-btn">
                             <img src="{{ asset('img/editar.png') }}" alt="Editar">
