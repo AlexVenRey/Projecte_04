@@ -41,7 +41,13 @@
                         </select>
                     </div>
                     <div class="d-flex align-items-center">
-                        <input type="number" class="form-control me-2" id="distancia" placeholder="Distancia (m)">
+                        <input type="number" 
+                               class="form-control me-2" 
+                               id="distancia" 
+                               placeholder="Distancia (m)"
+                               min="1"
+                               step="100"
+                               value="1000">
                         <button class="btn btn-outline-light" id="buscarCercanos">
                             <i class="fas fa-location-crosshairs"></i> Buscar cercanos
                         </button>

@@ -31,12 +31,25 @@ function initMap() {
         navigator.geolocation.getCurrentPosition(
             position => {
                 currentPosition = [position.coords.latitude, position.coords.longitude];
+                
+                // Añadir marcador de ubicación actual
                 const userMarker = L.marker(currentPosition, {
-                    title: 'Tu ubicación'
-                });
-                userMarker.addTo(map);
+                    icon: L.divIcon({
+                        html: '<i class="fas fa-user-circle fa-2x" style="color: #2196F3;"></i>',
+                        className: 'user-location-marker',
+                        iconSize: [25, 25],
+                        iconAnchor: [12, 12]
+                    })
+                }).addTo(map);
+                userMarker.bindPopup('Tu ubicación actual');
+
+                // Centrar el mapa en la ubicación del usuario
+                map.setView(currentPosition, 15);
             },
-            error => console.error('Error getting location:', error)
+            error => {
+                console.error('Error getting location:', error);
+                alert('No se pudo obtener tu ubicación. Algunas funciones pueden no estar disponibles.');
+            }
         );
     }
 }
@@ -56,6 +69,65 @@ async function cargarEtiquetas() {
         });
     } catch (error) {
         console.error('Error cargando etiquetas:', error);
+    }
+}
+
+// Función para calcular la distancia entre dos puntos usando la fórmula de Haversine
+function calcularDistancia(lat1, lon1, lat2, lon2) {
+    const R = 6371000; // Radio de la Tierra en metros
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+             Math.cos(φ1) * Math.cos(φ2) *
+             Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c; // Distancia en metros
+}
+
+// Buscar lugares cercanos
+async function buscarLugaresCercanos(distancia) {
+    if (!currentPosition) {
+        alert('Necesitamos tu ubicación para buscar lugares cercanos. Por favor, permite el acceso a tu ubicación.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/cliente/lugares');
+        const lugares = await response.json();
+        
+        // Filtrar lugares por distancia
+        const lugaresCercanos = lugares.filter(lugar => {
+            const distanciaEnMetros = calcularDistancia(
+                currentPosition[0],
+                currentPosition[1],
+                lugar.latitud,
+                lugar.longitud
+            );
+            return distanciaEnMetros <= distancia;
+        });
+
+        // Limpiar mapa y mostrar lugares cercanos
+        limpiarMapa();
+        mostrarLugares(lugaresCercanos);
+
+        // Si no hay lugares cercanos, mostrar mensaje
+        if (lugaresCercanos.length === 0) {
+            alert(`No se encontraron lugares en un radio de ${distancia} metros.`);
+        } else {
+            // Ajustar el zoom del mapa para mostrar todos los lugares encontrados
+            const bounds = L.latLngBounds([currentPosition]);
+            lugaresCercanos.forEach(lugar => {
+                bounds.extend([lugar.latitud, lugar.longitud]);
+            });
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
+    } catch (error) {
+        console.error('Error buscando lugares cercanos:', error);
+        alert('Hubo un error al buscar lugares cercanos.');
     }
 }
 
@@ -89,15 +161,28 @@ function setupEventListeners() {
         cargarFavoritos();
     });
 
+    // Botón "Buscar cercanos"
     document.getElementById('buscarCercanos').addEventListener('click', () => {
-        const distancia = document.getElementById('distancia').value;
-        if (distancia && currentPosition) {
-            activeFilters.cercanos = true;
-            activeFilters.favoritos = false;
-            buscarLugaresCercanos(distancia);
-        } else {
-            alert('Por favor, ingresa una distancia y permite el acceso a tu ubicación');
+        const distanciaInput = document.getElementById('distancia');
+        const distancia = parseInt(distanciaInput.value);
+
+        if (!distancia || distancia <= 0) {
+            alert('Por favor, ingresa una distancia válida en metros.');
+            return;
         }
+
+        if (!currentPosition) {
+            alert('Necesitamos tu ubicación para buscar lugares cercanos. Por favor, permite el acceso a tu ubicación.');
+            return;
+        }
+
+        activeFilters.cercanos = true;
+        activeFilters.favoritos = false;
+        buscarLugaresCercanos(distancia);
+
+        // Actualizar UI
+        document.getElementById('mostrarTodos').classList.remove('active');
+        document.getElementById('mostrarFavoritos').classList.remove('active');
     });
 
     document.getElementById('filtroEtiquetas').addEventListener('change', (e) => {
