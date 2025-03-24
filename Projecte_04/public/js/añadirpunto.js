@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const errorContainer = document.createElement("div");
+    errorContainer.id = "error-container";
     errorContainer.style.backgroundColor = "#f8d7da";
     errorContainer.style.color = "#721c24";
     errorContainer.style.padding = "10px";
@@ -18,28 +19,19 @@ document.addEventListener("DOMContentLoaded", function () {
         const longitud = document.getElementById("longitud");
         const descripcion = document.getElementById("descripcion");
         const icono = document.getElementById("icono");
-        const etiquetas = document.getElementById("etiquetas");
+        const etiquetas = document.querySelectorAll("#etiquetas input[type='checkbox']");
 
         // Limpiar errores previos
         errorContainer.innerHTML = "";
         errorContainer.style.display = "none";
-        [nombre, latitud, longitud, descripcion, icono, etiquetas].forEach((field) => {
+        [nombre, latitud, longitud, descripcion, icono].forEach((field) => {
             field.style.borderColor = "";
         });
 
         // Validar campos
         if (!nombre.value.trim()) {
-            errors.push("El campo 'Nombre del sitio' es obligatorio.");
+            errors.push("El campo 'Nombre' es obligatorio.");
             nombre.style.borderColor = "red";
-        } else {
-            // Verificar si el nombre ya existe mediante AJAX
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", `/admin/puntos/check-nombre?nombre=${encodeURIComponent(nombre.value.trim())}`, false);
-            xhr.send();
-            if (xhr.status === 200 && JSON.parse(xhr.responseText).exists) {
-                errors.push("El nombre del sitio ya existe.");
-                nombre.style.borderColor = "red";
-            }
         }
 
         if (!latitud.value.trim() || isNaN(latitud.value)) {
@@ -53,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (!descripcion.value.trim()) {
-            errors.push("El campo 'Pista' es obligatorio.");
+            errors.push("El campo 'Descripción' es obligatorio.");
             descripcion.style.borderColor = "red";
         }
 
@@ -62,9 +54,9 @@ document.addEventListener("DOMContentLoaded", function () {
             icono.style.borderColor = "red";
         }
 
-        if (!etiquetas.selectedOptions.length) {
+        const etiquetasSeleccionadas = Array.from(etiquetas).some((checkbox) => checkbox.checked);
+        if (!etiquetasSeleccionadas) {
             errors.push("Debe seleccionar al menos una etiqueta.");
-            etiquetas.style.borderColor = "red";
         }
 
         // Mostrar errores si los hay
@@ -74,8 +66,23 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-
         // Si no hay errores, enviar el formulario
         form.submit();
+    });
+
+    // Vista previa del icono
+    const iconoInput = document.getElementById("icono");
+    const previewContainer = document.getElementById("preview-container");
+    const previewImage = document.getElementById("preview-image");
+
+    iconoInput.addEventListener("change", function (e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = "block";
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
     });
 });
