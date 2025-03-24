@@ -3,107 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title') - Turismo App</title>
+    <title>@yield('title', 'Turismo App')</title>
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     
     <style>
-        .navbar-brand {
-            font-size: 1.5rem;
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-container img {
+            height: 40px;
+        }
+
+        .user-name {
+            font-size: 1.1rem;
             font-weight: bold;
         }
-        .navbar-nav .nav-link {
-            font-size: 1.1rem;
-            padding: 0.5rem 1rem;
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 1rem;
         }
-        .dropdown-menu {
-            border-radius: 0.5rem;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #444;
+        }
+
+        main {
+            min-height: calc(100vh - 100px);
         }
     </style>
     
     @yield('styles')
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">Turismo App</a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarMain">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('user.dashboard') }}">
-                            <i class="fas fa-home"></i> Inicio
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('user.lugares') }}">
-                            <i class="fas fa-map-marker-alt"></i> Lugares
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('user.gimcanas') }}">
-                            <i class="fas fa-flag"></i> Gimcanas
-                        </a>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
-                    @auth
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
-                                data-bs-toggle="dropdown">
-                                <i class="fas fa-user"></i> {{ Auth::user()->name }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('user.profile') }}">
-                                        <i class="fas fa-user-cog"></i> Perfil
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
+    <header>
+        <div class="logo-container">
+            <img src="{{ asset('img/logo.webp') }}" alt="Logo">
+            @auth
+                <span class="user-name">{{ Auth::user()->nombre }}</span>
+            @endauth
+        </div>
+        <nav>
+            <ul>
+                @auth
+                    @if(Auth::user()->rol === 'admin')
+                        <li><a href="{{ route('admin.index') }}">Inicio</a></li>
+                        <li><a href="{{ route('admin.puntos') }}">Puntos de Interés</a></li>
+                        <li><a href="{{ route('admin.gimcana') }}">Gimcanas</a></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" style="background: none; border: none; color: white; cursor: pointer;">
+                                    Cerrar Sesión
+                                </button>
+                            </form>
                         </li>
                     @else
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">
-                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                            </a>
+                        <li><a href="{{ route('cliente.index') }}">Inicio</a></li>
+                        <li><a href="{{ route('cliente.favoritos') }}">Favoritos</a></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" style="background: none; border: none; color: white; cursor: pointer;">
+                                    Cerrar Sesión
+                                </button>
+                            </form>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">
-                                <i class="fas fa-user-plus"></i> Registrarse
-                            </a>
-                        </li>
-                    @endauth
-                </ul>
-            </div>
-        </div>
-    </nav>
+                    @endif
+                @else
+                    <li><a href="{{ route('login') }}">Iniciar Sesión</a></li>
+                    <li><a href="{{ route('register') }}">Registrarse</a></li>
+                @endauth
+            </ul>
+        </nav>
+    </header>
 
     <main>
         @yield('content')
     </main>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     
