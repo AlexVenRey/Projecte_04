@@ -107,7 +107,7 @@
                                     <div style="
                                         position: absolute;
                                         top: 15px;
-                                        left: 5px;
+                                        left: 4px;
                                         width: 0;
                                         height: 0;
                                         border-left: 5px solid transparent;
