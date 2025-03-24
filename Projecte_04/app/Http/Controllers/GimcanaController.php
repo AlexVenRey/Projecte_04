@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Lugar; // Importamos el modelo Lugar
 use App\Models\Gimcana; // Importamos el modelo Gimcana
+use Illuminate\Support\Facades\Auth; // Importamos la clase Auth para acceder al usuario autenticado
 
 class GimcanaController extends Controller
 {
@@ -38,6 +39,7 @@ class GimcanaController extends Controller
         $gimcana = new Gimcana();
         $gimcana->nombre = $request->nombre;
         $gimcana->descripcion = $request->descripcion;
+        $gimcana->creado_por = Auth::id(); // Guardamos el ID del usuario autenticado
         $gimcana->save(); // Guardamos la gimcana
     
         // Asociar los puntos de interés seleccionados a la gimcana

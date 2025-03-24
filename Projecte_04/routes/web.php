@@ -63,3 +63,9 @@ Route::post('/logout', function () {
     Auth::logout(); // Cerrar la sesión del usuario
     return redirect('/')->with('success', 'Sesión cerrada correctamente.');
 })->name('logout');
+
+// Ruta para mostrar el formulario de registro
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+
+// Ruta para registrar el usuario
+Route::post('/register', [AuthController::class, 'register'])->name('register.store');
