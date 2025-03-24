@@ -29,13 +29,10 @@ function initMap() {
         navigator.geolocation.getCurrentPosition(
             position => {
                 currentPosition = [position.coords.latitude, position.coords.longitude];
-                L.marker(currentPosition, {
-                    icon: L.divIcon({
-                        html: '<i class="fas fa-user-location fa-2x"></i>',
-                        iconSize: [20, 20],
-                        className: 'custom-div-icon'
-                    })
-                }).addTo(map);
+                const userMarker = L.marker(currentPosition, {
+                    title: 'Tu ubicación'
+                });
+                userMarker.addTo(map);
             },
             error => console.error('Error getting location:', error)
         );
@@ -132,32 +129,52 @@ function mostrarLugares(lugares) {
 
 // Agregar marcador al mapa
 function agregarMarcador(lugar) {
-    const icono = lugar.etiquetas.length > 0 ? lugar.etiquetas[0].icono : 'fa-map-marker-alt';
     const marker = L.marker([lugar.latitud, lugar.longitud], {
-        icon: L.divIcon({
-            html: `<i class="fas ${icono}" style="color: ${lugar.color_marcador}"></i>`,
-            iconSize: [20, 20],
-            className: 'custom-div-icon'
-        })
+        icon: createCustomMarker(lugar)
     });
 
-    marker.bindPopup(crearPopupContent(lugar));
+    marker.bindPopup(createPopupContent(lugar));
     marker.on('click', () => mostrarDetalles(lugar));
     marker.addTo(map);
     markers.push(marker);
 }
 
-// Crear contenido del popup
-function crearPopupContent(lugar) {
-    const etiquetas = lugar.etiquetas.map(e => 
-        `<span class="badge bg-secondary"><i class="fas ${e.icono}"></i> ${e.nombre}</span>`
-    ).join(' ');
+// Función para crear un marcador personalizado con Font Awesome
+function createCustomMarker(lugar) {
+    const markerHtml = `
+        <div class="custom-marker" style="background-color: ${lugar.color_marcador}">
+            <i class="fas ${lugar.icono}"></i>
+        </div>
+    `;
     
+    return L.divIcon({
+        html: markerHtml,
+        className: 'custom-marker-container',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30]
+    });
+}
+
+// Función para crear el contenido del popup
+function createPopupContent(lugar) {
+    let etiquetasHtml = '';
+    lugar.etiquetas.forEach(etiqueta => {
+        etiquetasHtml += `
+            <span class="badge bg-primary">
+                <i class="fas ${etiqueta.icono}"></i> 
+                ${etiqueta.nombre}
+            </span>
+        `;
+    });
+
     return `
-        <div>
+        <div class="popup-content">
             <h5>${lugar.nombre}</h5>
             <p>${lugar.descripcion}</p>
-            <div>${etiquetas}</div>
+            <div class="etiquetas">
+                ${etiquetasHtml}
+            </div>
         </div>
     `;
 }

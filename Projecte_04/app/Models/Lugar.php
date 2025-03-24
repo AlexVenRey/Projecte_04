@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Lugar extends Model
 {
@@ -18,12 +18,9 @@ class Lugar extends Model
         'latitud',
         'longitud',
         'descripcion',
-        'icono',
         'color_marcador',
         'creado_por'
     ];
-
-    protected $appends = ['es_favorito'];
 
     /**
      * Relación Many-to-Many con las etiquetas.
@@ -34,21 +31,24 @@ class Lugar extends Model
     }
 
     /**
-     * Relación One-to-Many con los favoritos.
+     * Relación Many-to-One con el usuario que creó el lugar.
      */
-    public function favoritos(): HasMany
+    public function usuario(): BelongsTo
     {
-        return $this->hasMany(Favorito::class);
+        return $this->belongsTo(User::class, 'creado_por');
     }
 
     /**
-     * Obtiene si el lugar es favorito del usuario autenticado.
+     * Obtiene el icono del lugar.
      */
-    public function getEsFavoritoAttribute(): bool
+    public function getIconoAttribute()
     {
-        if (!auth()->check()) {
-            return false;
+        // Si el lugar tiene etiquetas, devolver el icono de la primera etiqueta
+        if ($this->etiquetas->isNotEmpty()) {
+            return $this->etiquetas->first()->icono;
         }
-        return $this->favoritos()->where('usuario_id', auth()->id())->exists();
+        
+        // Si no tiene etiquetas, devolver un icono por defecto
+        return 'fa-map-marker-alt';
     }
 }

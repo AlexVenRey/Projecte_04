@@ -7,12 +7,12 @@
 @section('content')
 <div class="card shadow mb-4">
     <div class="card-body">
-        <form action="{{ route('admin.pruebas.update', $prueba) }}" method="POST">
+        <form action="{{ route('admin.pruebas.update', $prueba) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             
-            <div class="row">
-                <div class="col-md-6">
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
                         <input type="text" class="form-control @error('titulo') is-invalid @enderror" 
@@ -42,17 +42,15 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
                     <div class="mb-3">
                         <label for="lugar_id" class="form-label">Lugar</label>
-                        <select class="form-control @error('lugar_id') is-invalid @enderror" 
+                        <select class="form-select @error('lugar_id') is-invalid @enderror" 
                             id="lugar_id" name="lugar_id" required>
                             <option value="">Selecciona un lugar</option>
                             @foreach($lugares as $lugar)
                                 <option value="{{ $lugar->id }}" 
-                                    data-lat="{{ $lugar->latitud }}" 
-                                    data-lng="{{ $lugar->longitud }}"
-                                    {{ (old('lugar_id', $prueba->lugar_id) == $lugar->id) ? 'selected' : '' }}>
+                                    {{ old('lugar_id', $prueba->lugar_id) == $lugar->id ? 'selected' : '' }}>
                                     {{ $lugar->nombre }}
                                 </option>
                             @endforeach
@@ -104,9 +102,15 @@
                 </div>
             </div>
 
-            <div class="text-end">
-                <a href="{{ route('admin.pruebas.index') }}" class="btn btn-secondary">Cancelar</a>
-                <button type="submit" class="btn btn-primary">Actualizar</button>
+            <div class="mt-4 d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    <span class="d-none d-sm-inline ms-1">Actualizar</span>
+                </button>
+                <a href="{{ route('admin.pruebas.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    <span class="d-none d-sm-inline ms-1">Cancelar</span>
+                </a>
             </div>
         </form>
     </div>

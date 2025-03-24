@@ -65,12 +65,53 @@ body {
 
 .custom-div-icon i {
     font-size: 24px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2c3e50;
+    text-shadow: 2px 2px 2px rgba(0,0,0,0.2);
 }
+
+.custom-div-icon i.fa-landmark { color: #8e44ad; } /* Cultura */
+.custom-div-icon i.fa-graduation-cap { color: #2980b9; } /* Educación */
+.custom-div-icon i.fa-tree { color: #27ae60; } /* Parques */
+.custom-div-icon i.fa-train { color: #c0392b; } /* Transporte */
+.custom-div-icon i.fa-shopping-cart { color: #f39c12; } /* Compras */
+.custom-div-icon i.fa-ticket-alt { color: #e74c3c; } /* Ocio */
+.custom-div-icon i.fa-hospital { color: #e74c3c; } /* Sanidad */
+.custom-div-icon i.fa-futbol { color: #16a085; } /* Deportes */
+.custom-div-icon i.fa-utensils { color: #d35400; } /* Restaurantes */
 
 .custom-div-icon i:hover {
     transform: scale(1.2);
     transition: transform 0.2s;
+}
+
+.custom-marker-container {
+    background: none !important;
+    border: none !important;
+}
+
+.custom-marker {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.custom-marker:hover {
+    transform: scale(1.2);
+}
+
+.custom-marker i {
+    font-size: 16px;
 }
 
 /* Estilos para el mapa */
@@ -158,6 +199,44 @@ body {
     margin: 0 0 0.5rem 0;
 }
 
+.popup-content {
+    padding: 10px;
+    max-width: 300px;
+}
+
+.popup-content h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+.popup-content p {
+    margin: 0 0 10px 0;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.etiqueta {
+    background-color: #f0f2f5;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #2c3e50;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.etiqueta i {
+    font-size: 12px;
+}
+
 /* Estilos para el modal */
 .modal-body img {
     max-width: 100%;
@@ -172,4 +251,33 @@ body {
 .etiquetas-lista .tag {
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
+}
+
+/* Estilos para los filtros */
+#filtro-etiquetas {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.filtro-grupo {
+    margin-bottom: 5px;
+}
+
+.filtro-grupo label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    color: #2c3e50;
+    cursor: pointer;
+}
+
+.filtro-grupo input[type="checkbox"] {
+    margin: 0;
 }

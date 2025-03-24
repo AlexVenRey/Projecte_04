@@ -14,7 +14,6 @@ class CreateLugaresTable extends Migration
             $table->decimal('latitud', 10, 8);
             $table->decimal('longitud', 10, 8);
             $table->text('descripcion');
-            $table->string('icono')->default('fa-landmark'); // Cambiado a clase de Font Awesome
             $table->string('color_marcador')->default('#3388ff');
             $table->foreignId('creado_por')->constrained('usuarios');
             $table->timestamps();
