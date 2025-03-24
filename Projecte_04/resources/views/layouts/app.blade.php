@@ -77,39 +77,11 @@
         </div>
         <nav>
             <ul>
-                @auth
-                    @if(Auth::user()->rol === 'admin')
-                        <li><a href="{{ route('admin.index') }}">Inicio</a></li>
-                        <li><a href="{{ route('admin.puntos') }}">Puntos de Interés</a></li>
-                        <li><a href="{{ route('admin.gimcana') }}">Gimcanas</a></li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                                @csrf
-                                <button type="submit" style="background: none; border: none; color: white; cursor: pointer;">
-                                    Cerrar Sesión
-                                </button>
-                            </form>
-                        </li>
-                    @else
-                        <li><a href="{{ route('cliente.index') }}">Inicio</a></li>
-                        <li><a href="{{ route('cliente.favoritos') }}">Favoritos</a></li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-                                @csrf
-                                <button type="submit" style="background: none; border: none; color: white; cursor: pointer;">
-                                    Cerrar Sesión
-                                </button>
-                            </form>
-                        </li>
-                    @endif
-                @else
-                    <li><a href="{{ route('login') }}">Iniciar Sesión</a></li>
-                    <li><a href="{{ route('register') }}">Registrarse</a></li>
-                @endauth
+                <li><a href="{{ url('admin/index') }}">Inicio</a></li>
+                <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
             </ul>
         </nav>
     </header>
-
     <main>
         @yield('content')
     </main>
