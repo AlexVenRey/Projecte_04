@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Lugar;
 use App\Models\Etiqueta;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 
 class LugarController extends Controller
 {
@@ -29,20 +30,23 @@ class LugarController extends Controller
             'longitud' => 'required|numeric',
             'descripcion' => 'required|string',
             'icono' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'color_marcador' => 'required|string',
             'etiquetas' => 'required|array',
         ]);
 
-        // Mover el archivo a la carpeta public/img
+        // Procesar y guardar el icono
         $icono = $request->file('icono');
         $iconoName = time() . '_' . $icono->getClientOriginalName();
-        $icono->move(public_path('img'), $iconoName);
+        $icono->move(public_path('img/lugares'), $iconoName);
 
         $lugar = Lugar::create([
             'nombre' => $request->nombre,
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
             'descripcion' => $request->descripcion,
-            'icono' => $iconoName,
+            'icono' => 'lugares/' . $iconoName,
+            'color_marcador' => $request->color_marcador,
+            'creado_por' => Auth::id(),
         ]);
 
         $lugar->etiquetas()->attach($request->etiquetas);
@@ -65,22 +69,30 @@ class LugarController extends Controller
             'longitud' => 'required|numeric',
             'descripcion' => 'required|string',
             'icono' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'color_marcador' => 'required|string',
             'etiquetas' => 'required|array',
         ]);
 
         $punto = Lugar::findOrFail($id);
 
+        if ($request->hasFile('icono')) {
+            // Eliminar icono anterior si existe
+            if ($punto->icono && File::exists(public_path('img/' . $punto->icono))) {
+                File::delete(public_path('img/' . $punto->icono));
+            }
+
+            // Guardar nuevo icono
+            $icono = $request->file('icono');
+            $iconoName = time() . '_' . $icono->getClientOriginalName();
+            $icono->move(public_path('img/lugares'), $iconoName);
+            $punto->icono = 'lugares/' . $iconoName;
+        }
+
         $punto->nombre = $request->nombre;
         $punto->latitud = $request->latitud;
         $punto->longitud = $request->longitud;
         $punto->descripcion = $request->descripcion;
-
-        if ($request->hasFile('icono')) {
-            $icono = $request->file('icono');
-            $iconoName = time() . '_' . $icono->getClientOriginalName();
-            $icono->move(public_path('img'), $iconoName);
-            $punto->icono = $iconoName;
-        }
+        $punto->color_marcador = $request->color_marcador;
 
         $punto->save();
         $punto->etiquetas()->sync($request->etiquetas);
@@ -92,15 +104,12 @@ class LugarController extends Controller
     {
         $punto = Lugar::findOrFail($id);
 
-        // Eliminar el icono del servidor si existe
+        // Eliminar el icono si existe
         if ($punto->icono && File::exists(public_path('img/' . $punto->icono))) {
             File::delete(public_path('img/' . $punto->icono));
         }
 
-        // Eliminar las relaciones con etiquetas
         $punto->etiquetas()->detach();
-
-        // Eliminar el punto de interés
         $punto->delete();
 
         return redirect()->route('admin.puntos')->with('success', 'Punto de interés eliminado correctamente.');
