@@ -13,6 +13,12 @@ class EtiquetasSeeder extends Seeder
             ['nombre' => 'Cultura', 'created_at' => now(), 'updated_at' => now()],
             ['nombre' => 'Naturaleza', 'created_at' => now(), 'updated_at' => now()],
             ['nombre' => 'Gastronomía', 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Deportes', 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Museo', 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Parques', 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Restaurantes', 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Otros', 'created_at' => now(), 'updated_at' => now()],
+            ['nombre' => 'Centro Médico', 'created_at' => now(), 'updated_at' => now()], // Nueva etiqueta
         ]);
     }
 }
