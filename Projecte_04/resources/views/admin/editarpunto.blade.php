@@ -1,4 +1,3 @@
-<!-- filepath: c:\wamp64\www\M12\Projecte_04\Projecte_04\resources\views\admin\editarpunto.blade.php -->
 @extends('layouts.app')
 
 @section('content')
@@ -21,23 +20,23 @@
         
         <div class="form-group">
             <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" required value="{{ old('nombre', $punto->nombre) }}">
+            <input type="text" id="nombre" name="nombre"  value="{{ old('nombre', $punto->nombre) }}">
         </div>
 
         <div class="form-group">
             <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" name="descripcion" rows="3" required>{{ old('descripcion', $punto->descripcion) }}</textarea>
+            <textarea id="descripcion" name="descripcion" rows="3" >{{ old('descripcion', $punto->descripcion) }}</textarea>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label for="latitud">Latitud</label>
-                <input type="number" step="any" id="latitud" name="latitud" required value="{{ old('latitud', $punto->latitud) }}">
+                <input type="number" step="any" id="latitud" name="latitud"  value="{{ old('latitud', $punto->latitud) }}">
             </div>
 
             <div class="form-group">
                 <label for="longitud">Longitud</label>
-                <input type="number" step="any" id="longitud" name="longitud" required value="{{ old('longitud', $punto->longitud) }}">
+                <input type="number" step="any" id="longitud" name="longitud"  value="{{ old('longitud', $punto->longitud) }}">
             </div>
         </div>
 
@@ -242,4 +241,8 @@ textarea {
     min-height: 100px;
 }
 </style>
+@endsection
+
+@section('scripts')
+<script src="{{ asset('js/editarpunto.js') }}"></script>
 @endsection
