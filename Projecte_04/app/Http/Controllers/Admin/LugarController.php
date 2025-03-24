@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Lugar;
 use App\Models\Etiqueta;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class LugarController extends Controller
 {
@@ -26,28 +25,27 @@ class LugarController extends Controller
     {
         $validatedData = $request->validate([
             'nombre' => 'required|max:255',
-            'direccion' => 'required',
+            'descripcion' => 'required',
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
-            'descripcion' => 'required',
-            'color' => 'nullable|max:7',
-            'icono' => 'nullable|image|max:2048',
-            'etiquetas' => 'array'
+            'etiquetas' => 'required|array|min:1',
+            'etiquetas.*' => 'exists:etiquetas,id',
+            'color_marcador' => 'required|string|max:7'
         ]);
 
-        if ($request->hasFile('icono')) {
-            $path = $request->file('icono')->store('iconos', 'public');
-            $validatedData['icono'] = $path;
-        }
+        $lugar = Lugar::create([
+            'nombre' => $validatedData['nombre'],
+            'descripcion' => $validatedData['descripcion'],
+            'latitud' => $validatedData['latitud'],
+            'longitud' => $validatedData['longitud'],
+            'color_marcador' => $validatedData['color_marcador'],
+            'creado_por' => auth()->id()
+        ]);
 
-        $lugar = Lugar::create($validatedData);
-
-        if (isset($validatedData['etiquetas'])) {
-            $lugar->etiquetas()->sync($validatedData['etiquetas']);
-        }
+        $lugar->etiquetas()->attach($validatedData['etiquetas']);
 
         return redirect()->route('admin.lugares.index')
-            ->with('success', 'Lugar creado correctamente');
+            ->with('success', 'Lugar creado correctamente.');
     }
 
     public function edit(Lugar $lugar)
@@ -60,43 +58,33 @@ class LugarController extends Controller
     {
         $validatedData = $request->validate([
             'nombre' => 'required|max:255',
-            'direccion' => 'required',
+            'descripcion' => 'required',
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
-            'descripcion' => 'required',
-            'color' => 'nullable|max:7',
-            'icono' => 'nullable|image|max:2048',
-            'etiquetas' => 'array'
+            'etiquetas' => 'required|array|min:1',
+            'etiquetas.*' => 'exists:etiquetas,id',
+            'color_marcador' => 'required|string|max:7'
         ]);
 
-        if ($request->hasFile('icono')) {
-            if ($lugar->icono) {
-                Storage::disk('public')->delete($lugar->icono);
-            }
-            $path = $request->file('icono')->store('iconos', 'public');
-            $validatedData['icono'] = $path;
-        }
+        $lugar->update([
+            'nombre' => $validatedData['nombre'],
+            'descripcion' => $validatedData['descripcion'],
+            'latitud' => $validatedData['latitud'],
+            'longitud' => $validatedData['longitud'],
+            'color_marcador' => $validatedData['color_marcador']
+        ]);
 
-        $lugar->update($validatedData);
-
-        if (isset($validatedData['etiquetas'])) {
-            $lugar->etiquetas()->sync($validatedData['etiquetas']);
-        }
+        $lugar->etiquetas()->sync($validatedData['etiquetas']);
 
         return redirect()->route('admin.lugares.index')
-            ->with('success', 'Lugar actualizado correctamente');
+            ->with('success', 'Lugar actualizado correctamente.');
     }
 
     public function destroy(Lugar $lugar)
     {
-        if ($lugar->icono) {
-            Storage::disk('public')->delete($lugar->icono);
-        }
-        
         $lugar->delete();
-
         return redirect()->route('admin.lugares.index')
-            ->with('success', 'Lugar eliminado correctamente');
+            ->with('success', 'Lugar eliminado correctamente.');
     }
 
     // API endpoints para AJAX

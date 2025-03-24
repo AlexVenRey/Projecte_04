@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Lugar;
 use App\Models\Favorito;
+use App\Models\Etiqueta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,16 +12,20 @@ class ClienteController extends Controller
 {
     public function index()
     {
-        return view('cliente.index');
+        $etiquetas = Etiqueta::all();
+        return view('cliente.index', compact('etiquetas'));
     }
 
     public function getLugares()
     {
         $lugares = Lugar::with('etiquetas')->get();
-        foreach ($lugares as $lugar) {
-            $lugar->icono = asset('img/' . $lugar->icono);
-        }
         return response()->json($lugares);
+    }
+
+    public function getEtiquetas()
+    {
+        $etiquetas = Etiqueta::all();
+        return response()->json($etiquetas);
     }
 
     public function getFavoritos()
@@ -29,10 +34,6 @@ class ClienteController extends Controller
         $favoritos = Lugar::whereHas('favoritos', function($query) use ($usuario) {
             $query->where('usuario_id', $usuario->id);
         })->with('etiquetas')->get();
-        
-        foreach ($favoritos as $lugar) {
-            $lugar->icono = asset('img/' . $lugar->icono);
-        }
         
         return response()->json($favoritos);
     }
@@ -71,10 +72,6 @@ class ClienteController extends Controller
             ->whereBetween('latitud', [$lat - $grados, $lat + $grados])
             ->whereBetween('longitud', [$lng - $grados, $lng + $grados])
             ->get();
-
-        foreach ($lugares as $lugar) {
-            $lugar->icono = asset('img/' . $lugar->icono);
-        }
 
         // Filtrar por distancia exacta usando la fórmula de Haversine
         $lugaresFiltrados = $lugares->filter(function($lugar) use ($lat, $lng, $distancia) {

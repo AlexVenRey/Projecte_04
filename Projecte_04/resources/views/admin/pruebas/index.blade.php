@@ -1,53 +1,67 @@
 @extends('layouts.admin')
 
-@section('title', 'Gestión de Pruebas Gimcana')
+@section('title', 'Gestión de Pruebas')
 
-@section('header', 'Gestión de Pruebas Gimcana')
+@section('header', 'Gestión de Pruebas')
 
 @section('content')
-<div class="mb-3">
-    <a href="{{ route('admin.pruebas.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Nueva Prueba
-    </a>
-</div>
-
 <div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h6 class="m-0 font-weight-bold text-primary mb-2 mb-md-0">Pruebas de Gincana</h6>
+            <a href="{{ route('admin.pruebas.create') }}" class="btn btn-primary btn-responsive">
+                <i class="fas fa-plus"></i> Nueva Prueba
+            </a>
+        </div>
+    </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="pruebasTable">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Título</th>
-                        <th>Lugar</th>
-                        <th>Descripción</th>
-                        <th>Pista</th>
-                        <th>Grupos Completados</th>
-                        <th>Acciones</th>
+                        <th data-mobile-label="Nom">Nombre</th>
+                        <th data-mobile-label="Desc">Descripción</th>
+                        <th data-mobile-label="Pts">Puntos</th>
+                        <th data-mobile-label="Tipo">Tipo</th>
+                        <th data-mobile-label="Acc">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($pruebas as $prueba)
                     <tr>
-                        <td>{{ $prueba->titulo }}</td>
-                        <td>{{ $prueba->lugar->nombre }}</td>
-                        <td>{{ Str::limit($prueba->descripcion, 100) }}</td>
-                        <td>{{ Str::limit($prueba->pista, 100) }}</td>
-                        <td>
-                            {{ $prueba->grupos->where('pivot.completada', true)->count() }}
-                            de
-                            {{ $prueba->grupos->count() }}
+                        <td data-label="Nombre">{{ $prueba->nombre }}</td>
+                        <td data-label="Descripción">
+                            <div class="text-truncate" style="max-width: 200px;">
+                                {{ $prueba->descripcion }}
+                            </div>
                         </td>
-                        <td>
-                            <a href="{{ route('admin.pruebas.edit', $prueba) }}" class="btn btn-sm btn-warning">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('admin.pruebas.destroy', $prueba) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro?')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                        <td data-label="Puntos">{{ $prueba->puntos }}</td>
+                        <td data-label="Tipo">
+                            <span class="badge bg-{{ $prueba->tipo == 'pregunta' ? 'info' : 'warning' }}">
+                                <i class="fas fa-{{ $prueba->tipo == 'pregunta' ? 'question' : 'camera' }}"></i>
+                                {{ ucfirst($prueba->tipo) }}
+                            </span>
+                        </td>
+                        <td data-label="Acciones">
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('admin.pruebas.edit', $prueba) }}" 
+                                   class="btn btn-sm btn-primary"
+                                   title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                    <span class="d-none d-md-inline ms-1">Editar</span>
+                                </a>
+                                <form action="{{ route('admin.pruebas.destroy', $prueba) }}" 
+                                      method="POST" 
+                                      class="d-inline"
+                                      onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta prueba?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="d-none d-md-inline ms-1">Eliminar</span>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @endforeach
@@ -56,44 +70,23 @@
         </div>
     </div>
 </div>
-
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Mapa de Pruebas</h6>
-    </div>
-    <div class="card-body">
-        <div id="map" style="height: 400px;"></div>
-    </div>
-</div>
 @endsection
 
 @section('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar DataTable
-    $('#pruebasTable').DataTable({
+$(document).ready(function() {
+    $('#dataTable').DataTable({
+        responsive: true,
         language: {
             url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
-        }
+        },
+        columnDefs: [
+            { responsivePriority: 1, targets: [0, -1] }, // Nombre y Acciones siempre visibles
+            { responsivePriority: 2, targets: 2 },       // Puntos segunda prioridad
+            { responsivePriority: 3, targets: 3 },       // Tipo tercera prioridad
+            { responsivePriority: 4, targets: 1 }        // Descripción última prioridad
+        ]
     });
-
-    // Inicializar mapa
-    var map = L.map('map').setView([41.3851, 2.1734], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Añadir marcadores para cada prueba
-    @foreach($pruebas as $prueba)
-        L.marker([{{ $prueba->lugar->latitud }}, {{ $prueba->lugar->longitud }}])
-            .bindPopup(`
-                <strong>{{ $prueba->titulo }}</strong><br>
-                Lugar: {{ $prueba->lugar->nombre }}<br>
-                <small>{{ Str::limit($prueba->descripcion, 100) }}</small>
-            `)
-            .addTo(map);
-    @endforeach
 });
 </script>
 @endsection

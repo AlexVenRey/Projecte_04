@@ -1,56 +1,82 @@
 @extends('layouts.admin')
 
-@section('title', 'Crear Prueba')
+@section('title', 'Nueva Prueba')
 
-@section('header', 'Crear Nueva Prueba')
+@section('header', 'Nueva Prueba')
 
 @section('content')
 <div class="card shadow mb-4">
     <div class="card-body">
-        <form action="{{ route('admin.pruebas.store') }}" method="POST">
+        <form action="{{ route('admin.pruebas.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <div class="row">
-                <div class="col-md-6">
+            
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
                     <div class="mb-3">
-                        <label for="titulo" class="form-label">Título</label>
-                        <input type="text" class="form-control @error('titulo') is-invalid @enderror" 
-                            id="titulo" name="titulo" value="{{ old('titulo') }}" required>
-                        @error('titulo')
+                        <label for="nombre" class="form-label">Nombre de la Prueba</label>
+                        <input type="text" class="form-control @error('nombre') is-invalid @enderror" 
+                            id="nombre" name="nombre" value="{{ old('nombre') }}" required>
+                        @error('nombre')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción de la Prueba</label>
+                        <label for="descripcion" class="form-label">Descripción</label>
                         <textarea class="form-control @error('descripcion') is-invalid @enderror" 
-                            id="descripcion" name="descripcion" rows="4" required>{{ old('descripcion') }}</textarea>
+                            id="descripcion" name="descripcion" rows="3" required>{{ old('descripcion') }}</textarea>
                         @error('descripcion')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="pista" class="form-label">Pista</label>
-                        <textarea class="form-control @error('pista') is-invalid @enderror" 
-                            id="pista" name="pista" rows="3" required>{{ old('pista') }}</textarea>
-                        <small class="form-text text-muted">Esta pista será mostrada a los participantes para ayudarles a encontrar el lugar.</small>
-                        @error('pista')
+                        <label for="tipo" class="form-label">Tipo de Prueba</label>
+                        <select class="form-select @error('tipo') is-invalid @enderror" id="tipo" name="tipo" required>
+                            <option value="pregunta" {{ old('tipo') == 'pregunta' ? 'selected' : '' }}>
+                                <i class="fas fa-question"></i> Pregunta
+                            </option>
+                            <option value="foto" {{ old('tipo') == 'foto' ? 'selected' : '' }}>
+                                <i class="fas fa-camera"></i> Foto
+                            </option>
+                        </select>
+                        @error('tipo')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
+                    <div class="row g-2">
+                        <div class="col-12 col-sm-6">
+                            <div class="mb-3">
+                                <label for="puntos" class="form-label">Puntos</label>
+                                <input type="number" class="form-control @error('puntos') is-invalid @enderror" 
+                                    id="puntos" name="puntos" value="{{ old('puntos', 1) }}" required min="1">
+                                @error('puntos')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="mb-3">
+                                <label for="orden" class="form-label">Orden</label>
+                                <input type="number" class="form-control @error('orden') is-invalid @enderror" 
+                                    id="orden" name="orden" value="{{ old('orden', 1) }}" required min="1">
+                                @error('orden')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label for="lugar_id" class="form-label">Lugar</label>
-                        <select class="form-control @error('lugar_id') is-invalid @enderror" 
+                        <select class="form-select select2-lugares @error('lugar_id') is-invalid @enderror" 
                             id="lugar_id" name="lugar_id" required>
                             <option value="">Selecciona un lugar</option>
                             @foreach($lugares as $lugar)
-                                <option value="{{ $lugar->id }}" 
-                                    data-lat="{{ $lugar->latitud }}" 
-                                    data-lng="{{ $lugar->longitud }}"
-                                    {{ old('lugar_id') == $lugar->id ? 'selected' : '' }}>
+                                <option value="{{ $lugar->id }}" {{ old('lugar_id') == $lugar->id ? 'selected' : '' }}>
                                     {{ $lugar->nombre }}
                                 </option>
                             @endforeach
@@ -60,13 +86,28 @@
                         @enderror
                     </div>
 
-                    <div id="map" style="height: 300px;" class="mb-3"></div>
+                    <div id="preguntaRespuesta" class="{{ old('tipo') == 'foto' ? 'd-none' : '' }}">
+                        <div class="mb-3">
+                            <label for="respuesta_correcta" class="form-label">Respuesta Correcta</label>
+                            <input type="text" class="form-control @error('respuesta_correcta') is-invalid @enderror" 
+                                id="respuesta_correcta" name="respuesta_correcta" value="{{ old('respuesta_correcta') }}">
+                            @error('respuesta_correcta')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="text-end">
-                <a href="{{ route('admin.pruebas.index') }}" class="btn btn-secondary">Cancelar</a>
-                <button type="submit" class="btn btn-primary">Guardar</button>
+            <div class="mt-4 d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    <span class="d-none d-sm-inline ms-1">Crear Prueba</span>
+                </button>
+                <a href="{{ route('admin.pruebas.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    <span class="d-none d-sm-inline ms-1">Cancelar</span>
+                </a>
             </div>
         </form>
     </div>
@@ -75,41 +116,31 @@
 
 @section('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var map = L.map('map').setView([41.3851, 2.1734], 13);
-    var marker = null;
+$(document).ready(function() {
+    // Inicializar Select2 para lugares
+    $('.select2-lugares').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Selecciona un lugar',
+        width: '100%'
+    });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Función para actualizar el marcador
-    function updateMarker(lat, lng) {
-        if (marker) {
-            map.removeLayer(marker);
-        }
-        marker = L.marker([lat, lng]).addTo(map);
-        map.setView([lat, lng], 16);
-    }
-
-    // Evento change del select de lugar
-    document.getElementById('lugar_id').addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        if (selectedOption.value) {
-            const lat = selectedOption.dataset.lat;
-            const lng = selectedOption.dataset.lng;
-            updateMarker(lat, lng);
+    // Manejar cambio de tipo de prueba
+    $('#tipo').change(function() {
+        if ($(this).val() === 'foto') {
+            $('#preguntaRespuesta').addClass('d-none');
+            $('#respuesta_correcta').prop('required', false);
+        } else {
+            $('#preguntaRespuesta').removeClass('d-none');
+            $('#respuesta_correcta').prop('required', true);
         }
     });
 
-    // Si hay un lugar seleccionado al cargar la página, mostrar su marcador
-    const lugarSelect = document.getElementById('lugar_id');
-    if (lugarSelect.value) {
-        const selectedOption = lugarSelect.options[lugarSelect.selectedIndex];
-        const lat = selectedOption.dataset.lat;
-        const lng = selectedOption.dataset.lng;
-        updateMarker(lat, lng);
-    }
+    // Ajustar Select2 en dispositivos móviles
+    $('.select2-lugares').on('select2:open', function() {
+        if (window.innerWidth < 768) {
+            $('.select2-search__field').focus();
+        }
+    });
 });
 </script>
 @endsection

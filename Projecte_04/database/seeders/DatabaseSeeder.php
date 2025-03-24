@@ -7,8 +7,8 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\GruposSeeder;
-use Database\Seeders\LugaresSeeder;
 use Database\Seeders\EtiquetasSeeder;
+use Database\Seeders\LugaresSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             GruposSeeder::class,
-            LugaresSeeder::class,
             EtiquetasSeeder::class,
+            LugaresSeeder::class,
         ]);
     }
 }
