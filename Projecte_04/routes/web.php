@@ -72,3 +72,7 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/')->with('success', 'Sesión cerrada correctamente.');
 })->name('logout');
+
+// Ruta para editar gimcana
+Route::get('admin/gimcana/{id}/edit', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
+Route::put('admin/gimcana/{id}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');

@@ -61,4 +61,40 @@ class GimcanaController extends Controller
         // Redirigir con mensaje de éxito
         return redirect()->route('admin.gimcana')->with('success', 'Gimcana eliminada correctamente.');
     }
+
+    // Método para editar una gimcana
+    public function edit($id)
+    {
+        $gimcana = Gimcana::findOrFail($id);
+        $lugares = Lugar::all(); // Carga todos los lugares de interés disponibles
+
+        return view('admin.editargimcana', compact('gimcana', 'lugares'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Validación de los datos
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'lugares' => 'array', // Asegura que se recibe un array de lugares
+        ]);
+
+        // Buscar la gimcana en la base de datos
+        $gimcana = Gimcana::findOrFail($id);
+
+        // Actualizar los datos de la gimcana
+        $gimcana->nombre = $request->nombre;
+        $gimcana->descripcion = $request->descripcion;
+
+        // Guardar cambios en la base de datos
+        $gimcana->save();
+
+        // Actualizar la relación con los lugares
+        $gimcana->lugares()->sync($request->lugares);
+
+        // Redirigir con un mensaje de éxito
+        return redirect()->route('admin.gimcana')->with('success', 'Gimcana actualizada correctamente.');
+    }
+
 }
