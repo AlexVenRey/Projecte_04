@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gimcana</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -33,7 +34,7 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Descripción</th>
-                    <th>Lugares de Interés</th> <!-- Nueva columna de lugares -->
+                    <th>Lugares de Interés</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -51,8 +52,8 @@
                                 <img src="{{ asset('img/editar.png') }}" alt="Editar">
                             </a>
 
-                            <!-- Botón de Eliminar -->
-                            <a href="{{ route('admin.gimcana.delete', $gimcana->id) }}" class="delete-btn" onclick="event.preventDefault(); if (confirm('¿Estás seguro de que deseas eliminar esta gimcana?')) document.getElementById('delete-form-{{ $gimcana->id }}').submit();">
+                            <!-- Botón de Eliminar con llamada a la función confirmDelete() -->
+                            <a href="javascript:void(0)" class="delete-btn" onclick="confirmDelete({{ $gimcana->id }})">
                                 <img src="{{ asset('img/eliminar.png') }}" alt="Eliminar">
                             </a>
 
@@ -67,5 +68,26 @@
             </tbody>
         </table>
     </div>
+
+    <!-- SweetAlert Script -->
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Enviar el formulario de eliminación
+                    document.getElementById(`delete-form-${id}`).submit();
+                }
+            });
+        }
+    </script>
 </body>
 </html>

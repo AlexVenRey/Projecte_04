@@ -1,0 +1,119 @@
+/* Estilos generales */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Estilos de la barra lateral */
+.sidebar {
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+/* Estilos para la lista de lugares */
+.list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: #e9ecef;
+}
+
+.list-group-item.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Estilos para las etiquetas */
+.tag {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    margin: 0.25rem;
+    border-radius: 15px;
+    background-color: #e9ecef;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.tag.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Estilos para los botones de favoritos */
+.btn-favorito {
+    color: #dc3545;
+    background: none;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+}
+
+.btn-favorito i {
+    transition: transform 0.2s;
+}
+
+.btn-favorito:hover i {
+    transform: scale(1.2);
+}
+
+/* Estilos responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        height: 40vh;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    #mapa {
+        height: calc(60vh - 56px) !important;
+    }
+
+    .navbar .d-flex {
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .navbar-nav {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Estilos para el popup del mapa */
+.leaflet-popup-content {
+    min-width: 200px;
+}
+
+.lugar-popup img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 0.5rem;
+}
+
+.lugar-popup h5 {
+    margin: 0 0 0.5rem 0;
+}
+
+.lugar-popup p {
+    margin: 0 0 0.5rem 0;
+}
+
+/* Estilos para el modal */
+.modal-body img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.etiquetas-lista {
+    margin-top: 0.5rem;
+}
+
+.etiquetas-lista .tag {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
