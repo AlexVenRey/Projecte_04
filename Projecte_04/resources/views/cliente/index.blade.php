@@ -21,14 +21,14 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <button class="nav-link active" id="mostrarTodos">
+                        <a href="#" class="nav-link active" id="mostrarTodos">
                             <i class="fas fa-globe"></i> Todos los lugares
-                        </button>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" id="mostrarFavoritos">
+                        <a href="#" class="nav-link" id="mostrarFavoritos">
                             <i class="fas fa-heart"></i> Mis favoritos
-                        </button>
+                        </a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center gap-3">

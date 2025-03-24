@@ -3,6 +3,7 @@ let map;
 let markers = [];
 let currentPosition = null;
 let routingControl = null;
+let currentLugar = null;
 let activeFilters = {
     etiquetas: new Set(),
     favoritos: false,
@@ -60,15 +61,31 @@ async function cargarEtiquetas() {
 
 // Configurar los event listeners
 function setupEventListeners() {
-    document.getElementById('mostrarTodos').addEventListener('click', () => {
+    // Botón "Todos los lugares"
+    document.getElementById('mostrarTodos').addEventListener('click', (e) => {
+        e.preventDefault();
         activeFilters.favoritos = false;
         activeFilters.cercanos = false;
+        activeFilters.etiquetas.clear();
+        
+        // Actualizar UI
+        document.getElementById('mostrarTodos').classList.add('active');
+        document.getElementById('mostrarFavoritos').classList.remove('active');
+        document.getElementById('filtroEtiquetas').value = '';
+        
         cargarLugares();
     });
 
-    document.getElementById('mostrarFavoritos').addEventListener('click', () => {
+    // Botón "Mis favoritos"
+    document.getElementById('mostrarFavoritos').addEventListener('click', (e) => {
+        e.preventDefault();
         activeFilters.favoritos = true;
         activeFilters.cercanos = false;
+        
+        // Actualizar UI
+        document.getElementById('mostrarFavoritos').classList.add('active');
+        document.getElementById('mostrarTodos').classList.remove('active');
+        
         cargarFavoritos();
     });
 
@@ -117,9 +134,10 @@ async function cargarLugares() {
 // Cargar favoritos
 async function cargarFavoritos() {
     try {
-        const response = await fetch('/cliente/favoritos');
-        const favoritos = await response.json();
-        mostrarLugares(favoritos);
+        const response = await fetch('/cliente/lugares');
+        const lugares = await response.json();
+        const lugaresConFavoritos = lugares.filter(lugar => favoritos.has(lugar.id));
+        mostrarLugares(lugaresConFavoritos);
     } catch (error) {
         console.error('Error cargando favoritos:', error);
     }
@@ -131,7 +149,6 @@ function mostrarLugares(lugares) {
     lugares.forEach(lugar => {
         if (activeFilters.etiquetas.size === 0 || 
             lugar.etiquetas.some(e => activeFilters.etiquetas.has(e.id))) {
-            if (activeFilters.favoritos && !favoritos.has(lugar.id)) return;
             agregarMarcador(lugar);
         }
     });
@@ -263,13 +280,21 @@ function toggleFavorito(lugarId) {
     // Guardar en localStorage
     localStorage.setItem('favoritos', JSON.stringify(Array.from(favoritos)));
     
-    // Actualizar botón
+    // Actualizar UI
     const btnFavorito = document.getElementById('btnFavorito');
-    btnFavorito.classList.toggle('btn-success');
-    btnFavorito.classList.toggle('btn-outline-danger');
-    btnFavorito.querySelector('i').classList.toggle('fa-check');
-    btnFavorito.querySelector('i').classList.toggle('fa-heart');
-    btnFavorito.querySelector('span').textContent = favoritos.has(lugarId) ? 'Añadido a favoritos' : 'Añadir a favoritos';
+    if (btnFavorito) {
+        btnFavorito.classList.toggle('btn-success');
+        btnFavorito.classList.toggle('btn-outline-danger');
+        const icon = btnFavorito.querySelector('i');
+        if (icon) {
+            icon.classList.toggle('fa-check');
+            icon.classList.toggle('fa-heart');
+        }
+        const span = btnFavorito.querySelector('span');
+        if (span) {
+            span.textContent = favoritos.has(lugarId) ? 'Añadido a favoritos' : 'Añadir a favoritos';
+        }
+    }
     
     // Si estamos en la vista de favoritos, actualizar los marcadores
     if (activeFilters.favoritos) {
