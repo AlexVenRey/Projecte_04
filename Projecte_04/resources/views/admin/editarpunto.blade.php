@@ -1,66 +1,44 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Punto de Interés</title>
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
-    <div class="admin-container">
-        <header>
-            <div class="logo-container">
-                <img src="{{ asset('img/logo.webp') }}" alt="Logo">
-                <span class="user-name">{{ Auth::user()->nombre }}</span>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="{{ url('admin/index') }}">Inicio</a></li>
-                    <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
-                </ul>
-            </nav>
-        </header>
+@extends('layouts.app')
 
-        <h1>Editar Punto de Interés</h1>
+@section('content')
+<div class="admin-container">
+    <h1>Editar Punto de Interés</h1>
+    
+    @if($errors->any())
+        <div class="alert-error">
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        <!-- Mostrar errores de validación -->
-        @if($errors->any())
-            <div class="alert-error">
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    <form action="{{ route('admin.puntos.update', $punto->id) }}" method="POST" enctype="multipart/form-data" class="form-custom">
+        @csrf
+        @method('PUT')
+        
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre"  value="{{ old('nombre', $punto->nombre) }}">
+        </div>
 
-        <!-- Formulario para editar punto de interés -->
-        <form action="{{ route('admin.puntos.update', $punto->id) }}" method="POST" enctype="multipart/form-data" class="form-custom">
-            @csrf
-            @method('PUT')
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" name="descripcion" rows="3" >{{ old('descripcion', $punto->descripcion) }}</textarea>
+        </div>
 
+        <div class="form-row">
             <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" value="{{ old('nombre', $punto->nombre) }}">
+                <label for="latitud">Latitud</label>
+                <input type="number" step="any" id="latitud" name="latitud"  value="{{ old('latitud', $punto->latitud) }}">
             </div>
 
             <div class="form-group">
-                <label for="descripcion">Descripción</label>
-                <textarea id="descripcion" name="descripcion" rows="3">{{ old('descripcion', $punto->descripcion) }}</textarea>
+                <label for="longitud">Longitud</label>
+                <input type="number" step="any" id="longitud" name="longitud"  value="{{ old('longitud', $punto->longitud) }}">
             </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="latitud">Latitud</label>
-                    <input type="number" step="any" id="latitud" name="latitud" value="{{ old('latitud', $punto->latitud) }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="longitud">Longitud</label>
-                    <input type="number" step="any" id="longitud" name="longitud" value="{{ old('longitud', $punto->longitud) }}">
-                </div>
-            </div>
+        </div>
 
             <div class="form-row">
                 <div class="form-group">
@@ -269,4 +247,8 @@
         min-height: 100px;
     }
 </style>
+@endsection
+
+@section('scripts')
+<script src="{{ asset('js/editarpunto.js') }}"></script>
 @endsection

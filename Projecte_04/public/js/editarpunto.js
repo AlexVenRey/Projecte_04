@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const errorContainer = document.createElement("div");
+    errorContainer.id = "error-container";
     errorContainer.style.backgroundColor = "#f8d7da";
     errorContainer.style.color = "#721c24";
     errorContainer.style.padding = "10px";
@@ -10,26 +11,24 @@ document.addEventListener("DOMContentLoaded", function () {
     errorContainer.style.display = "none";
     form.prepend(errorContainer);
 
-    form.addEventListener("submit", async function (event) {
+    form.addEventListener("submit", function (event) {
         event.preventDefault(); // Evitar el envío del formulario hasta que se valide
         const errors = [];
         const nombre = document.getElementById("nombre");
         const latitud = document.getElementById("latitud");
         const longitud = document.getElementById("longitud");
         const descripcion = document.getElementById("descripcion");
-        const etiquetas = document.getElementById("etiquetas");
-        const puntoId = form.dataset.puntoId; // ID del punto actual (pasado desde el backend)
 
         // Limpiar errores previos
         errorContainer.innerHTML = "";
         errorContainer.style.display = "none";
-        [nombre, latitud, longitud, descripcion, etiquetas].forEach((field) => {
+        [nombre, latitud, longitud, descripcion].forEach((field) => {
             field.style.borderColor = "";
         });
 
         // Validar campos
         if (!nombre.value.trim()) {
-            errors.push("El campo 'Nombre del sitio' es obligatorio.");
+            errors.push("El campo 'Nombre' es obligatorio.");
             nombre.style.borderColor = "red";
         }
 
@@ -44,14 +43,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (!descripcion.value.trim()) {
-            errors.push("El campo 'Pista' es obligatorio.");
+            errors.push("El campo 'Descripción' es obligatorio.");
             descripcion.style.borderColor = "red";
-        }
-
-        // Validar etiquetas
-        if (!etiquetas.selectedOptions.length) {
-            errors.push("Debe seleccionar al menos una etiqueta.");
-            etiquetas.style.borderColor = "red";
         }
 
 
@@ -64,5 +57,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Si no hay errores, enviar el formulario
         form.submit();
+    });
+
+    // Vista previa del icono
+    const iconoInput = document.getElementById("icono");
+    const previewContainer = document.getElementById("preview-container");
+    const previewImage = document.getElementById("preview-image");
+
+    iconoInput.addEventListener("change", function (e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = "block";
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
     });
 });
