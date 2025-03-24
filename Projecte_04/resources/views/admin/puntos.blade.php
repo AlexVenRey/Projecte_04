@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+@endsection
+
 @section('content')
 <div class="admin-container">
     <h1>Puntos de Interés</h1>
