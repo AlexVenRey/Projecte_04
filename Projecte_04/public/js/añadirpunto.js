@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const longitud = document.getElementById("longitud");
         const descripcion = document.getElementById("descripcion");
         const icono = document.getElementById("icono");
-        const etiquetas = document.querySelectorAll("#etiquetas input[type='checkbox']");
 
         // Limpiar errores previos
         errorContainer.innerHTML = "";
@@ -54,10 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
             icono.style.borderColor = "red";
         }
 
-        const etiquetasSeleccionadas = Array.from(etiquetas).some((checkbox) => checkbox.checked);
-        if (!etiquetasSeleccionadas) {
-            errors.push("Debe seleccionar al menos una etiqueta.");
-        }
 
         // Mostrar errores si los hay
         if (errors.length > 0) {
