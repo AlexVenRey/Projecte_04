@@ -1,40 +1,18 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Añadir Punto de Interés</title>
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-    <script src="{{ asset('js/creargimcana.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
-    <div class="admin-container">
-        <header>
-            <div class="logo-container">
-                <img src="{{ asset('img/logo.webp') }}" alt="Logo">
-                <span class="user-name">{{ Auth::user()->nombre }}</span>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="{{ url('admin/index') }}">Inicio</a></li>
-                    <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
-                </ul>
-            </nav>
-        </header>
+@extends('layouts.app')
 
-        <h1>Añadir Punto de Interés</h1>
-
-        <!-- Mostrar errores de validación -->
-        @if($errors->any())
-            <div class="alert-error">
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+@section('content')
+<div class="admin-container">
+    <h1>Añadir Punto de Interés</h1>
+    
+    @if($errors->any())
+        <div class="alert-error">
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <form action="{{ route('admin.puntos.store') }}" method="POST" enctype="multipart/form-data" class="form-custom">
         @csrf
@@ -75,32 +53,31 @@
             </div>
         </div>
 
-            <div class="form-group">
-                <label>Etiquetas</label>
-                <div class="etiquetas-grid">
-                    @foreach($etiquetas as $etiqueta)
-                        <div class="etiqueta-item">
-                            <input type="checkbox" name="etiquetas[]" value="{{ $etiqueta->id }}" 
-                                   id="etiqueta{{ $etiqueta->id }}" {{ in_array($etiqueta->id, old('etiquetas', [])) ? 'checked' : '' }}>
-                            <label for="etiqueta{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</label>
-                        </div>
-                    @endforeach
-                </div>
+        <div class="form-group">
+            <label>Etiquetas</label>
+            <div class="etiquetas-grid">
+                @foreach($etiquetas as $etiqueta)
+                    <div class="etiqueta-item">
+                        <input type="checkbox" name="etiquetas[]" value="{{ $etiqueta->id }}" 
+                               id="etiqueta{{ $etiqueta->id }}" {{ in_array($etiqueta->id, old('etiquetas', [])) ? 'checked' : '' }}>
+                        <label for="etiqueta{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</label>
+                    </div>
+                @endforeach
             </div>
+        </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn-submit">Guardar</button>
-                <a href="{{ route('admin.puntos') }}" class="btn-cancel">Cancelar</a>
-            </div>
-        </form>
-    </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Guardar</button>
+            <a href="{{ route('admin.puntos') }}" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
 
-    <!-- SweetAlert Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const iconoInput = document.getElementById('icono');
-            const previewContainer = document.getElementById('preview-container');
-            const previewImage = document.getElementById('preview-image');
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const iconoInput = document.getElementById('icono');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
 
     iconoInput.addEventListener('change', function(e) {
         if (e.target.files && e.target.files[0]) {
@@ -236,6 +213,9 @@ input[type="color"] {
     background-color: #da190b;
 }
 
+h1 {
+    text-align: center;
+}
 .alert-error {
     background-color: #ffebee;
     border: 1px solid #ffcdd2;

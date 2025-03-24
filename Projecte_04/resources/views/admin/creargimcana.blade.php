@@ -24,7 +24,7 @@
 
         <h1>Crear Gimcana</h1>
 
-        <form action="{{ route('admin.creargimcana.store') }}" method="POST">
+        <form action="{{ route('admin.creargimcana.store') }}" method="POST" class="form-custom">
             @csrf
             <div>
                 <label for="nombre">Nombre de la Gimcana:</label>
@@ -46,7 +46,8 @@
                 @endforeach
             </div>
                                     
-            <button type="submit">Crear Gimcana</button>
+            <button type="submit" class="btn-submit-guardar">Guardar</button>
+            <a href="{{ route('admin.gimcana') }}" class="btn-submit-cancelar">Cancelar</a>
         </form>
     </div>
 </body>
