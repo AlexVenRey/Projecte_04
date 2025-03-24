@@ -12,7 +12,8 @@ class ClienteController extends Controller
 {
     public function index()
     {
-        return view('cliente.index');
+        $etiquetas = Etiqueta::all();
+        return view('cliente.index', compact('etiquetas'));
     }
 
     public function getLugares()

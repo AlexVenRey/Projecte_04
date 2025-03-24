@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="{{ asset('css/cliente.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -23,21 +21,23 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#" id="mostrarTodos">
+                        <button class="nav-link active" id="mostrarTodos">
                             <i class="fas fa-globe"></i> Todos los lugares
-                        </a>
+                        </button>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="mostrarFavoritos">
+                        <button class="nav-link" id="mostrarFavoritos">
                             <i class="fas fa-heart"></i> Mis favoritos
-                        </a>
+                        </button>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex align-items-center">
                         <select class="form-select me-2" id="filtroEtiquetas">
                             <option value="">Todas las etiquetas</option>
-                            <!-- Se llenará dinámicamente -->
+                            @foreach($etiquetas as $etiqueta)
+                                <option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="d-flex align-items-center">
@@ -77,6 +77,9 @@
                     <!-- Los detalles se cargarán dinámicamente -->
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" id="btnFavorito">
+                        <i class="fas fa-heart"></i> <span>Añadir a favoritos</span>
+                    </button>
                     <button type="button" class="btn btn-primary" id="btnRuta">
                         <i class="fas fa-route"></i> Ver ruta
                     </button>
@@ -89,6 +92,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <script src="{{ asset('js/cliente.js') }}"></script>
 </body>
 </html>

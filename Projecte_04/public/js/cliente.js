@@ -8,6 +8,7 @@ let activeFilters = {
     favoritos: false,
     cercanos: false
 };
+let favoritos = new Set(JSON.parse(localStorage.getItem('favoritos') || '[]'));
 
 // Inicializar el mapa cuando se carga la página
 document.addEventListener('DOMContentLoaded', () => {
@@ -92,6 +93,14 @@ function setupEventListeners() {
         }
         cargarLugares();
     });
+
+    document.getElementById('btnFavorito').addEventListener('click', () => {
+        if (currentLugar) {
+            toggleFavorito(currentLugar.id);
+            const modal = bootstrap.Modal.getInstance(document.getElementById('detallesModal'));
+            modal.hide();
+        }
+    });
 }
 
 // Cargar todos los lugares
@@ -122,6 +131,7 @@ function mostrarLugares(lugares) {
     lugares.forEach(lugar => {
         if (activeFilters.etiquetas.size === 0 || 
             lugar.etiquetas.some(e => activeFilters.etiquetas.has(e.id))) {
+            if (activeFilters.favoritos && !favoritos.has(lugar.id)) return;
             agregarMarcador(lugar);
         }
     });
@@ -175,12 +185,16 @@ function createPopupContent(lugar) {
             <div class="etiquetas">
                 ${etiquetasHtml}
             </div>
+            <button id="btnFavorito" class="btn btn-sm ${favoritos.has(lugar.id) ? 'btn-success' : 'btn-outline-danger'}">
+                <i class="fas ${favoritos.has(lugar.id) ? 'fa-check' : 'fa-heart'}"></i> ${favoritos.has(lugar.id) ? 'Añadido a favoritos' : 'Añadir a favoritos'}
+            </button>
         </div>
     `;
 }
 
 // Mostrar detalles en modal
 function mostrarDetalles(lugar) {
+    currentLugar = lugar;
     const modal = document.getElementById('detallesModal');
     const title = modal.querySelector('.modal-title');
     const body = modal.querySelector('.modal-body');
@@ -188,14 +202,13 @@ function mostrarDetalles(lugar) {
     title.textContent = lugar.nombre;
     body.innerHTML = `
         <p>${lugar.descripcion}</p>
-        <div class="etiquetas">
+        <div class="etiquetas mb-3">
             ${lugar.etiquetas.map(e => 
                 `<span class="badge bg-secondary"><i class="fas ${e.icono}"></i> ${e.nombre}</span>`
             ).join(' ')}
         </div>
-        <button class="btn btn-sm btn-${lugar.es_favorito ? 'danger' : 'success'}" 
-                onclick="toggleFavorito(${lugar.id})">
-            <i class="fas fa-heart"></i> ${lugar.es_favorito ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+        <button id="btnFavorito" class="btn btn-sm ${favoritos.has(lugar.id) ? 'btn-success' : 'btn-outline-danger'}">
+            <i class="fas ${favoritos.has(lugar.id) ? 'fa-check' : 'fa-heart'}"></i> ${favoritos.has(lugar.id) ? 'Añadido a favoritos' : 'Añadir a favoritos'}
         </button>
     `;
     
@@ -224,31 +237,43 @@ function mostrarRuta(lugar) {
         routeWhileDragging: false,
         showAlternatives: true,
         fitSelectedRoute: true,
-        language: 'es'
+        language: 'es',
+        router: L.Routing.osrmv1({
+            serviceUrl: 'https://router.project-osrm.org/route/v1'
+        }),
+        styles: [
+            {
+                color: '#2196F3', // Azul material design
+                weight: 4,        // Línea más gruesa
+                opacity: 0.8,     // Algo de transparencia
+                lineJoin: 'round' // Uniones redondeadas
+            }
+        ]
     }).addTo(map);
 }
 
 // Toggle favorito
-async function toggleFavorito(lugarId) {
-    try {
-        const response = await fetch(`/cliente/favoritos/${lugarId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            }
-        });
-        
-        if (response.ok) {
-            if (activeFilters.favoritos) {
-                cargarFavoritos();
-            } else {
-                cargarLugares();
-            }
-            bootstrap.Modal.getInstance(document.getElementById('detallesModal')).hide();
-        }
-    } catch (error) {
-        console.error('Error al modificar favorito:', error);
+function toggleFavorito(lugarId) {
+    if (favoritos.has(lugarId)) {
+        favoritos.delete(lugarId);
+    } else {
+        favoritos.add(lugarId);
+    }
+    
+    // Guardar en localStorage
+    localStorage.setItem('favoritos', JSON.stringify(Array.from(favoritos)));
+    
+    // Actualizar botón
+    const btnFavorito = document.getElementById('btnFavorito');
+    btnFavorito.classList.toggle('btn-success');
+    btnFavorito.classList.toggle('btn-outline-danger');
+    btnFavorito.querySelector('i').classList.toggle('fa-check');
+    btnFavorito.querySelector('i').classList.toggle('fa-heart');
+    btnFavorito.querySelector('span').textContent = favoritos.has(lugarId) ? 'Añadido a favoritos' : 'Añadir a favoritos';
+    
+    // Si estamos en la vista de favoritos, actualizar los marcadores
+    if (activeFilters.favoritos) {
+        cargarFavoritos();
     }
 }
 
