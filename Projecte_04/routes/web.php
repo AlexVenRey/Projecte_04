@@ -53,10 +53,14 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/gimcana/{gimcana}', [GimcanaController::class, 'destroy'])->name('admin.gimcana.delete');
 
     // Rutas del cliente
-    Route::get('/cliente/lugares', [ClienteController::class, 'getLugares'])->name('cliente.lugares');
-    Route::post('/cliente/favoritos/toggle/{lugar}', [ClienteController::class, 'toggleFavorito'])->name('cliente.favoritos.toggle');
-    Route::get('/cliente/favoritos', [ClienteController::class, 'getFavoritos'])->name('cliente.favoritos');
-    Route::post('/cliente/lugares/cercanos', [ClienteController::class, 'getLugaresCercanos'])->name('cliente.lugares.cercanos');
+    Route::middleware(['auth'])->prefix('cliente')->group(function () {
+        Route::get('/index', [ClienteController::class, 'index'])->name('cliente.index');
+        Route::get('/lugares', [ClienteController::class, 'getLugares']);
+        Route::get('/etiquetas', [ClienteController::class, 'getEtiquetas']);
+        Route::get('/favoritos', [ClienteController::class, 'getFavoritos']);
+        Route::post('/favoritos/{lugar}', [ClienteController::class, 'toggleFavorito']);
+        Route::post('/lugares/cercanos', [ClienteController::class, 'buscarCercanos']);
+    });
 });
 
 // Ruta para verificar nombre único de puntos de interés

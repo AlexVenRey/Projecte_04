@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Guía Turística</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/cliente.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
@@ -16,17 +16,21 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Guía Turística</a>
+            <a class="navbar-brand" href="#"><i class="fas fa-map-marked-alt"></i> Guía Turística</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#" id="mostrarTodos">Todos los lugares</a>
+                        <a class="nav-link active" href="#" id="mostrarTodos">
+                            <i class="fas fa-globe"></i> Todos los lugares
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="mostrarFavoritos">Mis favoritos</a>
+                        <a class="nav-link" href="#" id="mostrarFavoritos">
+                            <i class="fas fa-heart"></i> Mis favoritos
+                        </a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center gap-3">
@@ -38,7 +42,9 @@
                     </div>
                     <div class="d-flex align-items-center">
                         <input type="number" class="form-control me-2" id="distancia" placeholder="Distancia (m)">
-                        <button class="btn btn-outline-light" id="buscarCercanos">Buscar cercanos</button>
+                        <button class="btn btn-outline-light" id="buscarCercanos">
+                            <i class="fas fa-location-crosshairs"></i> Buscar cercanos
+                        </button>
                     </div>
                     <form action="{{ route('logout') }}" method="POST" class="ms-2">
                         @csrf
@@ -71,8 +77,12 @@
                     <!-- Los detalles se cargarán dinámicamente -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="btnRuta">Ver ruta</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnRuta">
+                        <i class="fas fa-route"></i> Ver ruta
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cerrar
+                    </button>
                 </div>
             </div>
         </div>

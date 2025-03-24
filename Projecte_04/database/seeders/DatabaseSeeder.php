@@ -9,6 +9,7 @@ use Database\Seeders\UserSeeder;
 use Database\Seeders\GruposSeeder;
 use Database\Seeders\LugaresSeeder;
 use Database\Seeders\EtiquetasSeeder;
+use Database\Seeders\LugarEtiquetaSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +23,7 @@ class DatabaseSeeder extends Seeder
             GruposSeeder::class,
             LugaresSeeder::class,
             EtiquetasSeeder::class,
+            LugarEtiquetaSeeder::class,
         ]);
     }
 }

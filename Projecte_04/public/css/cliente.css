@@ -46,19 +46,75 @@ body {
 
 /* Estilos para los botones de favoritos */
 .btn-favorito {
-    color: #dc3545;
-    background: none;
     border: none;
-    padding: 0.25rem 0.5rem;
+    background: none;
+    padding: 5px;
     cursor: pointer;
 }
 
-.btn-favorito i {
+.btn-favorito:hover {
+    transform: scale(1.2);
     transition: transform 0.2s;
 }
 
-.btn-favorito:hover i {
+/* Estilos para los marcadores personalizados */
+.custom-div-icon {
+    background: none;
+    border: none;
+}
+
+.custom-div-icon i {
+    font-size: 24px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.custom-div-icon i:hover {
     transform: scale(1.2);
+    transition: transform 0.2s;
+}
+
+/* Estilos para el mapa */
+#mapa {
+    height: calc(100vh - 56px);
+    width: 100%;
+}
+
+/* Estilos para las notificaciones */
+.badge {
+    margin: 2px;
+    padding: 5px 10px;
+}
+
+.badge i {
+    margin-right: 5px;
+}
+
+/* Estilos para el modal */
+.modal-body .etiquetas {
+    margin: 10px 0;
+}
+
+/* Estilos para el filtro de etiquetas */
+#filtroEtiquetas {
+    min-width: 200px;
+}
+
+#filtroEtiquetas option i {
+    margin-right: 8px;
+}
+
+/* Estilos para la ruta */
+.leaflet-routing-container {
+    background-color: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.leaflet-routing-alt {
+    max-height: none !important;
 }
 
 /* Estilos responsive */

@@ -11,6 +11,7 @@ class CreateEtiquetasTable extends Migration
         Schema::create('etiquetas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 50)->unique();
+            $table->string('icono')->default('fa-tag'); // Añadido campo para el icono
             $table->timestamps();
         });
     }

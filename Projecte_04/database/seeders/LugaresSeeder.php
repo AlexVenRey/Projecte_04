@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Lugar;
 use App\Models\Etiqueta;
+use Illuminate\Support\Facades\DB;
 
 class LugaresSeeder extends Seeder
 {
@@ -17,57 +18,59 @@ class LugaresSeeder extends Seeder
                 'descripcion' => 'Hospital universitario de referencia',
                 'latitud' => 41.3442,
                 'longitud' => 2.1019,
-                'direccion' => 'Carrer de la Feixa Llarga, s/n, 08907 L\'Hospitalet de Llobregat',
-                'icono' => 'hospital.png',
+                'icono' => 'fa-hospital',
                 'color_marcador' => '#FF0000',
-                'creado_por' => 1
+                'creado_por' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'nombre' => 'Institut Joan XXIII',
                 'descripcion' => 'Centro educativo de formación profesional',
                 'latitud' => 41.3479,
                 'longitud' => 2.1045,
-                'direccion' => 'Av. de la Mare de Déu de Bellvitge, 100, 08907 L\'Hospitalet de Llobregat',
-                'icono' => 'school.png',
+                'icono' => 'fa-school',
                 'color_marcador' => '#0000FF',
-                'creado_por' => 1
+                'creado_por' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'nombre' => 'Parc de Bellvitge',
                 'descripcion' => 'Parque público con áreas verdes y zonas de recreo',
                 'latitud' => 41.3467,
                 'longitud' => 2.1067,
-                'direccion' => 'Av. de la Mare de Déu de Bellvitge, 08907 L\'Hospitalet de Llobregat',
-                'icono' => 'park.png',
+                'icono' => 'fa-tree',
                 'color_marcador' => '#00FF00',
-                'creado_por' => 1
+                'creado_por' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'nombre' => 'Estación de Metro Bellvitge',
                 'descripcion' => 'Estación de la línea 1 del metro de Barcelona',
                 'latitud' => 41.3611,
                 'longitud' => 2.1127,
-                'direccion' => 'Av. de la Mare de Déu de Bellvitge, 08907 L\'Hospitalet de Llobregat',
-                'icono' => 'metro.png',
+                'icono' => 'fa-subway',
                 'color_marcador' => '#FFA500',
-                'creado_por' => 1
+                'creado_por' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'nombre' => 'Centro Comercial Gran Via 2',
                 'descripcion' => 'Centro comercial con tiendas, restaurantes y cine',
                 'latitud' => 41.3589,
                 'longitud' => 2.1289,
-                'direccion' => 'Av. de la Granvia, 75, 08908 L\'Hospitalet de Llobregat',
-                'icono' => 'shopping.png',
+                'icono' => 'fa-shopping-cart',
                 'color_marcador' => '#800080',
-                'creado_por' => 1
+                'creado_por' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ]
         ];
 
-        // Crear los lugares
-        foreach ($lugares as $lugar) {
-            Lugar::create($lugar);
-        }
+        DB::table('lugares')->insert($lugares);
 
         // Crear algunas etiquetas
         $etiquetas = [

@@ -10,14 +10,13 @@ class CreateLugaresTable extends Migration
     {
         Schema::create('lugares', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 150);
-            $table->text('descripcion')->nullable();
-            $table->string('direccion', 255)->nullable();
-            $table->decimal('latitud', 10, 7);
-            $table->decimal('longitud', 10, 7);
-            $table->string('icono', 100)->nullable();
-            $table->string('color_marcador', 7)->nullable();
-            $table->foreignId('creado_por')->nullable()->constrained('usuarios')->nullOnDelete();
+            $table->string('nombre');
+            $table->decimal('latitud', 10, 8);
+            $table->decimal('longitud', 10, 8);
+            $table->text('descripcion');
+            $table->string('icono')->default('fa-landmark'); // Cambiado a clase de Font Awesome
+            $table->string('color_marcador')->default('#3388ff');
+            $table->foreignId('creado_por')->constrained('usuarios');
             $table->timestamps();
         });
     }

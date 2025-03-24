@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMap();
     cargarLugares();
     setupEventListeners();
+    cargarEtiquetas();
 });
 
 // Inicializar el mapa
@@ -29,16 +30,33 @@ function initMap() {
             position => {
                 currentPosition = [position.coords.latitude, position.coords.longitude];
                 L.marker(currentPosition, {
-                    icon: L.icon({
-                        iconUrl: '/img/marker-icon.png',
-                        iconSize: [32, 32],
-                        iconAnchor: [16, 32],
-                        popupAnchor: [0, -32]
+                    icon: L.divIcon({
+                        html: '<i class="fas fa-user-location fa-2x"></i>',
+                        iconSize: [20, 20],
+                        className: 'custom-div-icon'
                     })
                 }).addTo(map);
             },
             error => console.error('Error getting location:', error)
         );
+    }
+}
+
+// Cargar etiquetas para el filtro
+async function cargarEtiquetas() {
+    try {
+        const response = await fetch('/cliente/etiquetas');
+        const etiquetas = await response.json();
+        const select = document.getElementById('filtroEtiquetas');
+        
+        etiquetas.forEach(etiqueta => {
+            const option = document.createElement('option');
+            option.value = etiqueta.id;
+            option.innerHTML = `<i class="fas ${etiqueta.icono}"></i> ${etiqueta.nombre}`;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error cargando etiquetas:', error);
     }
 }
 
@@ -66,6 +84,17 @@ function setupEventListeners() {
             alert('Por favor, ingresa una distancia y permite el acceso a tu ubicación');
         }
     });
+
+    document.getElementById('filtroEtiquetas').addEventListener('change', (e) => {
+        const etiquetaId = e.target.value;
+        if (etiquetaId) {
+            activeFilters.etiquetas.clear();
+            activeFilters.etiquetas.add(parseInt(etiquetaId));
+        } else {
+            activeFilters.etiquetas.clear();
+        }
+        cargarLugares();
+    });
 }
 
 // Cargar todos los lugares
@@ -90,139 +119,79 @@ async function cargarFavoritos() {
     }
 }
 
-// Buscar lugares cercanos
-async function buscarLugaresCercanos(distancia) {
-    if (!currentPosition) return;
-
-    try {
-        const response = await fetch('/cliente/lugares/cercanos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({
-                lat: currentPosition[0],
-                lng: currentPosition[1],
-                distancia: distancia
-            })
-        });
-        const lugares = await response.json();
-        mostrarLugares(lugares);
-    } catch (error) {
-        console.error('Error buscando lugares cercanos:', error);
-    }
-}
-
-// Mostrar lugares en el mapa y en la lista
+// Mostrar lugares en el mapa
 function mostrarLugares(lugares) {
-    // Limpiar marcadores existentes
-    markers.forEach(marker => marker.remove());
-    markers = [];
-
-    // Limpiar lista de lugares
-    const listaLugares = document.getElementById('lista-lugares');
-    listaLugares.innerHTML = '';
-
-    // Mostrar lugares filtrados por etiquetas
+    limpiarMapa();
     lugares.forEach(lugar => {
         if (activeFilters.etiquetas.size === 0 || 
             lugar.etiquetas.some(e => activeFilters.etiquetas.has(e.id))) {
             agregarMarcador(lugar);
-
-            // Crear elemento de lista
-            const item = document.createElement('div');
-            item.className = 'list-group-item';
-            item.innerHTML = `
-                <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="mb-1">${lugar.nombre}</h6>
-                    <button class="btn-favorito" onclick="toggleFavorito(${lugar.id})">
-                        <i class="fas fa-heart${lugar.es_favorito ? ' text-danger' : ''}"></i>
-                    </button>
-                </div>
-                <p class="mb-1">${lugar.descripcion}</p>
-                <div class="etiquetas-lista">
-                    ${lugar.etiquetas.map(e => `<span class="tag">${e.nombre}</span>`).join('')}
-                </div>
-            `;
-            
-            item.addEventListener('click', () => {
-                map.setView([lugar.latitud, lugar.longitud], 16);
-                markers.find(marker => marker._latlng.lat === lugar.latitud && marker._latlng.lng === lugar.longitud).openPopup();
-                mostrarDetalles(lugar);
-            });
-
-            listaLugares.appendChild(item);
         }
     });
 }
 
+// Agregar marcador al mapa
 function agregarMarcador(lugar) {
+    const icono = lugar.etiquetas.length > 0 ? lugar.etiquetas[0].icono : 'fa-map-marker-alt';
     const marker = L.marker([lugar.latitud, lugar.longitud], {
-        icon: L.icon({
-            iconUrl: `/img/${lugar.icono}`,
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
+        icon: L.divIcon({
+            html: `<i class="fas ${icono}" style="color: ${lugar.color_marcador}"></i>`,
+            iconSize: [20, 20],
+            className: 'custom-div-icon'
         })
     });
 
-    marker.bindPopup(`
-        <div class="lugar-popup">
-            <h5>${lugar.nombre}</h5>
-            <p>${lugar.descripcion}</p>
-            <p><i class="fas fa-map-marker-alt"></i> ${lugar.direccion}</p>
-            <div class="popup-actions">
-                <button onclick="toggleFavorito(${lugar.id})" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-heart"></i> Favorito
-                </button>
-                <button onclick="mostrarRuta(${JSON.stringify(lugar)})" class="btn btn-sm btn-outline-success">
-                    <i class="fas fa-route"></i> Ruta
-                </button>
-            </div>
-        </div>
-    `);
-
+    marker.bindPopup(crearPopupContent(lugar));
+    marker.on('click', () => mostrarDetalles(lugar));
     marker.addTo(map);
     markers.push(marker);
 }
 
 // Crear contenido del popup
 function crearPopupContent(lugar) {
+    const etiquetas = lugar.etiquetas.map(e => 
+        `<span class="badge bg-secondary"><i class="fas ${e.icono}"></i> ${e.nombre}</span>`
+    ).join(' ');
+    
     return `
-        <div class="lugar-popup">
+        <div>
             <h5>${lugar.nombre}</h5>
             <p>${lugar.descripcion}</p>
-            <button class="btn btn-sm btn-primary" onclick="mostrarDetalles(${JSON.stringify(lugar)})">
-                Ver más
-            </button>
+            <div>${etiquetas}</div>
         </div>
     `;
 }
 
 // Mostrar detalles en modal
 function mostrarDetalles(lugar) {
-    const modal = new bootstrap.Modal(document.getElementById('detallesModal'));
-    const modalTitle = document.querySelector('#detallesModal .modal-title');
-    const modalBody = document.querySelector('#detallesModal .modal-body');
-
-    modalTitle.textContent = lugar.nombre;
-    modalBody.innerHTML = `
-        <img src="/storage/${lugar.imagen}" alt="${lugar.nombre}" class="img-fluid">
+    const modal = document.getElementById('detallesModal');
+    const title = modal.querySelector('.modal-title');
+    const body = modal.querySelector('.modal-body');
+    
+    title.textContent = lugar.nombre;
+    body.innerHTML = `
         <p>${lugar.descripcion}</p>
-        <div class="etiquetas-lista">
-            ${lugar.etiquetas.map(e => `<span class="tag">${e.nombre}</span>`).join('')}
+        <div class="etiquetas">
+            ${lugar.etiquetas.map(e => 
+                `<span class="badge bg-secondary"><i class="fas ${e.icono}"></i> ${e.nombre}</span>`
+            ).join(' ')}
         </div>
+        <button class="btn btn-sm btn-${lugar.es_favorito ? 'danger' : 'success'}" 
+                onclick="toggleFavorito(${lugar.id})">
+            <i class="fas fa-heart"></i> ${lugar.es_favorito ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+        </button>
     `;
-
-    document.getElementById('btnRuta').onclick = () => mostrarRuta(lugar);
-    modal.show();
+    
+    const btnRuta = modal.querySelector('#btnRuta');
+    btnRuta.onclick = () => mostrarRuta(lugar);
+    
+    new bootstrap.Modal(modal).show();
 }
 
 // Mostrar ruta hasta el lugar
 function mostrarRuta(lugar) {
     if (!currentPosition) {
-        alert('No se puede obtener tu ubicación actual');
+        alert('Por favor, permite el acceso a tu ubicación para ver la ruta');
         return;
     }
 
@@ -235,44 +204,43 @@ function mostrarRuta(lugar) {
             L.latLng(currentPosition[0], currentPosition[1]),
             L.latLng(lugar.latitud, lugar.longitud)
         ],
-        router: L.Routing.osrmv1({
-            serviceUrl: 'https://router.project-osrm.org/route/v1'
-        }),
-        lineOptions: {
-            styles: [{ color: lugar.color_marcador || '#0d6efd', opacity: 0.8, weight: 5 }]
-        }
+        routeWhileDragging: false,
+        showAlternatives: true,
+        fitSelectedRoute: true,
+        language: 'es'
     }).addTo(map);
 }
 
 // Toggle favorito
 async function toggleFavorito(lugarId) {
     try {
-        const response = await fetch(`/cliente/favoritos/toggle/${lugarId}`, {
+        const response = await fetch(`/cliente/favoritos/${lugarId}`, {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             }
         });
-        const data = await response.json();
         
-        // Actualizar la vista según el filtro activo
-        if (activeFilters.favoritos) {
-            cargarFavoritos();
-        } else if (activeFilters.cercanos) {
-            const distancia = document.getElementById('distancia').value;
-            buscarLugaresCercanos(distancia);
-        } else {
-            cargarLugares();
+        if (response.ok) {
+            if (activeFilters.favoritos) {
+                cargarFavoritos();
+            } else {
+                cargarLugares();
+            }
+            bootstrap.Modal.getInstance(document.getElementById('detallesModal')).hide();
         }
     } catch (error) {
-        console.error('Error al toggle favorito:', error);
+        console.error('Error al modificar favorito:', error);
     }
 }
 
+// Limpiar mapa
 function limpiarMapa() {
-    markers.forEach(marker => marker.remove());
+    markers.forEach(marker => map.removeLayer(marker));
     markers = [];
     if (routingControl) {
         map.removeControl(routingControl);
+        routingControl = null;
     }
 }
