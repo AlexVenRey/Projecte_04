@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('scripts')
+    <script src="{{ asset('js/editargimcana.js') }}"></script>
+@endsection
+
 @section('content')
 <div class="admin-container">
     <h1>Editar Gimcana</h1>
@@ -20,12 +24,12 @@
         
         <div class="form-group">
             <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" required value="{{ old('nombre', $gimcana->nombre) }}">
+            <input type="text" id="nombre" name="nombre" value="{{ old('nombre', $gimcana->nombre) }}">
         </div>
 
         <div class="form-group">
             <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" name="descripcion" rows="3" required>{{ old('descripcion', $gimcana->descripcion) }}</textarea>
+            <textarea id="descripcion" name="descripcion" rows="3">{{ old('descripcion', $gimcana->descripcion) }}</textarea>
         </div>
 
         <div class="form-group">
