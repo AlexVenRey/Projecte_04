@@ -340,8 +340,8 @@ function mostrarRuta(lugar) {
         showAlternatives: true,
         fitSelectedRoute: true,
         language: 'es',
-        router: L.Routing.osrmv1({
-            serviceUrl: 'https://router.project-osrm.org/route/v1'
+        router: L.Routing.mapbox('pk.eyJ1IjoiZXZhcmlzdG82NyIsImEiOiJjbThuZm1xYjEwMDlxMnZzYWl4NG01dnU1In0.P3Jq6ts8g-gh3HjD611hcg', {
+            profile: 'mapbox/walking'
         }),
         styles: [
             {

@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="{{ asset('css/cliente.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
+    <style>
+        .leaflet-routing-container {
+            max-height: 300px; /* Ajusta la altura máxima para las indicaciones */
+            overflow-y: auto;  /* Permite el desplazamiento si es necesario */
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
