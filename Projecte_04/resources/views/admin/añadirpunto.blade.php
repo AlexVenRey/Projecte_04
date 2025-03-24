@@ -18,30 +18,30 @@
         @csrf
         <div class="form-group">
             <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" required value="{{ old('nombre') }}">
+            <input type="text" id="nombre" name="nombre"  value="{{ old('nombre') }}">
         </div>
 
         <div class="form-group">
             <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" name="descripcion" rows="3" required>{{ old('descripcion') }}</textarea>
+            <textarea id="descripcion" name="descripcion" rows="3">{{ old('descripcion') }}</textarea>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label for="latitud">Latitud</label>
-                <input type="number" step="any" id="latitud" name="latitud" required value="{{ old('latitud') }}">
+                <input type="number" step="any" id="latitud" name="latitud"  value="{{ old('latitud') }}">
             </div>
 
             <div class="form-group">
                 <label for="longitud">Longitud</label>
-                <input type="number" step="any" id="longitud" name="longitud" required value="{{ old('longitud') }}">
+                <input type="number" step="any" id="longitud" name="longitud"  value="{{ old('longitud') }}">
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label for="icono">Icono (imagen)</label>
-                <input type="file" id="icono" name="icono" accept="image/*" required>
+                <input type="file" id="icono" name="icono" accept="image/*" >
                 <div id="preview-container" class="preview-container" style="display: none;">
                     <img id="preview-image" src="#" alt="Vista previa">
                 </div>
@@ -49,7 +49,7 @@
 
             <div class="form-group">
                 <label for="color_marcador">Color del marcador</label>
-                <input type="color" id="color_marcador" name="color_marcador" value="#FF0000" required>
+                <input type="color" id="color_marcador" name="color_marcador" value="#FF0000" >
             </div>
         </div>
 
@@ -232,4 +232,8 @@ textarea {
     min-height: 100px;
 }
 </style>
+@endsection
+
+@section('scripts')
+<script src="{{ asset('js/añadirpunto.js') }}"></script>
 @endsection
