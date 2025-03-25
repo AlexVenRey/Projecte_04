@@ -949,3 +949,24 @@ header nav ul li form button:hover {
         margin: 10px 0;
     }
 }
+
+/* Estilo para las etiquetas */
+.etiquetas-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas por defecto */
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.etiqueta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Ajuste para pantallas pequeñas */
+@media (max-width: 700px) {
+    .etiquetas-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas pequeñas */
+    }
+}

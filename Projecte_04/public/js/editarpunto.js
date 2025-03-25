@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
             descripcion.style.borderColor = "red";
         }
 
-
         // Mostrar errores si los hay
         if (errors.length > 0) {
             errorContainer.innerHTML = errors.join("<br>");
@@ -57,21 +56,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Si no hay errores, enviar el formulario
         form.submit();
-    });
-
-    // Vista previa del icono
-    const iconoInput = document.getElementById("icono");
-    const previewContainer = document.getElementById("preview-container");
-    const previewImage = document.getElementById("preview-image");
-
-    iconoInput.addEventListener("change", function (e) {
-        if (e.target.files && e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                previewImage.src = e.target.result;
-                previewContainer.style.display = "block";
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        }
     });
 });
