@@ -19,8 +19,34 @@ class ClienteController extends Controller
 
     public function getLugares()
     {
-        $lugares = Lugar::with('etiquetas')->get();
-        return response()->json($lugares);
+        try {
+            $user = Auth::user();
+            
+            $lugares = Lugar::with(['etiquetas', 'creador'])
+                ->when($user->rol === 'usuario', function($query) use ($user) {
+                    return $query->where('creado_por', $user->id)
+                        ->orWhereHas('creador', function($q) {
+                            $q->where('rol', 'admin');
+                        });
+                })
+                ->get()
+                ->map(function($lugar) use ($user) {
+                    $lugar->es_propietario = $lugar->creado_por === $user->id;
+                    return $lugar;
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $lugares
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar lugares',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function getEtiquetas()
@@ -34,8 +60,13 @@ class ClienteController extends Controller
         $usuario = Auth::user();
         $favoritos = Lugar::whereHas('usuarios', function ($query) use ($usuario) {
             $query->where('usuario_id', $usuario->id);
+<<<<<<< HEAD
+        })->with(['etiquetas', 'creador'])->get();
+        
+=======
         })->with('etiquetas')->get();
 
+>>>>>>> 8939b8ce9a954f21618fc7e95c3e7bb10c5754af
         return response()->json($favoritos);
     }
 
@@ -60,20 +91,37 @@ class ClienteController extends Controller
         return response()->json(['esFavorito' => $esFavorito]);
     }
 
-    public function getLugaresCercanos(Request $request)
+    public function buscarCercanos(Request $request)
     {
         $lat = $request->input('lat');
         $lng = $request->input('lng');
-        $distancia = $request->input('distancia', 1000); // metros
+        $distancia = $request->input('distancia', 1000);
+        $user = Auth::user();
 
-        // Convertir distancia a grados (aproximadamente)
-        $grados = $distancia / 111000; // 1 grado ≈ 111 km
+        $grados = $distancia / 111000;
 
-        $lugares = Lugar::with('etiquetas')
+        $lugares = Lugar::with(['etiquetas', 'creador'])
+            ->when($user->rol === 'usuario', function($query) use ($user) {
+                return $query->where('creado_por', $user->id)
+                    ->orWhereHas('creador', function($q) {
+                        $q->where('rol', 'admin');
+                    });
+            })
             ->whereBetween('latitud', [$lat - $grados, $lat + $grados])
             ->whereBetween('longitud', [$lng - $grados, $lng + $grados])
-            ->get();
+            ->get()
+            ->filter(function($lugar) use ($lat, $lng, $distancia) {
+                $distanciaReal = $this->calcularDistancia($lat, $lng, $lugar->latitud, $lugar->longitud);
+                return $distanciaReal <= $distancia;
+            })
+            ->map(function($lugar) use ($user) {
+                $lugar->es_propietario = $lugar->creado_por === $user->id;
+                return $lugar;
+            });
 
+<<<<<<< HEAD
+        return response()->json($lugares->values());
+=======
         // Filtrar por distancia exacta usando la fórmula de Haversine
         $lugaresFiltrados = $lugares->filter(function ($lugar) use ($lat, $lng, $distancia) {
             $distanciaReal = $this->calcularDistancia($lat, $lng, $lugar->latitud, $lugar->longitud);
@@ -81,11 +129,12 @@ class ClienteController extends Controller
         });
 
         return response()->json($lugaresFiltrados->values());
+>>>>>>> 8939b8ce9a954f21618fc7e95c3e7bb10c5754af
     }
 
     private function calcularDistancia($lat1, $lon1, $lat2, $lon2)
     {
-        $r = 6371000; // Radio de la Tierra en metros
+        $r = 6371000;
         $p = pi() / 180;
 
         $a = 0.5 - cos(($lat2 - $lat1) * $p) / 2 +

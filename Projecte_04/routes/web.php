@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LugarController;
@@ -6,25 +7,23 @@ use App\Http\Controllers\EtiquetaController;
 use App\Http\Controllers\GimcanaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\UsuarioController;
+
+use App\Http\Controllers\UserMakerController;
 use Illuminate\Http\Request;
 use App\Models\Lugar;
 use Illuminate\Support\Facades\Auth;
 
-// Ruta del cliente (index)
-Route::get('/cliente/index', [ClienteController::class, 'index'])->name('cliente.index');
-
-// Ruta de inicio (login)
+// Rutas públicas
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-
-// Ruta de registro
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 
-// Rutas protegidas por autenticación
+// Rutas autenticadas
 Route::middleware(['auth'])->group(function () {
     // Rutas del admin
     Route::get('/admin/index', [LugarController::class, 'showMap'])->name('admin.index');
+    // ... otras rutas de admin
     
     // Rutas para puntos de interés
     Route::get('/admin/puntos', [LugarController::class, 'index'])->name('admin.puntos');
@@ -64,30 +63,29 @@ Route::middleware(['auth'])->group(function () {
     ]);
 
     // Rutas del cliente
-    Route::middleware(['auth'])->prefix('cliente')->group(function () {
+    Route::prefix('cliente')->group(function () {
         Route::get('/index', [ClienteController::class, 'index'])->name('cliente.index');
         Route::get('/lugares', [ClienteController::class, 'getLugares']);
         Route::get('/etiquetas', [ClienteController::class, 'getEtiquetas']);
         Route::get('/favoritos', [ClienteController::class, 'getFavoritos']);
         Route::post('/favoritos/{lugar}', [ClienteController::class, 'toggleFavorito']);
         Route::post('/lugares/cercanos', [ClienteController::class, 'buscarCercanos']);
+        
+        // Rutas para marcadores de usuario
+        Route::get('/marcadores/crear', [UserMakerController::class, 'create'])->name('cliente.marcadores.create');
+        Route::post('/marcadores', [UserMakerController::class, 'store'])->name('cliente.marcadores.store');
+        Route::delete('/marcadores/{lugar}', [UserMakerController::class, 'destroy'])->name('cliente.marcadores.destroy');
+
         Route::post('/puntos', [ClienteController::class, 'storePunto']);
     });
 });
 
-// Ruta para verificar nombre único de puntos de interés
-Route::get('/admin/puntos/check-nombre', function (Request $request) {
-    $exists = Lugar::where('nombre', $request->query('nombre'))
-        ->where('id', '!=', $request->query('id'))
-        ->exists();
-    return response()->json(['exists' => $exists]);
-});
-
-// Ruta para cerrar sesión
+// Ruta de logout
 Route::post('/logout', function () {
     Auth::logout();
     return redirect('/')->with('success', 'Sesión cerrada correctamente.');
 })->name('logout');
+
 
 // Ruta para editar gimcana
 Route::get('admin/gimcana/{id}/edit', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
