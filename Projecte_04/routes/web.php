@@ -84,3 +84,6 @@ Route::put('admin/gimcana/{id}', [GimcanaController::class, 'update'])->name('ad
 
 // Ruta para almacenar puntos del cliente
 Route::post('/cliente/puntos', [ClienteController::class, 'storePunto'])->middleware('auth');
+
+// Ruta para gimcanas
+Route::get('/gimcanas', [GimcanaController::class, 'index'])->name('gimcanas');

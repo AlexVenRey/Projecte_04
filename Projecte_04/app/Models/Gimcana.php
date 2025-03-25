@@ -20,4 +20,9 @@ class Gimcana extends Model
     {
         return $this->belongsToMany(Lugar::class, 'gimcana_lugar', 'gimcana_id', 'lugar_id');
     }
+
+    public function usuarios()
+    {
+        return $this->belongsToMany(User::class, 'usuarios_grupos', 'gimcana_id', 'usuario_id');
+    }
 }

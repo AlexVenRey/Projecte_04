@@ -36,6 +36,11 @@
                             <i class="fas fa-heart"></i> Mis favoritos
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('cliente.gimcanas') }}" class="nav-link">
+                            <i class="fas fa-trophy"></i> Gimcanas
+                        </a>
+                    </li>
                 </ul>
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex align-items-center">
