@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/favoritos', [ClienteController::class, 'getFavoritos']);
         Route::post('/favoritos/{lugar}', [ClienteController::class, 'toggleFavorito']);
         Route::post('/lugares/cercanos', [ClienteController::class, 'buscarCercanos']);
+        Route::post('/puntos', [ClienteController::class, 'storePunto']);
     });
 });
 
@@ -80,3 +81,6 @@ Route::post('/logout', function () {
 // Ruta para editar gimcana
 Route::get('admin/gimcana/{id}/edit', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
 Route::put('admin/gimcana/{id}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
+
+// Ruta para almacenar puntos del cliente
+Route::post('/cliente/puntos', [ClienteController::class, 'storePunto'])->middleware('auth');

@@ -20,7 +20,7 @@
         
         <div class="form-group">
             <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" value="{{ old('nombre', $punto->nombre) }}">
+            <input type="text" id="nombre" name="nombre" class="form-control" value="{{ old('nombre', $punto->nombre) }}">
         </div>
 
         <div class="form-group">
@@ -31,12 +31,12 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="latitud">Latitud</label>
-                <input type="number" step="any" id="latitud" name="latitud" value="{{ old('latitud', $punto->latitud) }}">
+                <input type="number" step="any" id="latitud" name="latitud" class="form-control" value="{{ old('latitud', $punto->latitud) }}">
             </div>
 
             <div class="form-group">
                 <label for="longitud">Longitud</label>
-                <input type="number" step="any" id="longitud" name="longitud" value="{{ old('longitud', $punto->longitud) }}">
+                <input type="number" step="any" id="longitud" name="longitud" class="form-control" value="{{ old('longitud', $punto->longitud) }}">
             </div>
         </div>
 

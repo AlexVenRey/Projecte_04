@@ -18,7 +18,7 @@
         @csrf
         <div class="form-group">
             <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre"  value="{{ old('nombre') }}">
+            <input type="text" id="nombre" name="nombre" class="form-control" value="{{ old('nombre') }}">
         </div>
 
         <div class="form-group">
@@ -29,12 +29,12 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="latitud">Latitud</label>
-                <input type="number" step="any" id="latitud" name="latitud"  value="{{ old('latitud') }}">
+                <input type="number" step="any" id="latitud" name="latitud" class="form-control" value="{{ old('latitud') }}">
             </div>
 
             <div class="form-group">
                 <label for="longitud">Longitud</label>
-                <input type="number" step="any" id="longitud" name="longitud"  value="{{ old('longitud') }}">
+                <input type="number" step="any" id="longitud" name="longitud" class="form-control" value="{{ old('longitud') }}">
             </div>
         </div>
 
