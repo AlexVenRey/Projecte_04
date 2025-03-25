@@ -23,6 +23,6 @@ class Gimcana extends Model
 
     public function usuarios()
     {
-        return $this->belongsToMany(User::class, 'usuarios_grupos', 'gimcana_id', 'usuario_id');
+        return $this->belongsToMany(User::class, 'gimcana_usuario', 'gimcana_id', 'usuario_id');
     }
 }

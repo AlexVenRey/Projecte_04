@@ -518,6 +518,36 @@ LOCK TABLES `usuarios_grupos` WRITE;
 /*!40000 ALTER TABLE `usuarios_grupos` DISABLE KEYS */;
 /*!40000 ALTER TABLE `usuarios_grupos` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `gimcana_usuario`
+--
+
+DROP TABLE IF EXISTS `gimcana_usuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `gimcana_usuario` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `gimcana_id` bigint unsigned NOT NULL,
+  `usuario_id` bigint unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `gimcana_usuario_gimcana_id_foreign` (`gimcana_id`),
+  KEY `gimcana_usuario_usuario_id_foreign` (`usuario_id`),
+  CONSTRAINT `gimcana_usuario_gimcana_id_foreign` FOREIGN KEY (`gimcana_id`) REFERENCES `gimcanas` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `gimcana_usuario_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `gimcana_usuario`
+--
+
+LOCK TABLES `gimcana_usuario` WRITE;
+/*!40000 ALTER TABLE `gimcana_usuario` DISABLE KEYS */;
+/*!40000 ALTER TABLE `gimcana_usuario` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

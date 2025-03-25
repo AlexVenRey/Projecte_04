@@ -8,6 +8,7 @@ use App\Http\Controllers\ClienteController;
 use Illuminate\Http\Request;
 use App\Models\Lugar;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ClienteGimcanaController;
 
 // Ruta del cliente (index)
 Route::get('/cliente/index', [ClienteController::class, 'index'])->name('cliente.index');
@@ -86,4 +87,4 @@ Route::put('admin/gimcana/{id}', [GimcanaController::class, 'update'])->name('ad
 Route::post('/cliente/puntos', [ClienteController::class, 'storePunto'])->middleware('auth');
 
 // Ruta para gimcanas
-Route::get('/gimcanas', [GimcanaController::class, 'index'])->name('gimcanas');
+Route::get('/gimcanas', [ClienteGimcanaController::class, 'index'])->name('cliente.gimcanas');
