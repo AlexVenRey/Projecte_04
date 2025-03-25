@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lugar;
+use App\Models\Favorito;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,6 +24,7 @@ class UserMarkerController extends Controller
             'color_marcador' => 'sometimes|string'
         ]);
 
+        // Crear el lugar
         $lugar = Lugar::create([
             'nombre' => $request->nombre,
             'latitud' => $request->latitud,
@@ -32,10 +34,17 @@ class UserMarkerController extends Controller
             'creado_por' => Auth::id()
         ]);
 
+        // Añadir automáticamente a favoritos
+        Favorito::create([
+            'usuario_id' => Auth::id(),
+            'lugar_id' => $lugar->id
+        ]);
+
         return response()->json([
             'success' => true,
             'lugar' => $lugar,
-            'es_propietario' => true
+            'es_propietario' => true,
+            'es_favorito' => true // Indicar que ya es favorito
         ], 201);
     }
 
@@ -44,6 +53,11 @@ class UserMarkerController extends Controller
         if (Auth::user()->rol !== 'admin' && $lugar->creado_por !== Auth::id()) {
             abort(403, 'No tienes permiso para eliminar este marcador');
         }
+
+        // Eliminar también de favoritos si existe
+        Favorito::where('lugar_id', $lugar->id)
+               ->where('usuario_id', Auth::id())
+               ->delete();
 
         $lugar->delete();
         return response()->json(['success' => true], 204);

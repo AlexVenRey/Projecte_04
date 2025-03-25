@@ -193,17 +193,28 @@ function setupEventListeners() {
     });
 }
 
-// Cargar todos los lugares
 async function cargarLugares() {
     try {
         const response = await fetch('/cliente/lugares');
-        const lugares = await response.json();
-        mostrarLugares(lugares);
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.message || 'Error al cargar lugares');
+        }
+
+        // Asegúrate de acceder a result.data
+        console.log('Lugares recibidos:', result.data);
+        
+        if (!Array.isArray(result.data)) {
+            throw new Error('La respuesta no contiene un array de lugares');
+        }
+
+        mostrarLugares(result.data);
     } catch (error) {
         console.error('Error cargando lugares:', error);
+        alert(error.message);
     }
 }
-
 // Cargar favoritos
 async function cargarFavoritos() {
     try {
@@ -215,17 +226,23 @@ async function cargarFavoritos() {
     }
 }
 
-// Mostrar lugares en el mapa
 function mostrarLugares(lugares) {
+    // Verifica que sea un array
+    if (!Array.isArray(lugares)) {
+        console.error('Los lugares no son un array:', lugares);
+        return;
+    }
+
     limpiarMapa();
+    
     lugares.forEach(lugar => {
-        if (activeFilters.etiquetas.size === 0 || 
-            lugar.etiquetas.some(e => activeFilters.etiquetas.has(e.id))) {
+        if (lugar.latitud && lugar.longitud) {
             agregarMarcador(lugar);
+        } else {
+            console.warn('Lugar sin coordenadas:', lugar);
         }
     });
 }
-
 // Agregar marcador al mapa
 function agregarMarcador(lugar) {
     const marker = L.marker([lugar.latitud, lugar.longitud], {

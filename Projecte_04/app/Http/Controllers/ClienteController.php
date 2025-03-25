@@ -18,22 +18,34 @@ class ClienteController extends Controller
 
     public function getLugares()
     {
-        $user = Auth::user();
-        
-        $lugares = Lugar::with(['etiquetas', 'creador'])
-            ->when($user->rol === 'usuario', function($query) use ($user) {
-                return $query->where('creado_por', $user->id)
-                    ->orWhereHas('creador', function($q) {
-                        $q->where('rol', 'admin');
-                    });
-            })
-            ->get()
-            ->map(function($lugar) use ($user) {
-                $lugar->es_propietario = $lugar->creado_por === $user->id;
-                return $lugar;
-            });
-        
-        return response()->json($lugares);
+        try {
+            $user = Auth::user();
+            
+            $lugares = Lugar::with(['etiquetas', 'creador'])
+                ->when($user->rol === 'usuario', function($query) use ($user) {
+                    return $query->where('creado_por', $user->id)
+                        ->orWhereHas('creador', function($q) {
+                            $q->where('rol', 'admin');
+                        });
+                })
+                ->get()
+                ->map(function($lugar) use ($user) {
+                    $lugar->es_propietario = $lugar->creado_por === $user->id;
+                    return $lugar;
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $lugares
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Error al cargar lugares',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function getEtiquetas()

@@ -15,7 +15,14 @@ class CreateLugaresTable extends Migration
             $table->decimal('longitud', 10, 8);
             $table->text('descripcion');
             $table->string('color_marcador')->default('#3388ff');
-            $table->foreignId('creado_por')->constrained('usuarios');
+            
+            // Relación explícita (recomendado)
+            $table->unsignedBigInteger('creado_por');
+            $table->foreign('creado_por')
+                  ->references('id')
+                  ->on('usuarios')
+                  ->onDelete('cascade');
+            
             $table->timestamps();
         });
     }
