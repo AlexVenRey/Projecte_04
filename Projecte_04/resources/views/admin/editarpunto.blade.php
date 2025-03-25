@@ -16,7 +16,12 @@
                 <span class="user-name">{{ Auth::user()->nombre }}</span>
             </div>
             <nav>
-                <ul>
+                <div class="hamburger-menu" onclick="toggleMenu()">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+                <ul class="nav-links">
                     <li><a href="{{ url('admin/index') }}">Inicio</a></li>
                     <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
                     <li><a href="{{ url('admin/puntos') }}">Puntos de Interés</a></li>
@@ -86,5 +91,12 @@
             </div>
         </form>
     </div>
+
+    <script>
+    function toggleMenu() {
+        const navLinks = document.querySelector('.nav-links');
+        navLinks.classList.toggle('active');
+    }
+    </script>
 </body>
 </html>
