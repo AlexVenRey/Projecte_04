@@ -54,4 +54,9 @@ class User extends Authenticatable
             'ubicacion_actual' => 'array'
         ];
     }
+
+    public function puntos()
+    {
+        return $this->belongsToMany(Lugar::class, 'puntos_usuarios', 'usuario_id', 'lugar_id');
+    }
 }

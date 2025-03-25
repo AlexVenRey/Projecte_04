@@ -18,12 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const latitud = document.getElementById("latitud");
         const longitud = document.getElementById("longitud");
         const descripcion = document.getElementById("descripcion");
-        const icono = document.getElementById("icono");
 
         // Limpiar errores previos
         errorContainer.innerHTML = "";
         errorContainer.style.display = "none";
-        [nombre, latitud, longitud, descripcion, icono].forEach((field) => {
+        [nombre, latitud, longitud, descripcion].forEach((field) => {
             field.style.borderColor = "";
         });
 
@@ -48,12 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
             descripcion.style.borderColor = "red";
         }
 
-        if (!icono.value.trim()) {
-            errors.push("El campo 'Icono' es obligatorio.");
-            icono.style.borderColor = "red";
-        }
-
-
         // Mostrar errores si los hay
         if (errors.length > 0) {
             errorContainer.innerHTML = errors.join("<br>");
@@ -65,19 +58,4 @@ document.addEventListener("DOMContentLoaded", function () {
         form.submit();
     });
 
-    // Vista previa del icono
-    const iconoInput = document.getElementById("icono");
-    const previewContainer = document.getElementById("preview-container");
-    const previewImage = document.getElementById("preview-image");
-
-    iconoInput.addEventListener("change", function (e) {
-        if (e.target.files && e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                previewImage.src = e.target.result;
-                previewContainer.style.display = "block";
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        }
-    });
 });

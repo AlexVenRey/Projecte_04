@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Página Admin</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
@@ -31,7 +31,7 @@
                 </ul>
             </nav>
         </header>
-        <h1>Bienvenido al Dashboard Admin</h1>
+        <h1>Bienvenido a la página Admin</h1>
         <div id="map" style="height: 500px; width: 100%;"></div>
     </div>
 
@@ -132,7 +132,6 @@
                                 <strong>Distancia:</strong> ${distancia} km<br>
                                 <strong>Tiempo estimado:</strong><br>
                                 <img src="{{ asset('img/caminando.webp') }}" alt="Caminando" style="width: 20px;"> ${tiempoCaminando} min<br>
-                                <img src="{{ asset('img/' . $lugar->icono) }}" alt="Icono" style="width: 50px; height: 50px;">
                             `);
                         @endforeach
                     });

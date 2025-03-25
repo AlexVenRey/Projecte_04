@@ -31,11 +31,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/favoritos', [ClienteController::class, 'getFavoritos']);
         Route::post('/favoritos/{lugar}', [ClienteController::class, 'toggleFavorito']);
         Route::post('/lugares/cercanos', [ClienteController::class, 'buscarCercanos']);
+<<<<<<< HEAD
         
         // Rutas para marcadores de usuario
         Route::get('/marcadores/crear', [UserMakerController::class, 'create'])->name('cliente.marcadores.create');
         Route::post('/marcadores', [UserMakerController::class, 'store'])->name('cliente.marcadores.store');
         Route::delete('/marcadores/{lugar}', [UserMakerController::class, 'destroy'])->name('cliente.marcadores.destroy');
+=======
+        Route::post('/puntos', [ClienteController::class, 'storePunto']);
+>>>>>>> 8939b8ce9a954f21618fc7e95c3e7bb10c5754af
     });
 });
 
@@ -43,4 +47,15 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/logout', function () {
     Auth::logout();
     return redirect('/')->with('success', 'Sesión cerrada correctamente.');
+<<<<<<< HEAD
 })->name('logout');
+=======
+})->name('logout');
+
+// Ruta para editar gimcana
+Route::get('admin/gimcana/{id}/edit', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
+Route::put('admin/gimcana/{id}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
+
+// Ruta para almacenar puntos del cliente
+Route::post('/cliente/puntos', [ClienteController::class, 'storePunto'])->middleware('auth');
+>>>>>>> 8939b8ce9a954f21618fc7e95c3e7bb10c5754af
