@@ -17,6 +17,7 @@
             <nav>
                 <ul>
                     <li><a href="{{ url('admin/index') }}">Inicio</a></li>
+                    <li><a href="{{ url('admin/puntos') }}">Puntos de Interés</a></li>
                     <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
                 </ul>
             </nav>
