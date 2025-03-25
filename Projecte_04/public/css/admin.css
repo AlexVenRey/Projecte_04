@@ -611,8 +611,66 @@ header nav ul li form button:hover {
     --header-height: 70px;
 }
 
+/* Estilo para las etiquetas */
+.etiquetas-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas por defecto */
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.etiqueta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+.icon-preview {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 5px;
+}
+
+.edit-btn img, .delete-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
 /* Media query para dispositivos móviles */
-@media (max-width: 768px) {
+@media (max-width: 700px) {
     :root {
         --sidebar-width: 0px;
     }
@@ -639,7 +697,7 @@ header nav ul li form button:hover {
     #content {
         margin-top: var(--header-height);
     }
-}
+
 
 /* Estilos de tabla responsive */
 .table-responsive {
@@ -647,49 +705,46 @@ header nav ul li form button:hover {
     padding: 0;
 }
 
-@media (max-width: 768px) {
-    .table-responsive table {
-        display: block;
-    }
-
-    .table-responsive table thead {
-        display: none;
-    }
-
-    .table-responsive table tbody tr {
-        display: block;
-        margin-bottom: 1rem;
-        border: 1px solid #dee2e6;
-        border-radius: 0.35rem;
-    }
-
-    .table-responsive table tbody td {
-        display: block;
-        text-align: right;
-        padding: 0.75rem;
-        position: relative;
-        border-bottom: 1px solid #dee2e6;
-    }
-
-    .table-responsive table tbody td:before {
-        content: attr(data-label);
-        float: left;
-        font-weight: bold;
-        text-transform: uppercase;
-        font-size: 0.85em;
-    }
-
-    .table-responsive table tbody td:last-child {
-        border-bottom: none;
-    }
+.table-responsive table {
+    display: block;
 }
+
+.table-responsive table thead {
+    display: none;
+}
+
+.table-responsive table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.35rem;
+}
+
+.table-responsive table tbody td {
+    display: block;
+    text-align: right;
+    padding: 0.75rem;
+    position: relative;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table-responsive table tbody td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85em;
+}
+
+.table-responsive table tbody td:last-child {
+    border-bottom: none;
+}
+
 
 /* Estilos de formularios responsive */
 .form-group {
-    margin-bottom: 1rem;
-}
-
-@media (max-width: 768px) {
+margin-bottom: 1rem;
+}    
     .form-row {
         flex-direction: column;
     }
@@ -707,10 +762,8 @@ header nav ul li form button:hover {
     .card-body {
         padding: 1rem;
     }
-}
 
-/* Estilos para los botones en móvil */
-@media (max-width: 768px) {
+
     .btn-group {
         display: flex;
         width: 100%;
@@ -724,10 +777,8 @@ header nav ul li form button:hover {
         width: 100%;
         margin-bottom: 0.5rem;
     }
-}
 
-/* Estilos para Select2 en móvil */
-@media (max-width: 768px) {
+
     .select2-container {
         width: 100% !important;
     }
@@ -735,9 +786,8 @@ header nav ul li form button:hover {
     .select2-container .select2-selection--multiple {
         min-height: 100px;
     }
-}
 
-/* Estilos para las etiquetas en la tabla */
+
 .badge {
     display: inline-flex;
     align-items: center;
@@ -751,15 +801,12 @@ header nav ul li form button:hover {
     margin-right: 0.25rem;
 }
 
-@media (max-width: 768px) {
     .badge {
         display: inline-flex;
         margin: 2px;
     }
-}
 
-/* Estilos para los iconos en móvil */
-@media (max-width: 768px) {
+
     .fas {
         font-size: 1.1em;
     }
@@ -767,10 +814,8 @@ header nav ul li form button:hover {
     .btn .fas {
         margin-right: 0.5rem;
     }
-}
 
-/* Estilos para el menú de navegación en móvil */
-@media (max-width: 768px) {
+
     .navbar-nav {
         padding: 1rem;
     }
@@ -782,10 +827,9 @@ header nav ul li form button:hover {
     .navbar-nav .nav-link {
         padding: 0.75rem 1rem;
     }
-}
 
-/* Estilos para las cards en móvil */
-@media (max-width: 768px) {
+
+
     .card {
         margin-bottom: 1rem;
     }
@@ -797,7 +841,7 @@ header nav ul li form button:hover {
     .card-body {
         padding: 1rem;
     }
-}
+
 
 /* Estilos para los mensajes de alerta */
 .alert {
@@ -805,17 +849,13 @@ header nav ul li form button:hover {
     border-radius: 0.35rem;
 }
 
-@media (max-width: 768px) {
     .alert {
         margin: 1rem;
         padding: 0.75rem;
     }
-}
 
-/* Responsive Design */
 
-/* Para pantallas pequeñas (teléfonos móviles) */
-@media (max-width: 768px) {
+
     body {
         font-size: 14px;
     }
@@ -878,10 +918,7 @@ header nav ul li form button:hover {
         width: 100%;
         padding: 10px;
     }
-}
 
-/* Responsive Design para pantallas de 700px o menos */
-@media (max-width: 700px) {
     /* Ajustar el contenedor principal */
     .admin-container {
         padding: 10px;
@@ -948,24 +985,8 @@ header nav ul li form button:hover {
         text-align: center;
         margin: 10px 0;
     }
-}
 
-/* Estilo para las etiquetas */
-.etiquetas-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columnas por defecto */
-    gap: 10px;
-    margin-top: 10px;
-}
 
-.etiqueta-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-/* Ajuste para pantallas pequeñas */
-@media (max-width: 700px) {
     .etiquetas-grid {
         grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas pequeñas */
     }
