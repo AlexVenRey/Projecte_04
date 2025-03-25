@@ -33,22 +33,21 @@ class LugarController extends Controller
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
             'descripcion' => 'required|string',
+            'icono' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'color_marcador' => 'required|string',
             'etiquetas' => 'required|array',
         ]);
 
-<<<<<<< HEAD
         $icono = $request->file('icono');
         $iconoName = time() . '_' . $icono->getClientOriginalName();
         $icono->move(public_path('img/lugares'), $iconoName);
 
-=======
->>>>>>> 8939b8ce9a954f21618fc7e95c3e7bb10c5754af
         $lugar = Lugar::create([
             'nombre' => $request->nombre,
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
             'descripcion' => $request->descripcion,
+            'icono' => 'lugares/' . $iconoName,
             'color_marcador' => $request->color_marcador,
             'creado_por' => Auth::id(),
         ]);
@@ -74,6 +73,7 @@ class LugarController extends Controller
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
             'descripcion' => 'required|string',
+            'icono' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'color_marcador' => 'required|string',
             'etiquetas' => 'required|array',
         ]);
@@ -81,7 +81,6 @@ class LugarController extends Controller
         $punto = Lugar::where('creado_por', Auth::id())
                      ->findOrFail($id);
 
-<<<<<<< HEAD
         if ($request->hasFile('icono')) {
             if ($punto->icono && File::exists(public_path('img/' . $punto->icono))) {
                 File::delete(public_path('img/' . $punto->icono));
@@ -93,8 +92,6 @@ class LugarController extends Controller
             $punto->icono = 'lugares/' . $iconoName;
         }
 
-=======
->>>>>>> 8939b8ce9a954f21618fc7e95c3e7bb10c5754af
         $punto->nombre = $request->nombre;
         $punto->latitud = $request->latitud;
         $punto->longitud = $request->longitud;
