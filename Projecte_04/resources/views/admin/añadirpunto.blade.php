@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,6 +39,9 @@
         <form action="{{ route('admin.puntos.store') }}" method="POST" enctype="multipart/form-data" class="form-custom">
             @csrf
             <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre"  value="{{ old('nombre') }}">
+            </div>
 
             <div class="form-group">
                 <label for="descripcion">Descripción</label>

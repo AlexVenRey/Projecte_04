@@ -5,6 +5,7 @@ use App\Http\Controllers\LugarController;
 use App\Http\Controllers\EtiquetaController;
 use App\Http\Controllers\GimcanaController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use App\Models\Lugar;
 use Illuminate\Support\Facades\Auth;
@@ -51,6 +52,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/gimcana/{gimcana}/editar', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
     Route::put('/admin/gimcana/{gimcana}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
     Route::delete('/admin/gimcana/{gimcana}', [GimcanaController::class, 'destroy'])->name('admin.gimcana.delete');
+
+    // Rutas para usuarios
+    Route::resource('admin/usuarios', UsuarioController::class)->names([
+        'index' => 'admin.usuarios.index',
+        'create' => 'admin.usuarios.create',
+        'store' => 'admin.usuarios.store',
+        'edit' => 'admin.usuarios.edit',
+        'update' => 'admin.usuarios.update',
+        'destroy' => 'admin.usuarios.destroy',
+    ]);
 
     // Rutas del cliente
     Route::middleware(['auth'])->prefix('cliente')->group(function () {
