@@ -218,14 +218,23 @@ async function cargarLugares() {
 // Cargar favoritos
 async function cargarFavoritos() {
     try {
-        const response = await fetch('/cliente/favoritos');
-        const lugares = await response.json();
-        mostrarLugares(lugares);
+        const response = await fetch('/cliente/lugares');
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.message || 'Error al cargar lugares');
+        }
+
+        // Filtrar solo los favoritos
+        const lugaresFavoritos = result.data.filter(lugar => favoritos.has(lugar.id));
+        console.log('Favoritos filtrados:', lugaresFavoritos);
+        
+        mostrarLugares(lugaresFavoritos);
     } catch (error) {
         console.error('Error cargando favoritos:', error);
+        alert('Error al cargar favoritos: ' + error.message);
     }
 }
-
 function mostrarLugares(lugares) {
     // Verifica que sea un array
     if (!Array.isArray(lugares)) {
