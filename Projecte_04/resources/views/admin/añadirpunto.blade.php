@@ -66,8 +66,9 @@
 </div>
 @endsection
 
-@section('styles')
+
 <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+
 @endsection
 
 @section('scripts')
