@@ -21,17 +21,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Inicializar el mapa
 function initMap() {
-    map = L.map('mapa').setView([41.3479, 2.1045], 14);
+    map = L.map('mapa').setView([41.3879, 2.16992], 13); // Coordenadas iniciales
+
+    // Cargar el mapa base
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        maxZoom: 19,
     }).addTo(map);
+
+    // Evento para capturar clics en el mapa
+    map.on('click', function (e) {
+        const { lat, lng } = e.latlng;
+
+        // Mostrar el modal y rellenar los campos de latitud y longitud
+        document.getElementById('pointLat').value = lat.toFixed(6);
+        document.getElementById('pointLng').value = lng.toFixed(6);
+        const addPointModal = new bootstrap.Modal(document.getElementById('addPointModal'));
+        addPointModal.show();
+    });
 
     // Obtener la ubicación del usuario
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             position => {
                 currentPosition = [position.coords.latitude, position.coords.longitude];
-                
+
                 // Añadir marcador de ubicación actual
                 const userMarker = L.marker(currentPosition, {
                     icon: L.divIcon({
@@ -47,7 +60,7 @@ function initMap() {
                 map.setView(currentPosition, 15);
             },
             error => {
-                console.error('Error getting location:', error);
+                console.error('Error obteniendo la ubicación:', error);
                 alert('No se pudo obtener tu ubicación. Algunas funciones pueden no estar disponibles.');
             }
         );
@@ -396,3 +409,68 @@ function limpiarMapa() {
         routingControl = null;
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    initMap();
+
+    // Guardar el punto al hacer clic en "Guardar Punto"
+    document.getElementById('savePoint').addEventListener('click', function () {
+        const name = document.getElementById('pointName').value.trim();
+        const lat = document.getElementById('pointLat').value;
+        const lng = document.getElementById('pointLng').value;
+        const tags = Array.from(document.getElementById('pointTags').selectedOptions).map(option => option.value);
+        const color = document.getElementById('pointColor').value;
+
+        // Limpiar mensajes de error previos
+        const errorContainer = document.getElementById('errorContainer');
+        if (errorContainer) {
+            errorContainer.remove();
+        }
+
+        // Validar campos
+        const errors = [];
+        if (!name) {
+            errors.push('El campo "Nombre del Punto" es obligatorio.');
+        }
+        if (!lat || !lng) {
+            errors.push('Debe seleccionar una ubicación en el mapa.');
+        }
+        if (tags.length === 0) {
+            errors.push('Debe seleccionar al menos una etiqueta.');
+        }
+        if (!color) {
+            errors.push('Debe seleccionar un color para el punto.');
+        }
+
+        // Mostrar errores si los hay
+        if (errors.length > 0) {
+            const modalBody = document.querySelector('#addPointModal .modal-body');
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'errorContainer';
+            errorDiv.className = 'alert alert-danger';
+            errorDiv.innerHTML = errors.join('<br>');
+            modalBody.prepend(errorDiv);
+            return;
+        }
+
+        // Enviar el punto al servidor
+        fetch('/cliente/puntos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: JSON.stringify({ nombre: name, latitud: lat, longitud: lng, etiquetas: tags, color_marcador: color }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Punto añadido correctamente.');
+                    location.reload(); // Recargar la página para actualizar el mapa
+                } else {
+                    alert('Error al añadir el punto: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+});

@@ -44,10 +44,7 @@
                 <label for="nombre">Nombre</label>
                 <input type="text" id="nombre" name="nombre" value="{{ old('nombre', $punto->nombre) }}">
             </div>
-    
-            <div class="form-group">
-                <label for="descripcion">Descripción</label>
-                <textarea id="descripcion" name="descripcion" rows="3">{{ old('descripcion', $punto->descripcion) }}</textarea>
+
             </div>
     
             <div class="form-row">

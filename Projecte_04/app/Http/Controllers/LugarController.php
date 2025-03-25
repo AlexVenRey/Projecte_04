@@ -44,7 +44,7 @@ class LugarController extends Controller
 
         $lugar->etiquetas()->attach($request->etiquetas);
 
-        return redirect()->route('admin.puntos')->with('success');
+        return redirect()->route('admin.puntos')->with('success', 'Punto de interés añadido correctamente.');
     }
 
     public function edit($id)
@@ -76,7 +76,7 @@ class LugarController extends Controller
         $punto->save();
         $punto->etiquetas()->sync($request->etiquetas);
 
-        return redirect()->route('admin.puntos')->with('success');
+        return redirect()->route('admin.puntos')->with('success', 'Punto de interés actualizado correctamente.');
     }
 
     public function destroy($id)
@@ -91,6 +91,6 @@ class LugarController extends Controller
         $punto->etiquetas()->detach();
         $punto->delete();
 
-        return redirect()->route('admin.puntos')->with('success');
+        return redirect()->route('admin.puntos')->with('success', 'Punto de interés eliminado correctamente.');
     }
 }

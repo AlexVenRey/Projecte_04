@@ -103,6 +103,47 @@
         </div>
     </div>
 
+    <!-- Modal para añadir un punto -->
+    <div class="modal fade" id="addPointModal" tabindex="-1" aria-labelledby="addPointModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPointModalLabel">Añadir Punto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPointForm">
+                        <div class="mb-3">
+                            <label for="pointName" class="form-label">Nombre del Punto</label>
+                            <input type="text" class="form-control" id="pointName" placeholder="Introduce un nombre">
+                        </div>
+                        <div class="mb-3">
+                            <label for="pointLat" class="form-label">Latitud</label>
+                            <input type="text" class="form-control" id="pointLat" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pointLng" class="form-label">Longitud</label>
+                            <input type="text" class="form-control" id="pointLng" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pointTags" class="form-label">Etiquetas</label>
+                            <select multiple class="form-select" id="pointTags">
+                                @foreach($etiquetas as $etiqueta)
+                                    <option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pointColor" class="form-label">Color del Punto</label>
+                            <input type="color" class="form-control form-control-color" id="pointColor" value="#FF0000">
+                        </div>
+                        <button type="button" class="btn btn-primary" id="savePoint">Guardar Punto</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
