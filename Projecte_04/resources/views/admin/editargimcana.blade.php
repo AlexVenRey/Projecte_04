@@ -64,8 +64,8 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-submit">Actualizar</button>
-                <a href="{{ route('admin.gimcana') }}" class="btn-cancelar">Cancelar</a>
+                <button type="submit" class="btn-submit">Guardar</button>
+                <a href="{{ route('admin.gimcana') }}" class="btn-submit-cancelar">Cancelar</a>
             </div>
         </form>
     </div>
