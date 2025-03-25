@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
             descripcion.style.borderColor = "red";
         }
 
-
         // Mostrar errores si los hay
         if (errors.length > 0) {
             errorContainer.innerHTML = errors.join("<br>");
@@ -58,5 +57,4 @@ document.addEventListener("DOMContentLoaded", function () {
         // Si no hay errores, enviar el formulario
         form.submit();
     });
-
 });

@@ -61,25 +61,11 @@ class LugarController extends Controller
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
             'descripcion' => 'required|string',
-            'icono' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'color_marcador' => 'required|string',
             'etiquetas' => 'required|array',
         ]);
 
         $punto = Lugar::findOrFail($id);
-
-        if ($request->hasFile('icono')) {
-            // Eliminar icono anterior si existe
-            if ($punto->icono && File::exists(public_path('img/' . $punto->icono))) {
-                File::delete(public_path('img/' . $punto->icono));
-            }
-
-            // Guardar nuevo icono
-            $icono = $request->file('icono');
-            $iconoName = time() . '_' . $icono->getClientOriginalName();
-            $icono->move(public_path('img/'), $iconoName);
-            $punto->icono = 'img/' . $iconoName;
-        }
 
         $punto->nombre = $request->nombre;
         $punto->latitud = $request->latitud;
