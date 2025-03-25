@@ -60,15 +60,14 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-submit">Guardar</button>
-            <a href="{{ route('admin.puntos') }}" class="btn-cancel">Cancelar</a>
+            <a href="{{ route('admin.puntos') }}" class="btn-submit-cancelar">Cancelar</a>
         </div>
     </form>
 </div>
 @endsection
 
-
+@section('styles')
 <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-
 @endsection
 
 @section('scripts')

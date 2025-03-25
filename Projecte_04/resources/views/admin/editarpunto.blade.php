@@ -60,7 +60,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-submit">Actualizar</button>
-            <a href="{{ route('admin.puntos') }}" class="btn-cancel">Cancelar</a>
+            <a href="{{ route('admin.puntos') }}" class="btn-submit-cancelar">Cancelar</a>
         </div>
     </form>
 </div>

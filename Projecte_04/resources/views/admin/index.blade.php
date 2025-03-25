@@ -131,7 +131,6 @@
                                 <strong>Distancia:</strong> ${distancia} km<br>
                                 <strong>Tiempo estimado:</strong><br>
                                 <img src="{{ asset('img/caminando.webp') }}" alt="Caminando" style="width: 20px;"> ${tiempoCaminando} min<br>
-                                <img src="{{ asset('img/' . $lugar->icono) }}" alt="Icono" style="width: 50px; height: 50px;">
                             `);
                         @endforeach
                     });
