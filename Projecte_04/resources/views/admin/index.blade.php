@@ -16,9 +16,15 @@
                 <span class="user-name">{{ Auth::user()->nombre }}</span>
             </div>
             <nav>
-                <ul>
+                <div class="hamburger-menu" onclick="toggleMenu()">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+                <ul class="nav-links">
                     <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
                     <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
+                    <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="logout-button">
@@ -144,6 +150,11 @@
 
             // Llamar a la función por primera vez
             updateLocation();
+        }
+
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
         }
     </script>
 </body>

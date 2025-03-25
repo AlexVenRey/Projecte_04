@@ -670,6 +670,58 @@ tr:hover {
     border-radius: 4px;
 }
 
+/* Estilos para el menú de hamburguesa */
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    margin-right: 50px;
+}
+
+.hamburger-menu .bar {
+    width: 25px;
+    height: 3px;
+    background-color: #fff;
+    margin: 4px 0;
+    transition: 0.4s;
+}
+
+/* Estilos para el menú desplegable */
+.nav-links {
+    display: flex;
+    list-style: none;
+}
+
+.nav-links.active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: var(--header-height);
+    right: 0;
+    background-color: #343a40;
+    width: auto;
+    text-align: center;
+    z-index: 1000;
+}
+
+.nav-links li {
+    margin: 0;
+}
+
+.nav-links li a {
+    display: block;
+    padding: 15px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav-links li a:hover {
+    background-color: #007BFF;
+}
+
 /* Media query para dispositivos móviles */
 @media (max-width: 700px) {
     :root {
@@ -987,6 +1039,154 @@ margin-bottom: 1rem;
         margin: 10px 0;
     }
 
+    .etiquetas-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas pequeñas */
+    }
+
+    .hamburger-menu {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links li {
+        width: 100%;
+    }
+
+    .nav-links li a {
+        width: 100%;
+        text-align: center;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .logo-container {
+        margin-bottom: 10px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    nav ul li a {
+        width: 100%;
+        text-align: left;
+        padding: 10px;
+    }
+
+    .logout-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    h1 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    #map {
+        height: 300px;
+    }
+
+    .form-punto {
+        padding: 15px;
+    }
+
+    .form-punto input[type="text"],
+    .form-punto input[type="file"],
+    .form-punto textarea,
+    .form-punto select {
+        font-size: 14px;
+    }
+
+    .form-punto button {
+        width: 100%;
+        padding: 10px;
+    }
+
+    /* Ajustar el contenedor principal */
+    .admin-container {
+        padding: 10px;
+    }
+
+    /* Ajustar el encabezado */
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .logo-container {
+        margin-bottom: 10px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 80%;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    nav ul li a {
+        width: 80%;
+        text-align: left;
+        padding: 10px;
+    }
+
+    /* Ajustar el botón de cerrar sesión */
+    .logout-button {
+        width: 80%;
+        justify-content: center;
+    }
+
+    /* Ajustar el título */
+    h1 {
+        font-size: 18px;
+        text-align: center;
+    }
+
+    /* Ajustar la tabla */
+    table {
+        width: 90%;
+        font-size: 12px; /* Reducir el tamaño del texto */
+        border-collapse: collapse;
+    }
+
+    table th, table td {
+        padding: 8px;
+        word-wrap: break-word; /* Ajustar el texto dentro de las celdas */
+    }
+
+    table td img {
+        height: 30px;
+        width: 30px;
+    }
+
+    /* Ajustar el botón de añadir */
+    .add-btn {
+        width: 80%;
+        text-align: center;
+        margin: 10px 0;
+    }
 
     .etiquetas-grid {
         grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas pequeñas */
