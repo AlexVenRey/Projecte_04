@@ -17,12 +17,12 @@
         <!-- Contenedor del formulario -->
         <div class="form-container">
             <h2>Regístrate</h2>
-            <form action="{{ url('/register') }}" method="POST">
+            <form action="{{ route('register.store') }}" method="POST">
                 @csrf
-                <input type="text" name="name" placeholder="Nombre completo">
-                <input type="email" name="email" placeholder="Correo electrónico">
-                <input type="password" name="password" placeholder="Contraseña">
-                <input type="password" name="password_confirmation" placeholder="Confirmar contraseña">
+                <input type="text" name="nombre" placeholder="Nombre completo" required>
+                <input type="email" name="email" placeholder="Correo electrónico" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
+                <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required>
                 <button type="submit">Registrarse</button>
             </form>
 

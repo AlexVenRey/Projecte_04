@@ -19,6 +19,7 @@
                 <ul>
                     <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
                     <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
+                    <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="logout-button">
@@ -44,34 +45,6 @@
             }).addTo(map);
 
             var userMarker;
-
-            const icons = {
-                Deportes: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41]
-                }),
-                Museo: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41]
-                }),
-                Restaurantes: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41]
-                }),
-                Parques: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41]
-                }),
-                Otros: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-purple.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41]
-                })
-            };
 
             // Función para calcular la distancia entre dos puntos en kilómetros
             function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -118,10 +91,38 @@
                             var tiempoCaminando = Math.round((distancia / 5) * 60); // Tiempo caminando (5 km/h)
                             var tiempoEnCoche = Math.round((distancia / 50) * 60); // Tiempo en coche (50 km/h)
 
-                            // Determinar el icono según la etiqueta
-                            var etiqueta = "{{ $lugar->etiquetas->first()->nombre ?? 'Otros' }}";
-                            var icon = icons[etiqueta] || icons.Otros;
+                            // Crear un ícono dinámico basado en el color del marcador
+                            var icon = L.divIcon({
+                                className: 'custom-marker',
+                                html: `
+                                    <div style="
+                                        position: relative;
+                                        width: 15px;
+                                        height: 15px;
+                                        background-color: {{ $lugar->color_marcador }};
+                                        border-radius: 50%;
+                                        border: 2px solid white;
+                                        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+                                    ">
+                                    </div>
+                                    <div style="
+                                        position: absolute;
+                                        top: 15px;
+                                        left: 4px;
+                                        width: 0;
+                                        height: 0;
+                                        border-left: 5px solid transparent;
+                                        border-right: 5px solid transparent;
+                                        border-top: 7px solid {{ $lugar->color_marcador }};
+                                    ">
+                                    </div>
+                                `,
+                                iconSize: [15, 22],
+                                iconAnchor: [7.5, 22],
+                                popupAnchor: [0, -22]
+                            });
 
+                            // Crear el marcador con el diseño dinámico
                             var marker = L.marker([lugarLat, lugarLng], {
                                 icon: icon
                             }).addTo(map)

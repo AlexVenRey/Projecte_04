@@ -2,18 +2,42 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Lugar extends Model
 {
     use HasFactory;
+
     protected $table = 'lugares';
 
-    protected $fillable = ['nombre', 'descripcion', 'direccion', 'latitud', 'longitud', 'icono', 'color_marcador', 'creado_por'];
+    protected $fillable = [
+        'nombre',
+        'latitud',
+        'longitud',
+        'descripcion',
+        'color_marcador',
+        'creado_por'
+    ];
 
-    public function etiquetas()
+    public function etiquetas(): BelongsToMany
     {
-        return $this->belongsToMany(Etiqueta::class, 'lugares_etiquetas', 'lugar_id', 'etiqueta_id');
+        return $this->belongsToMany(Etiqueta::class, 'lugar_etiqueta');
+    }
+
+    // Cambiado de 'usuario' a 'creador' para coincidir con el controlador
+    public function creador(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'creado_por');
+    }
+
+    public function getIconoAttribute()
+    {
+        if ($this->etiquetas->isNotEmpty()) {
+            return $this->etiquetas->first()->icono;
+        }
+        return 'fa-map-marker-alt';
     }
 }
