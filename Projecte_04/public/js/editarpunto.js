@@ -59,19 +59,4 @@ document.addEventListener("DOMContentLoaded", function () {
         form.submit();
     });
 
-    // Vista previa del icono
-    const iconoInput = document.getElementById("icono");
-    const previewContainer = document.getElementById("preview-container");
-    const previewImage = document.getElementById("preview-image");
-
-    iconoInput.addEventListener("change", function (e) {
-        if (e.target.files && e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                previewImage.src = e.target.result;
-                previewContainer.style.display = "block";
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        }
-    });
 });

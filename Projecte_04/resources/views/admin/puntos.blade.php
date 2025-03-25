@@ -24,7 +24,6 @@
                 <th>Latitud</th>
                 <th>Longitud</th>
                 <th>Pista</th>
-                <th>Icono</th>
                 <th>Etiquetas</th>
                 <th>Acciones</th>
             </tr>
@@ -36,7 +35,6 @@
                 <td>{{ $lugar->latitud }}</td>
                 <td>{{ $lugar->longitud }}</td>
                 <td>{{ $lugar->descripcion }}</td>
-                <td><img src="{{ asset('img/' . $lugar->icono) }}" alt="Icono" class="icon-preview"></td>
                 <td>
                     {{ $lugar->etiquetas->pluck('nombre')->implode(', ') }}
                 </td>

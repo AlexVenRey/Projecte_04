@@ -29,22 +29,15 @@ class LugarController extends Controller
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
             'descripcion' => 'required|string',
-            'icono' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'color_marcador' => 'required|string',
             'etiquetas' => 'required|array',
         ]);
-
-        // Procesar y guardar el icono
-        $icono = $request->file('icono');
-        $iconoName = time() . '_' . $icono->getClientOriginalName();
-        $icono->move(public_path('img/lugares'), $iconoName);
 
         $lugar = Lugar::create([
             'nombre' => $request->nombre,
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
             'descripcion' => $request->descripcion,
-            'icono' => 'lugares/' . $iconoName,
             'color_marcador' => $request->color_marcador,
             'creado_por' => Auth::id(),
         ]);
