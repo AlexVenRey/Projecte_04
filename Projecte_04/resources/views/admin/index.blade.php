@@ -19,6 +19,8 @@
                 <ul>
                     <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
                     <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
+                    <li><a href="{{ url('admin/usuarios') }}">Usuarios</a></li>                        <form action="{{ route('logout') }}" method="POST">
+
                     <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
