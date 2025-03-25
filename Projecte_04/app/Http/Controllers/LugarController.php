@@ -84,8 +84,8 @@ class LugarController extends Controller
             // Guardar nuevo icono
             $icono = $request->file('icono');
             $iconoName = time() . '_' . $icono->getClientOriginalName();
-            $icono->move(public_path('img/lugares'), $iconoName);
-            $punto->icono = 'lugares/' . $iconoName;
+            $icono->move(public_path('img/'), $iconoName);
+            $punto->icono = 'img/' . $iconoName;
         }
 
         $punto->nombre = $request->nombre;

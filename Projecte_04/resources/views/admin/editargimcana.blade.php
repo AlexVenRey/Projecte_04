@@ -65,7 +65,7 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn-submit">Actualizar</button>
-                <a href="{{ route('admin.gimcana') }}" class="btn-cancel">Cancelar</a>
+                <a href="{{ route('admin.gimcana') }}" class="btn-cancelar">Cancelar</a>
             </div>
         </form>
     </div>
@@ -136,7 +136,7 @@
         margin-top: 20px;
     }
 
-    .btn-submit, .btn-cancel {
+    .btn-submit, .btn-cancelar {
         padding: 10px 20px;
         border: none;
         border-radius: 4px;
@@ -151,7 +151,7 @@
         color: white;
     }
 
-    .btn-cancel {
+    .btn-cancelar {
         background-color: #f44336;
         color: white;
     }
@@ -160,7 +160,7 @@
         background-color: #45a049;
     }
 
-    .btn-cancel:hover {
+    .btn-cancelar:hover {
         background-color: #da190b;
     }
 
