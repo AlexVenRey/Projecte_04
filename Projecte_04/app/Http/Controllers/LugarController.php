@@ -12,9 +12,7 @@ class LugarController extends Controller
 {
     public function index()
     {
-        $lugares = Lugar::where('creado_por', Auth::id())
-                      ->with('etiquetas')
-                      ->get();
+        $lugares = Lugar::with('etiquetas')->get(); // Obtener todos los puntos
         return view('admin.puntos', compact('lugares'));
     }
 
@@ -116,5 +114,18 @@ class LugarController extends Controller
         $punto->delete();
 
         return redirect()->route('admin.puntos')->with('success', 'Punto de interés eliminado correctamente.');
+    }
+
+    public function copy($id)
+    {
+        $punto = Lugar::findOrFail($id);
+
+        $nuevoPunto = $punto->replicate(); // Clonar el punto
+        $nuevoPunto->nombre = $punto->nombre . ' (Copia)';
+        $nuevoPunto->save();
+
+        $nuevoPunto->etiquetas()->sync($punto->etiquetas->pluck('id'));
+
+        return redirect()->route('admin.puntos')->with('success', 'Punto de interés copiado correctamente.');
     }
 }
