@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Lugar;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ClienteGimcanaController;
+use App\Http\Controllers\ClienteGrupoController;
 
 // Ruta del cliente (index)
 Route::get('/cliente/index', [ClienteController::class, 'index'])->name('cliente.index');
@@ -62,6 +63,21 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/favoritos/{lugar}', [ClienteController::class, 'toggleFavorito']);
         Route::post('/lugares/cercanos', [ClienteController::class, 'buscarCercanos']);
         Route::post('/puntos', [ClienteController::class, 'storePunto']);
+
+        // Ruta para obtener los grupos y sus miembros
+        Route::get('/grupos/{gimcana_id}/miembros', [ClienteGrupoController::class, 'obtenerGrupos'])
+            ->name('cliente.grupos.miembros');
+        
+        Route::post('/crear-grupo', [ClienteGrupoController::class, 'crearGrupo'])
+            ->name('cliente.crear-grupo');
+        Route::post('/unirse-grupo', [ClienteGrupoController::class, 'unirseGrupo'])
+            ->name('cliente.unirse-grupo');
+        
+        // Mantener la ruta de gimcanas dentro del grupo de cliente
+        Route::get('/gimcanas', [ClienteGimcanaController::class, 'index'])->name('cliente.gimcanas');
+
+        Route::get('/mis-favoritos', [ClienteController::class, 'misFavoritos'])->name('cliente.mis-favoritos');
+        Route::post('/toggle-favorito', [ClienteController::class, 'toggleFavorito'])->name('cliente.toggle-favorito');
     });
 });
 
@@ -85,6 +101,3 @@ Route::put('admin/gimcana/{id}', [GimcanaController::class, 'update'])->name('ad
 
 // Ruta para almacenar puntos del cliente
 Route::post('/cliente/puntos', [ClienteController::class, 'storePunto'])->middleware('auth');
-
-// Ruta para gimcanas
-Route::get('/gimcanas', [ClienteGimcanaController::class, 'index'])->name('cliente.gimcanas');

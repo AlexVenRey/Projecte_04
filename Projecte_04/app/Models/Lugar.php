@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Etiqueta;
 use App\Models\User as Usuario;
+use Illuminate\Support\Facades\Auth;
 
 class Lugar extends Model
 {
@@ -35,17 +36,27 @@ class Lugar extends Model
     /**
      * Relación Many-to-One con el usuario que creó el lugar.
      */
-    public function usuario(): BelongsTo
+    public function creador(): BelongsTo
     {
         return $this->belongsTo(User::class, 'creado_por');
     }
 
     /**
-     * Relación Many-to-Many con los usuarios.
+     * Relación Many-to-Many con los usuarios que lo tienen como favorito.
      */
-    public function usuarios(): BelongsToMany
+    public function usuariosFavoritos(): BelongsToMany
     {
-        return $this->belongsToMany(Usuario::class, 'puntos_usuarios', 'lugar_id', 'usuario_id');
+        return $this->belongsToMany(User::class, 'favoritos', 'lugar_id', 'usuario_id')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relación Many-to-Many con los usuarios que han añadido el punto.
+     */
+    public function usuariosPuntos(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'puntos_usuarios', 'lugar_id', 'usuario_id')
+                    ->withTimestamps();
     }
 
     /**
@@ -60,5 +71,13 @@ class Lugar extends Model
         
         // Si no tiene etiquetas, devolver un icono por defecto
         return 'fa-map-marker-alt';
+    }
+
+    public function getEsFavoritoAttribute()
+    {
+        if (Auth::check()) {
+            return $this->usuariosFavoritos()->where('usuario_id', Auth::id())->exists();
+        }
+        return false;
     }
 }

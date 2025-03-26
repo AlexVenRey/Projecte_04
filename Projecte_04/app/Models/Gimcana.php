@@ -11,7 +11,7 @@ class Gimcana extends Model
 
     protected $table = 'gimcanas'; // Nombre de la tabla en la base de datos
 
-    protected $fillable = ['nombre', 'descripcion'];
+    protected $fillable = ['nombre', 'descripcion', 'creado_por'];
 
     /**
      * Relación Many-to-Many con los lugares.
@@ -24,5 +24,16 @@ class Gimcana extends Model
     public function usuarios()
     {
         return $this->belongsToMany(User::class, 'gimcana_usuario', 'gimcana_id', 'usuario_id');
+    }
+
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class, 'gimcana_grupo', 'gimcana_id', 'grupo_id')
+            ->withTimestamps();
+    }
+
+    public function creador()
+    {
+        return $this->belongsTo(User::class, 'creado_por');
     }
 }

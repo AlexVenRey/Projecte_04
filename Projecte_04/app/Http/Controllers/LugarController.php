@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Lugar;
 use App\Models\Etiqueta;
+use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class LugarController extends Controller
 {
@@ -92,5 +94,45 @@ class LugarController extends Controller
         $punto->delete();
 
         return redirect()->route('admin.puntos')->with('success', 'Punto de interés eliminado correctamente.');
+    }
+
+    public function misFavoritos()
+    {
+        try {
+            $usuario = Auth::user();
+            $lugares = $usuario->favoritos()
+                ->with('etiquetas')
+                ->get()
+                ->map(function ($lugar) {
+                    $lugar->es_favorito = true;
+                    return $lugar;
+                });
+
+            return response()->json($lugares);
+        } catch (\Exception $e) {
+            Log::error('Error al obtener favoritos: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al obtener favoritos'], 500);
+        }
+    }
+
+    public function toggleFavorito(Request $request)
+    {
+        try {
+            $lugar_id = $request->lugar_id;
+            $usuario = Auth::user();
+            
+            $esFavorito = $usuario->favoritos()->toggle($lugar_id);
+            
+            return response()->json([
+                'success' => true,
+                'esFavorito' => count($esFavorito['attached']) > 0
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al toggle favorito: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar favorito'
+            ], 500);
+        }
     }
 }
