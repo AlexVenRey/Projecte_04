@@ -22,6 +22,8 @@
                 </div>
                 <ul class="nav-links">
                     <li><a href="{{ url('admin/index') }}">Inicio</a></li>
+                    <li><a href="{{ url('admin/puntos') }}">Puntos de Interés</a></li>
+                    <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
                     <li><a href="{{ url('admin/usuarios') }}">Usuarios</a></li>
                 </ul>
             </nav>
@@ -34,11 +36,11 @@
             @method('PUT')
             <div>
                 <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" id="nombre" class="form-control" value="{{ $usuario->nombre }}" required>
+                <input type="text" name="nombre" id="nombre" class="form-control" value="{{ $usuario->nombre }}">
             </div>
             <div>
                 <label for="email">Email</label>
-                <input type="email" name="email" id="email" class="form-control" value="{{ $usuario->email }}" required>
+                <input type="email" name="email" id="email" class="form-control" value="{{ $usuario->email }}">
             </div>
             <div>
                 <label for="password">Contraseña (opcional)</label>
@@ -50,7 +52,7 @@
             </div>
             <div>
                 <label for="rol">Rol</label>
-                <select name="rol" id="rol" class="form-control" required>
+                <select name="rol" id="rol" class="form-control" >
                     <option value="usuario" {{ $usuario->rol == 'usuario' ? 'selected' : '' }}>Usuario</option>
                     <option value="admin" {{ $usuario->rol == 'admin' ? 'selected' : '' }}>Administrador</option>
                 </select>
@@ -59,5 +61,7 @@
             <a href="{{ route('admin.usuarios.index') }}" class="btn-submit-cancelar">Cancelar</a>
         </form>
     </div>    
+
+    <script src="{{ asset('js/editarusuario.js') }}"></script>
 </body>
 </html>

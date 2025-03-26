@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <title>CRUD Usuarios</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -21,7 +22,10 @@
                     <div class="bar"></div>
                 </div>
                 <ul class="nav-links">
-                    <li><a href="{{ url('admin/index') }}">Inicio</a></li>
+                    <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
+                    <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
+                    <li><a href="{{ url('admin/usuarios') }}">Usuarios</a></li>                        
+
                     <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
@@ -57,7 +61,7 @@
             </thead>
             <tbody>
                 @foreach($usuarios as $usuario)
-                    <tr>
+                    <tr id="usuario-row-{{ $usuario->id }}">
                         <td>{{ $usuario->nombre }}</td>
                         <td>{{ $usuario->email }}</td>
                         <td>{{ ucfirst($usuario->rol) }}</td>
@@ -69,10 +73,6 @@
                                 <button type="button" class="delete-btn" onclick="confirmDelete({{ $usuario->id }})">
                                     <img src="{{ asset('img/eliminar.png') }}" alt="Eliminar">
                                 </button>
-                                <form id="delete-form-{{ $usuario->id }}" action="{{ route('admin.usuarios.destroy', $usuario->id) }}" method="POST" style="display: none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
                             </div>
                         </td>
                     </tr>
@@ -94,11 +94,41 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById(`delete-form-${id}`).submit();
+                // Realizar la solicitud de eliminación
+                fetch(`{{ url('admin/usuarios') }}/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Eliminar la fila de la tabla
+                        document.getElementById(`usuario-row-${id}`).remove();
+                        Swal.fire(
+                            'Eliminado',
+                            'El usuario ha sido eliminado correctamente.',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Error',
+                            'No se pudo eliminar el usuario.',
+                            'error'
+                        );
+                    }
+                })
+                .catch(error => {
+                    Swal.fire(
+                        'Error',
+                        'Ocurrió un error al intentar eliminar el usuario.',
+                        'error'
+                    );
+                });
             }
         });
     }
     </script>
-    
 </body>
 </html>
