@@ -21,8 +21,19 @@
                     <div class="bar"></div>
                 </div>
                 <ul class="nav-links">
-                    <li><a href="{{ url('admin/index') }}">Inicio</a></li>
                     <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
+                    <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
+                    <li><a href="{{ url('admin/usuarios') }}">Usuarios</a></li>                        
+
+                    <li>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="logout-button">
+                                <img src="{{ asset('img/cerrarsesion.png') }}" alt="Cerrar sesión" class="logout-icon">
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </nav>
         </header>
