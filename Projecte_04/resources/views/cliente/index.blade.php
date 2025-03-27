@@ -38,13 +38,11 @@
                             <i class="fas fa-heart"></i> Mis favoritos
                         </a>
                     </li>
-                    @if(auth()->user()->rol === 'usuario')
                     <li class="nav-item">
-                        <a href="{{ route('cliente.marcadores.create') }}" class="nav-link">
-                            <i class="fas fa-plus-circle"></i> Crear marcador
+                        <a href="{{ route('cliente.gimcanas') }}" class="nav-link">
+                            <i class="fas fa-trophy"></i> Gimcanas
                         </a>
                     </li>
-                    @endif
                 </ul>
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex align-items-center">
