@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Gimcana; // Importamos el modelo Gimcana
+use App\Models\Lugar;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ClienteGimcanaController extends Controller
 {
@@ -22,5 +25,27 @@ class ClienteGimcanaController extends Controller
 
         // Pasar la gimcana a la vista
         return view('cliente.live', compact('gimcana'));
+    }
+
+    public function getLugares($gimcana_id)
+    {
+        try {
+            $gimcana = Gimcana::findOrFail($gimcana_id);
+            
+            $lugares = $gimcana->lugares()
+                ->select('lugares.id', 'lugares.nombre', 'lugares.descripcion', 'lugares.latitud', 'lugares.longitud')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'lugares' => $lugares
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al obtener lugares: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los lugares de la gimcana'
+            ], 500);
+        }
     }
 }

@@ -50,8 +50,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/gimcana/{gimcana}/editar', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
     Route::put('/admin/gimcana/{gimcana}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
     Route::delete('/admin/gimcana/{gimcana}', [GimcanaController::class, 'destroy'])->name('admin.gimcana.delete');
-    Route::get('admin/gimcana/{id}/edit', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
-    Route::put('admin/gimcana/{id}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
 
     // Todas las rutas del cliente agrupadas
     Route::prefix('cliente')->group(function () {
@@ -68,8 +66,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/gimcanas', [ClienteGimcanaController::class, 'index'])->name('cliente.gimcanas');
         Route::get('/gimcanas/{gimcana_id}/lugares', [ClienteGimcanaController::class, 'getLugares']);
         Route::get('/gimcanas/{gimcana_id}/live', [ClienteGimcanaController::class, 'live'])->name('cliente.gimcanas.live');
-        Route::get('/gimcanas/{gimcana_id}/verificar-listos', [ClienteGrupoController::class, 'verificarTodosListos']);
+        Route::get('/gimcanas/{gimcana_id}/verificar-todos-listos', [ClienteGrupoController::class, 'verificarTodosListos']);
         Route::post('/gimcanas/{gimcana_id}/iniciar', [ClienteGrupoController::class, 'iniciarGimcana']);
+        
+        // Rutas para la funcionalidad live
+        Route::post('/actualizar-posicion', [ClienteGrupoController::class, 'actualizarPosicion']);
+        Route::get('/gimcanas/{gimcana_id}/posiciones-usuarios', [ClienteGrupoController::class, 'obtenerPosicionesUsuarios']);
+        Route::post('/gimcanas/marcar-lugar', [ClienteGrupoController::class, 'marcarLugarCompletado']);
+        Route::get('/gimcanas/{gimcana_id}/progreso', [ClienteGrupoController::class, 'obtenerProgreso']);
+        Route::get('/gimcanas/{gimcana_id}/grupo-actual', [ClienteGrupoController::class, 'obtenerGrupoActual']);
 
         // Rutas para grupos
         Route::get('/grupos/{gimcana_id}/miembros', [ClienteGrupoController::class, 'obtenerGrupos'])->name('cliente.grupos.miembros');

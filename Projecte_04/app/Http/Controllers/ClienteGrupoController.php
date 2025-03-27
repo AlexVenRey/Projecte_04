@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class ClienteGrupoController extends Controller
 {
@@ -329,6 +330,84 @@ class ClienteGrupoController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al iniciar la gimcana: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function actualizarPosicion(Request $request)
+    {
+        try {
+            $request->validate([
+                'latitud' => 'required|numeric',
+                'longitud' => 'required|numeric',
+                'gimcana_id' => 'required|exists:gimcanas,id'
+            ]);
+
+            $usuario = Auth::user();
+            
+            // Actualizar la ubicación del usuario
+            DB::table('usuarios')
+                ->where('id', $usuario->id)
+                ->update([
+                    'ubicacion_actual' => DB::raw("POINT({$request->longitud}, {$request->latitud})"),
+                    'updated_at' => now()
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Posición actualizada correctamente'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar posición: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar la posición'
+            ], 500);
+        }
+    }
+
+    public function obtenerPosicionesUsuarios($gimcana_id)
+    {
+        try {
+            $gimcana = Gimcana::findOrFail($gimcana_id);
+            
+            // Obtener todos los usuarios de los grupos de la gimcana con sus ubicaciones
+            $usuarios = DB::table('usuarios')
+                ->join('usuarios_grupos', 'usuarios.id', '=', 'usuarios_grupos.usuario_id')
+                ->join('grupos', 'usuarios_grupos.grupo_id', '=', 'grupos.id')
+                ->join('gimcana_grupo', 'grupos.id', '=', 'gimcana_grupo.grupo_id')
+                ->where('gimcana_grupo.gimcana_id', $gimcana_id)
+                ->select([
+                    'usuarios.id',
+                    'usuarios.nombre',
+                    DB::raw('ST_X(ubicacion_actual) as longitud'),
+                    DB::raw('ST_Y(ubicacion_actual) as latitud'),
+                    'grupos.nombre as grupo_nombre',
+                    'grupos.id as grupo_id'
+                ])
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'usuarios' => $usuarios->map(function($usuario) {
+                    return [
+                        'id' => $usuario->id,
+                        'nombre' => $usuario->nombre,
+                        'latitud' => (float)$usuario->latitud,
+                        'longitud' => (float)$usuario->longitud,
+                        'grupo' => [
+                            'id' => $usuario->grupo_id,
+                            'nombre' => $usuario->grupo_nombre
+                        ],
+                        'color' => '#' . substr(md5($usuario->grupo_id), 0, 6) // Color único por grupo
+                    ];
+                })
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al obtener posiciones de usuarios: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener las posiciones de los usuarios'
             ], 500);
         }
     }

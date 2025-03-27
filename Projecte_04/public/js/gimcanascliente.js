@@ -188,7 +188,7 @@ function detenerActualizacionAutomatica(gimcanaId) {
 
 // Función para verificar si todos están listos
 function verificarTodosListos(gimcanaId) {
-    fetch(`/cliente/gimcanas/${gimcanaId}/verificar-listos`)
+    fetch(`/cliente/gimcanas/${gimcanaId}/verificar-todos-listos`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error en la respuesta del servidor');
@@ -196,7 +196,6 @@ function verificarTodosListos(gimcanaId) {
             return response.json();
         })
         .then(data => {
-            console.log('Respuesta del servidor:', data);
             if (data.success && data.todos_listos) {
                 // Detener todas las actualizaciones automáticas
                 Object.values(intervalosActualizacion).forEach(intervalo => {
@@ -224,9 +223,8 @@ function verificarTodosListos(gimcanaId) {
                     })
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Respuesta de iniciar:', data);
                         if (data.success) {
-                            window.location.replace(`/cliente/gimcanas/${gimcanaId}/live`);
+                            window.location.href = `/cliente/gimcanas/${gimcanaId}/live`;
                         }
                     });
                 });

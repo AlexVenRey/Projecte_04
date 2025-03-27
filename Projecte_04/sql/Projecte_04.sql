@@ -39,7 +39,7 @@ CREATE TABLE `etiquetas` (
 
 LOCK TABLES `etiquetas` WRITE;
 /*!40000 ALTER TABLE `etiquetas` DISABLE KEYS */;
-INSERT INTO `etiquetas` VALUES (1,'Cultura','fa-landmark','2025-03-26 18:14:57','2025-03-26 18:14:57'),(2,'Educación','fa-graduation-cap','2025-03-26 18:14:57','2025-03-26 18:14:57'),(3,'Parques','fa-tree','2025-03-26 18:14:57','2025-03-26 18:14:57'),(4,'Transporte','fa-train','2025-03-26 18:14:57','2025-03-26 18:14:57'),(5,'Compras','fa-shopping-cart','2025-03-26 18:14:57','2025-03-26 18:14:57'),(6,'Ocio','fa-ticket-alt','2025-03-26 18:14:57','2025-03-26 18:14:57'),(7,'Sanidad','fa-hospital','2025-03-26 18:14:57','2025-03-26 18:14:57'),(8,'Deportes','fa-futbol','2025-03-26 18:14:57','2025-03-26 18:14:57'),(9,'Restaurantes','fa-utensils','2025-03-26 18:14:57','2025-03-26 18:14:57');
+INSERT INTO `etiquetas` VALUES (1,'Cultura','fa-landmark','2025-03-27 15:59:29','2025-03-27 15:59:29'),(2,'Educación','fa-graduation-cap','2025-03-27 15:59:29','2025-03-27 15:59:29'),(3,'Parques','fa-tree','2025-03-27 15:59:29','2025-03-27 15:59:29'),(4,'Transporte','fa-train','2025-03-27 15:59:29','2025-03-27 15:59:29'),(5,'Compras','fa-shopping-cart','2025-03-27 15:59:29','2025-03-27 15:59:29'),(6,'Ocio','fa-ticket-alt','2025-03-27 15:59:29','2025-03-27 15:59:29'),(7,'Sanidad','fa-hospital','2025-03-27 15:59:29','2025-03-27 15:59:29'),(8,'Deportes','fa-futbol','2025-03-27 15:59:29','2025-03-27 15:59:29'),(9,'Restaurantes','fa-utensils','2025-03-27 15:59:29','2025-03-27 15:59:29');
 /*!40000 ALTER TABLE `etiquetas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -91,7 +91,7 @@ CREATE TABLE `gimcana_grupo` (
   KEY `gimcana_grupo_grupo_id_foreign` (`grupo_id`),
   CONSTRAINT `gimcana_grupo_gimcana_id_foreign` FOREIGN KEY (`gimcana_id`) REFERENCES `gimcanas` (`id`) ON DELETE CASCADE,
   CONSTRAINT `gimcana_grupo_grupo_id_foreign` FOREIGN KEY (`grupo_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +100,7 @@ CREATE TABLE `gimcana_grupo` (
 
 LOCK TABLES `gimcana_grupo` WRITE;
 /*!40000 ALTER TABLE `gimcana_grupo` DISABLE KEYS */;
-INSERT INTO `gimcana_grupo` VALUES (1,1,3,NULL,NULL);
+INSERT INTO `gimcana_grupo` VALUES (1,1,3,NULL,NULL),(2,1,4,NULL,NULL);
 /*!40000 ALTER TABLE `gimcana_grupo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -177,6 +177,7 @@ CREATE TABLE `gimcanas` (
   `nombre` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `descripcion` text COLLATE utf8mb3_unicode_ci NOT NULL,
   `creado_por` bigint unsigned NOT NULL,
+  `estado` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'pendiente',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -191,7 +192,7 @@ CREATE TABLE `gimcanas` (
 
 LOCK TABLES `gimcanas` WRITE;
 /*!40000 ALTER TABLE `gimcanas` DISABLE KEYS */;
-INSERT INTO `gimcanas` VALUES (1,'aimai','aimai',2,'2025-03-26 18:15:41','2025-03-26 18:15:41');
+INSERT INTO `gimcanas` VALUES (1,'qweQWE123','qweQWE123',7,'en_progreso','2025-03-27 16:00:20','2025-03-27 16:04:18');
 /*!40000 ALTER TABLE `gimcanas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -209,7 +210,7 @@ CREATE TABLE `grupos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,7 +219,7 @@ CREATE TABLE `grupos` (
 
 LOCK TABLES `grupos` WRITE;
 /*!40000 ALTER TABLE `grupos` DISABLE KEYS */;
-INSERT INTO `grupos` VALUES (1,'Grupo A','Este es el grupo A','2025-03-26 18:14:57','2025-03-26 18:14:57'),(2,'Grupo B','Este es el grupo B','2025-03-26 18:14:57','2025-03-26 18:14:57'),(3,'aimai','Grupo para la gimcana 1','2025-03-27 13:14:17','2025-03-27 13:14:17');
+INSERT INTO `grupos` VALUES (1,'Grupo A','Este es el grupo A','2025-03-27 15:59:29','2025-03-27 15:59:29'),(2,'Grupo B','Este es el grupo B','2025-03-27 15:59:29','2025-03-27 15:59:29'),(3,'qweQWE123','Grupo para la gimcana 1','2025-03-27 16:00:31','2025-03-27 16:00:31'),(4,'qweQWE1231212','Grupo para la gimcana 1','2025-03-27 16:04:12','2025-03-27 16:04:12');
 /*!40000 ALTER TABLE `grupos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -310,7 +311,7 @@ CREATE TABLE `lugares` (
 
 LOCK TABLES `lugares` WRITE;
 /*!40000 ALTER TABLE `lugares` DISABLE KEYS */;
-INSERT INTO `lugares` VALUES (1,'Hospital Universitari de Bellvitge',41.34420000,2.10190000,'Hospital universitario de referencia','#FF0000',1,'2025-03-26 18:14:57','2025-03-26 18:14:57'),(2,'Institut Joan XXIII',41.34790000,2.10450000,'Centro educativo de formación profesional','#0000FF',1,'2025-03-26 18:14:57','2025-03-26 18:14:57'),(3,'Parc de Bellvitge',41.34670000,2.10670000,'Parque público con áreas verdes y zonas de recreo','#00FF00',1,'2025-03-26 18:14:57','2025-03-26 18:14:57'),(4,'Estación de Metro Bellvitge',41.36110000,2.11270000,'Estación de la línea 1 del metro de Barcelona','#FFA500',1,'2025-03-26 18:14:57','2025-03-26 18:14:57'),(5,'Centro Comercial Gran Via 2',41.35890000,2.12890000,'Centro comercial con tiendas, restaurantes y cine','#800080',1,'2025-03-26 18:14:57','2025-03-26 18:14:57');
+INSERT INTO `lugares` VALUES (1,'Hospital Universitari de Bellvitge',41.34420000,2.10190000,'Hospital universitario de referencia','#FF0000',1,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(2,'Institut Joan XXIII',41.34790000,2.10450000,'Centro educativo de formación profesional','#0000FF',1,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(3,'Parc de Bellvitge',41.34670000,2.10670000,'Parque público con áreas verdes y zonas de recreo','#00FF00',1,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(4,'Estación de Metro Bellvitge',41.36110000,2.11270000,'Estación de la línea 1 del metro de Barcelona','#FFA500',1,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(5,'Centro Comercial Gran Via 2',41.35890000,2.12890000,'Centro comercial con tiendas, restaurantes y cine','#800080',1,'2025-03-27 15:59:29','2025-03-27 15:59:29');
 /*!40000 ALTER TABLE `lugares` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -542,7 +543,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('zmDjWkBp9de7h27XUDnbPE62yTH4pM67av0RUxMG',5,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36','YTo0OntzOjY6Il90b2tlbiI7czo0MDoialpUSE5yd0E0NUVRcTd4bjAxVEpGazJsQWVBNDBQeGZ3ZWFMYThLMCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9jbGllbnRlL2dydXBvcy8xL21pZW1icm9zIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NTt9',1743086071);
+INSERT INTO `sessions` VALUES ('8TECScOd41rSQuOpOAKA6s1kvWW5vmZfSh0tU8gs',5,'127.0.0.1','Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiMnFuamVDUE1tMUZab1F6NzlDTnp0OGd1MHlNOGVXc3ZkTVlLSU80TSI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo0NzoiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2NsaWVudGUvZ3J1cG9zLzEvbWllbWJyb3MiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo1MToiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2NsaWVudGUvZ2ltY2FuYXMvbnVsbC9sdWdhcmVzIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NTt9',1743095062),('L6aoLis2srULKJDv21KONbCVZAzshNLo53kbRaZS',7,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoibTFud2Nlc1o1M1B6QnAxZkFWSU1UaU1TOU9aV0ZGcXBkUkd6eG03WCI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNToiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2FkbWluL2dpbWNhbmEiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo1MToiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2NsaWVudGUvZ2ltY2FuYXMvbnVsbC9sdWdhcmVzIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Nzt9',1743095060);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -573,7 +574,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Alejandro González','alejandro@admin.com','$2y$12$S8PKd4Pf9L/nBrcPaI9SE.QNQPPCrMuRfoyt7zeLwfh1uxXVL0D/a','admin',NULL,'2025-03-26 18:14:56','2025-03-26 18:14:56'),(2,'Sergi Masip','sergi@admin.com','$2y$12$c3n1i0eqJYuJWA1Hl/Sqc.JU/Xl6g6pqbvABbeSsF5ruJwYtslhL6','admin',NULL,'2025-03-26 18:14:56','2025-03-26 18:14:56'),(3,'Adrián Vazquez','adrian@admin.com','$2y$12$JHLftcZy9PzCqnJnW1St2./bo5sFryBuSb0u2Yx1g6aReBv5exGeK','admin',NULL,'2025-03-26 18:14:56','2025-03-26 18:14:56'),(4,'Àlex Ventura','alex@admin.com','$2y$12$lG.7F7od/jSvz8QUUiBao.mNjWmIZCiMpKSLx3zb3xEONtOCoW/cu','admin',NULL,'2025-03-26 18:14:56','2025-03-26 18:14:56'),(5,'María García','maria@example.com','$2y$12$kiFmYVf2Cz3Ao6yBBpiQieZ07nK/QQW00BuqROgy7Rf83Cv34XsjS','usuario',NULL,'2025-03-26 18:14:57','2025-03-26 18:14:57'),(6,'Juan Rodríguez','juan@example.com','$2y$12$NUzhkvZQm6pqFfPp2PZusuSMJ4LaSsEaXy7DmamkNFouSR184FiM.','usuario',NULL,'2025-03-26 18:14:57','2025-03-26 18:14:57'),(7,'Laura Martínez','laura@example.com','$2y$12$qtdTaKNm0tMlrOw5fHSvEucI1hPRqbPHc9LntUqs3bQFiAZa046HG','usuario',NULL,'2025-03-26 18:14:57','2025-03-26 18:14:57'),(8,'Carlos López','carlos@example.com','$2y$12$w2mdIbJJ9igqMy3w4Sk/E.dysZzTSPoziCGOOXroiiNdojjFrk9Mi','usuario',NULL,'2025-03-26 18:14:57','2025-03-26 18:14:57');
+INSERT INTO `usuarios` VALUES (1,'Alejandro González','alejandro@admin.com','$2y$12$pgqfAl45Jl3l0Alzfb.x0OdsSOaXmIXmUa/gKqGLssqIlMAtPatIi','admin',NULL,'2025-03-27 15:59:28','2025-03-27 15:59:28'),(2,'Sergi Masip','sergi@admin.com','$2y$12$U7Ct3bXytVY/vs06Kda3Oe9reLIUPZer4DNPO.J1RksnD9L5PuG9G','admin',NULL,'2025-03-27 15:59:28','2025-03-27 15:59:28'),(3,'Adrián Vazquez','adrian@admin.com','$2y$12$d5dmc4NzTQsrLO7WmUrjMu18R0un.3QjnIm.V.1U2IjIWWvmIOUxa','admin',NULL,'2025-03-27 15:59:28','2025-03-27 15:59:28'),(4,'Àlex Ventura','alex@admin.com','$2y$12$5Kt12urRbC5pC.BVHbn8Xey.oBDA8UWQk8pOluUmpgksMzabADtwO','admin',NULL,'2025-03-27 15:59:28','2025-03-27 15:59:28'),(5,'María García','maria@example.com','$2y$12$PV.9.n1jeo9KBxlZc16UiO/Wn5b5F5pU2Q4T2aekpsMx17TfunbWe','usuario',NULL,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(6,'Juan Rodríguez','juan@example.com','$2y$12$2FE0GDMZZpHouzLNWcVWdOKR3uQKk7Ac44onhJc467wVndg9XrCHu','usuario',NULL,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(7,'Laura Martínez','laura@example.com','$2y$12$ArcASjRaANiH12xOoE12/eXjWgbt4cN08AJ2GNbBPLPB/MgeRQPhe','usuario',NULL,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(8,'Carlos López','carlos@example.com','$2y$12$PysVGB0BaUGrD8zt8Uj2RO8VktvkmqgNfNJFm8.VgROXws/1qNeRm','usuario',NULL,'2025-03-27 15:59:29','2025-03-27 15:59:29');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -596,7 +597,7 @@ CREATE TABLE `usuarios_grupos` (
   KEY `usuarios_grupos_grupo_id_foreign` (`grupo_id`),
   CONSTRAINT `usuarios_grupos_grupo_id_foreign` FOREIGN KEY (`grupo_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE,
   CONSTRAINT `usuarios_grupos_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -605,7 +606,7 @@ CREATE TABLE `usuarios_grupos` (
 
 LOCK TABLES `usuarios_grupos` WRITE;
 /*!40000 ALTER TABLE `usuarios_grupos` DISABLE KEYS */;
-INSERT INTO `usuarios_grupos` VALUES (1,5,3,0,NULL,NULL);
+INSERT INTO `usuarios_grupos` VALUES (1,5,3,1,'2025-03-27 16:00:31','2025-03-27 16:04:16'),(2,7,4,1,'2025-03-27 16:04:12','2025-03-27 16:04:18');
 /*!40000 ALTER TABLE `usuarios_grupos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -618,4 +619,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-27 15:47:15
+-- Dump completed on 2025-03-27 18:07:43
