@@ -62,5 +62,11 @@
     </div>    
 
     <script src="{{ asset('js/usuario.js') }}"></script>
+    <script>
+        function toggleMenu() {
+        const navLinks = document.querySelector('.nav-links');
+        navLinks.classList.toggle('active');
+    }
+</script>
 </body>
 </html>
