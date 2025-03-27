@@ -12,39 +12,35 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
     <style>
         .leaflet-routing-container {
-            max-height: 300px;
-            overflow-y: auto;
+            max-height: 300px; /* Ajusta la altura máxima para las indicaciones */
+            overflow-y: auto;  /* Permite el desplazamiento si es necesario */
         }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-map-marked-alt"></i> Guía Turística
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <a class="navbar-brand" href="#"><i class="fas fa-map-marked-alt"></i> Guía Turística</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" id="mostrarTodos" href="#">
-                            <i class="fas fa-map"></i> Todos los lugares
+                        <a href="#" class="nav-link active" id="mostrarTodos">
+                            <i class="fas fa-globe"></i> Todos los lugares
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="mostrarFavoritos" href="#">
+                        <a href="#" class="nav-link" id="mostrarFavoritos">
                             <i class="fas fa-heart"></i> Mis favoritos
                         </a>
                     </li>
-                    @if(auth()->user()->rol === 'usuario')
                     <li class="nav-item">
-                        <a href="{{ route('cliente.marcadores.create') }}" class="nav-link">
-                            <i class="fas fa-plus-circle"></i> Crear marcador
+                        <a href="{{ route('cliente.gimcanas') }}" class="nav-link">
+                            <i class="fas fa-trophy"></i> Gimcanas
                         </a>
                     </li>
-                    @endif
                 </ul>
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex align-items-center">
@@ -94,16 +90,15 @@
                     <h5 class="modal-title"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body"></div>
+                <div class="modal-body">
+                    <!-- Los detalles se cargarán dinámicamente -->
+                </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="btnFavorito">
+                    <button type="button" class="btn btn-outline-danger" id="btnFavorito">
                         <i class="fas fa-heart"></i> <span>Añadir a favoritos</span>
                     </button>
                     <button type="button" class="btn btn-primary" id="btnRuta">
                         <i class="fas fa-route"></i> Ver ruta
-                    </button>
-                    <button type="button" class="btn btn-danger d-none" id="btnEliminar">
-                        <i class="fas fa-trash"></i> Eliminar
                     </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i> Cerrar
