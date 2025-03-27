@@ -316,7 +316,7 @@ function createPopupContent(lugar) {
                 <i class="fas ${esFavorito ? 'fa-times' : 'fa-heart'}"></i> 
                 ${esFavorito ? 'Quitar de favoritos' : 'Añadir a favoritos'}
             </button>
-            <button type="button" class="btn btn-primary" id="btnRuta" onclick="mostrarRuta(${lugar.id})">
+            <button type="button" class="btn btn-primary" onclick="mostrarRuta(${lugar.id})">
                 <i class="fas fa-route"></i> Ver ruta
             </button>
         </div>
@@ -350,36 +350,70 @@ function mostrarDetalles(lugar) {
 }
 
 // Mostrar ruta hasta el lugar
-function mostrarRuta(lugar) {
-    if (!currentPosition) {
-        alert('Por favor, permite el acceso a tu ubicación para ver la ruta');
+function mostrarRuta(lugarId) {
+    // Buscar el lugar por su ID
+    const lugar = markers.find(marker => marker.options.lugarId === lugarId)?.options.lugarData;
+
+    if (!lugar) {
+        alert('No se encontró el lugar seleccionado.');
         return;
     }
 
+    if (!currentPosition) {
+        alert('Por favor, permite el acceso a tu ubicación para ver la ruta.');
+        return;
+    }
+
+    // Eliminar el control de ruta anterior si existe
     if (routingControl) {
         map.removeControl(routingControl);
     }
 
+    // Crear un nuevo control de ruta con las indicaciones
     routingControl = L.Routing.control({
         waypoints: [
-            L.latLng(currentPosition[0], currentPosition[1]),
-            L.latLng(lugar.latitud, lugar.longitud)
+            L.latLng(currentPosition[0], currentPosition[1]), // Ubicación actual
+            L.latLng(lugar.latitud, lugar.longitud)           // Ubicación del lugar
         ],
         routeWhileDragging: false,
-        showAlternatives: true,
+        showAlternatives: false,
         fitSelectedRoute: true,
         language: 'es',
         router: L.Routing.mapbox('pk.eyJ1IjoiZXZhcmlzdG82NyIsImEiOiJjbThuZm1xYjEwMDlxMnZzYWl4NG01dnU1In0.P3Jq6ts8g-gh3HjD611hcg', {
             profile: 'mapbox/walking'
         }),
-        styles: [
-            {
-                color: '#2196F3', // Azul material design
-                weight: 4,        // Línea más gruesa
-                opacity: 0.8,     // Algo de transparencia
-                lineJoin: 'round' // Uniones redondeadas
+        createMarker: function (i, waypoint, n) {
+            // Personalizar los marcadores de inicio y fin
+            if (i === 0) {
+                return L.marker(waypoint.latLng, {
+                    icon: L.divIcon({
+                        html: '<i class="fas fa-user-circle fa-2x" style="color: #2196F3;"></i>',
+                        className: 'user-location-marker',
+                        iconSize: [25, 25],
+                        iconAnchor: [12, 12]
+                    })
+                });
+            } else if (i === n - 1) {
+                return L.marker(waypoint.latLng, {
+                    icon: L.divIcon({
+                        html: '<i class="fas fa-map-marker-alt fa-2x" style="color: #FF0000;"></i>',
+                        className: 'destination-marker',
+                        iconSize: [25, 25],
+                        iconAnchor: [12, 12]
+                    })
+                });
             }
-        ]
+        },
+        lineOptions: {
+            styles: [
+                {
+                    color: '#2196F3', // Azul material design
+                    weight: 4,        // Línea más gruesa
+                    opacity: 0.8,     // Algo de transparencia
+                    lineJoin: 'round' // Uniones redondeadas
+                }
+            ]
+        }
     }).addTo(map);
 }
 
