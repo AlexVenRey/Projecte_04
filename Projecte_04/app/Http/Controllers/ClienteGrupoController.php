@@ -2,52 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Grupo;
 use App\Models\Gimcana;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ClienteGrupoController extends Controller
 {
+    public function obtenerGrupos($gimcana_id)
+    {
+        try {
+            $gimcana = Gimcana::findOrFail($gimcana_id);
+            
+            // Obtener los grupos con sus usuarios y el estado de "esta_listo"
+            $grupos = $gimcana->grupos()
+                ->with(['usuarios' => function($query) {
+                    $query->select('usuarios.*', 'usuarios_grupos.esta_listo')
+                        ->withPivot('esta_listo');
+                }])
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'grupos' => $grupos
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error al obtener grupos: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los grupos'
+            ], 500);
+        }
+    }
+
     public function crearGrupo(Request $request)
     {
         try {
-            // Validaciones detalladas
-            $validator = Validator::make($request->all(), [
-                'gimcana_id' => 'required|exists:gimcanas,id',
-                'nombre' => [
-                    'required',
-                    'string',
-                    'max:100',
-                    'min:3',
-                    'regex:/^[a-zA-Z0-9\s]+$/' // Solo letras, números y espacios
-                ]
-            ], [
-                'nombre.required' => 'El nombre del grupo es obligatorio',
-                'nombre.min' => 'El nombre debe tener al menos 3 caracteres',
-                'nombre.max' => 'El nombre no puede tener más de 100 caracteres',
-                'nombre.regex' => 'El nombre solo puede contener letras, números y espacios',
-                'gimcana_id.required' => 'ID de gimcana no proporcionado',
-                'gimcana_id.exists' => 'La gimcana seleccionada no existe'
+            $request->validate([
+                'nombre' => 'required|string|max:100',
+                'gimcana_id' => 'required|exists:gimcanas,id'
             ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Error de validación',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Verificar si el usuario ya está en un grupo en esta gimcana
-            $usuario = User::find(Auth::id());
-            $usuarioTieneGrupo = $usuario->grupos()
+            // Verificar si el usuario ya está en un grupo para esta gimcana
+            $usuarioTieneGrupo = Auth::user()
+                ->grupos()
                 ->whereHas('gimcanas', function($query) use ($request) {
                     $query->where('gimcanas.id', $request->gimcana_id);
-                })->exists();
+                })
+                ->exists();
 
             if ($usuarioTieneGrupo) {
                 return response()->json([
@@ -56,39 +61,44 @@ class ClienteGrupoController extends Controller
                 ], 422);
             }
 
-            // Verificar si ya existe un grupo con ese nombre en la gimcana
-            $grupoExistente = Gimcana::find($request->gimcana_id)
-                ->grupos()
-                ->where('nombre', $request->nombre)
+            // Verificar si ya existe un grupo con el mismo nombre en la gimcana
+            $grupoExistente = Grupo::where('nombre', $request->nombre)
+                ->whereHas('gimcanas', function($query) use ($request) {
+                    $query->where('gimcanas.id', $request->gimcana_id);
+                })
                 ->exists();
 
             if ($grupoExistente) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Ya existe un grupo con ese nombre. Por favor, elige otro nombre.'
+                    'message' => 'Ya existe un grupo con este nombre en la gimcana'
                 ], 422);
             }
 
             // Crear el grupo
-            $grupo = new Grupo();
-            $grupo->nombre = trim($request->nombre); // Eliminar espacios en blanco
-            $grupo->descripcion = "Grupo para la gimcana " . $request->gimcana_id;
-            $grupo->save();
+            $grupo = Grupo::create([
+                'nombre' => $request->nombre,
+                'descripcion' => 'Grupo para la gimcana ' . $request->gimcana_id
+            ]);
 
             // Asociar el grupo con la gimcana
             $grupo->gimcanas()->attach($request->gimcana_id);
 
-            // Añadir al usuario creador al grupo
-            $grupo->usuarios()->attach($usuario->id);
+            // Añadir el usuario al grupo
+            $grupo->usuarios()->attach(Auth::id(), [
+                'esta_listo' => false,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Grupo creado exitosamente',
+                'message' => 'Grupo creado correctamente',
                 'grupo' => $grupo
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error al crear grupo: ' . $e->getMessage());
+            \Log::error('Error al crear el grupo: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al crear el grupo: ' . $e->getMessage()
@@ -145,9 +155,9 @@ class ClienteGrupoController extends Controller
                 ], 422);
             }
 
-            // Verificar el número máximo de usuarios por grupo (opcional)
+            // Verificar el número máximo de usuarios por grupo
             $grupo = Grupo::find($request->grupo_id);
-            if ($grupo->usuarios()->count() >= 5) { // Por ejemplo, máximo 5 usuarios por grupo
+            if ($grupo->usuarios()->count() >= 5) {
                 return response()->json([
                     'success' => false,
                     'message' => 'El grupo ya ha alcanzado el número máximo de participantes'
@@ -170,33 +180,155 @@ class ClienteGrupoController extends Controller
         }
     }
 
-    public function obtenerGrupos($gimcana_id)
+    public function marcarListo(Request $request)
     {
         try {
-            $gimcana = Gimcana::findOrFail($gimcana_id);
-            
-            // Obtener grupos con sus usuarios
-            $grupos = $gimcana->grupos()
-                ->with(['usuarios' => function($query) {
-                    $query->select('usuarios.id', 'usuarios.nombre');
-                }])
-                ->get();
-
-            // Log para debug usando la fachada importada
-            Log::info('Grupos obtenidos:', [
-                'gimcana_id' => $gimcana_id, 
-                'grupos' => $grupos->toArray()
+            $validator = Validator::make($request->all(), [
+                'grupo_id' => 'required|exists:grupos,id',
+                'gimcana_id' => 'required|exists:gimcanas,id'
             ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Datos inválidos',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Verificar que el usuario pertenece al grupo
+            $grupo = Grupo::findOrFail($request->grupo_id);
+            $usuarioEnGrupo = $grupo->usuarios()
+                ->where('usuario_id', Auth::id())
+                ->first();
+
+            if (!$usuarioEnGrupo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No perteneces a este grupo'
+                ], 403);
+            }
+
+            // Actualizar el estado del usuario en el grupo
+            $actualizado = $grupo->usuarios()->updateExistingPivot(Auth::id(), [
+                'esta_listo' => true,
+                'updated_at' => now()
+            ]);
+
+            if (!$actualizado) {
+                throw new \Exception('No se pudo actualizar el estado');
+            }
+
+            // Verificar si la actualización fue exitosa
+            $estadoActualizado = $grupo->usuarios()
+                ->where('usuario_id', Auth::id())
+                ->first()
+                ->pivot
+                ->esta_listo;
+
+            if (!$estadoActualizado) {
+                throw new \Exception('La actualización no se reflejó en la base de datos');
+            }
 
             return response()->json([
                 'success' => true,
-                'grupos' => $grupos
+                'message' => '¡Has marcado que estás listo!',
+                'estado' => $estadoActualizado
             ]);
+
         } catch (\Exception $e) {
-            Log::error('Error al obtener grupos: ' . $e->getMessage());
+            Log::error('Error al marcar como listo: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener los grupos: ' . $e->getMessage()
+                'message' => 'Error al marcar como listo: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function verificarTodosListos($gimcana_id)
+    {
+        try {
+            $gimcana = Gimcana::with(['grupos.usuarios' => function($query) {
+                $query->select('usuarios.id', 'usuarios.nombre')
+                      ->withPivot('esta_listo');
+            }])->findOrFail($gimcana_id);
+
+            // Log para ver los grupos y usuarios
+            Log::info('Grupos y usuarios:', [
+                'grupos' => $gimcana->grupos->map(function($grupo) {
+                    return [
+                        'grupo_id' => $grupo->id,
+                        'usuarios' => $grupo->usuarios->map(function($usuario) {
+                            return [
+                                'usuario_id' => $usuario->id,
+                                'esta_listo' => $usuario->pivot->esta_listo
+                            ];
+                        })
+                    ];
+                })
+            ]);
+
+            $todosListos = $gimcana->grupos->every(function($grupo) {
+                return $grupo->usuarios->every(function($usuario) {
+                    return $usuario->pivot->esta_listo == true;
+                });
+            });
+
+            Log::info('Resultado de verificación:', ['todos_listos' => $todosListos]);
+
+            return response()->json([
+                'success' => true,
+                'todos_listos' => $todosListos,
+                'message' => $todosListos ? 'Todos los usuarios están listos' : 'Aún hay usuarios que no están listos'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al verificar usuarios listos: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el estado de los usuarios'
+            ], 500);
+        }
+    }
+
+    public function iniciarGimcana($gimcana_id)
+    {
+        try {
+            $gimcana = Gimcana::findOrFail($gimcana_id);
+            $grupo = $gimcana->grupos()->whereHas('usuarios', function($query) {
+                $query->where('usuario_id', Auth::id());
+            })->first();
+
+            if (!$grupo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No estás en ningún grupo de esta gimcana'
+                ]);
+            }
+
+            // Verificar que todos los usuarios estén listos
+            $todosListos = $grupo->usuarios()->where('esta_listo', false)->count() === 0;
+            
+            if (!$todosListos) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No todos los usuarios están listos'
+                ]);
+            }
+
+            // Actualizar el estado de la gimcana
+            $gimcana->estado = 'en_progreso';
+            $gimcana->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Gimcana iniciada correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error al iniciar la gimcana: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al iniciar la gimcana: ' . $e->getMessage()
             ], 500);
         }
     }

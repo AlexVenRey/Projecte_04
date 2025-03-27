@@ -93,6 +93,7 @@ class User extends Authenticatable
     public function grupos()
     {
         return $this->belongsToMany(Grupo::class, 'usuarios_grupos', 'usuario_id', 'grupo_id')
+            ->withPivot('esta_listo')
             ->withTimestamps();
     }
 }

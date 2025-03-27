@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Lugar;
 use App\Models\Favorito;
 use App\Models\Etiqueta;
+use App\Models\Gimcana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -168,5 +169,17 @@ class ClienteController extends Controller
             Log::error('Error creando punto: ' . $e->getMessage());
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
         }
+    }
+
+    public function gimcanas()
+    {
+        $gimcanas = Gimcana::with(['grupos.usuarios'])->get();
+        return view('cliente.gimcana', compact('gimcanas'));
+    }
+
+    public function live($gimcana_id)
+    {
+        $gimcana = Gimcana::with(['puntos'])->findOrFail($gimcana_id);
+        return view('cliente.live', compact('gimcana'));
     }
 }

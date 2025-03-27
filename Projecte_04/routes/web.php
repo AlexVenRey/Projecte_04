@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ClienteGimcanaController;
 use App\Http\Controllers\ClienteGrupoController;
 
-// Ruta del cliente (index)
-Route::get('/cliente/index', [ClienteController::class, 'index'])->name('cliente.index');
-
 // Ruta de inicio (login)
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -46,16 +43,19 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/admin/etiquetas/{etiqueta}', [EtiquetaController::class, 'update'])->name('admin.etiquetas.update');
     Route::delete('/admin/etiquetas/{etiqueta}', [EtiquetaController::class, 'destroy'])->name('admin.etiquetas.destroy');
 
-    // Rutas para gimcanas
+    // Rutas para gimcanas del admin
     Route::get('/admin/gimcana', [GimcanaController::class, 'index'])->name('admin.gimcana');
     Route::get('/admin/creargimcana', [GimcanaController::class, 'create'])->name('admin.creargimcana');
     Route::post('/admin/creargimcana', [GimcanaController::class, 'store'])->name('admin.creargimcana.store');
     Route::get('/admin/gimcana/{gimcana}/editar', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
     Route::put('/admin/gimcana/{gimcana}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
     Route::delete('/admin/gimcana/{gimcana}', [GimcanaController::class, 'destroy'])->name('admin.gimcana.delete');
+    Route::get('admin/gimcana/{id}/edit', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
+    Route::put('admin/gimcana/{id}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
 
-    // Rutas del cliente
-    Route::middleware(['auth'])->prefix('cliente')->group(function () {
+    // Todas las rutas del cliente agrupadas
+    Route::prefix('cliente')->group(function () {
+        // Rutas básicas del cliente
         Route::get('/index', [ClienteController::class, 'index'])->name('cliente.index');
         Route::get('/lugares', [ClienteController::class, 'getLugares']);
         Route::get('/etiquetas', [ClienteController::class, 'getEtiquetas']);
@@ -64,18 +64,20 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/lugares/cercanos', [ClienteController::class, 'buscarCercanos']);
         Route::post('/puntos', [ClienteController::class, 'storePunto']);
 
-        // Ruta para obtener los grupos y sus miembros
-        Route::get('/grupos/{gimcana_id}/miembros', [ClienteGrupoController::class, 'obtenerGrupos'])
-            ->name('cliente.grupos.miembros');
-        
-        Route::post('/crear-grupo', [ClienteGrupoController::class, 'crearGrupo'])
-            ->name('cliente.crear-grupo');
-        Route::post('/unirse-grupo', [ClienteGrupoController::class, 'unirseGrupo'])
-            ->name('cliente.unirse-grupo');
-        
-        // Mantener la ruta de gimcanas dentro del grupo de cliente
+        // Rutas para gimcanas del cliente
         Route::get('/gimcanas', [ClienteGimcanaController::class, 'index'])->name('cliente.gimcanas');
+        Route::get('/gimcanas/{gimcana_id}/lugares', [ClienteGimcanaController::class, 'getLugares']);
+        Route::get('/gimcanas/{gimcana_id}/live', [ClienteGimcanaController::class, 'live'])->name('cliente.gimcanas.live');
+        Route::get('/gimcanas/{gimcana_id}/verificar-listos', [ClienteGrupoController::class, 'verificarTodosListos']);
+        Route::post('/gimcanas/{gimcana_id}/iniciar', [ClienteGrupoController::class, 'iniciarGimcana']);
 
+        // Rutas para grupos
+        Route::get('/grupos/{gimcana_id}/miembros', [ClienteGrupoController::class, 'obtenerGrupos'])->name('cliente.grupos.miembros');
+        Route::post('/grupos/crear-grupo', [ClienteGrupoController::class, 'crearGrupo'])->name('cliente.crear-grupo');
+        Route::post('/grupos/unirse-grupo', [ClienteGrupoController::class, 'unirseGrupo'])->name('cliente.unirse-grupo');
+        Route::post('/grupos/marcar-listo', [ClienteGrupoController::class, 'marcarListo'])->name('cliente.marcar-listo');
+
+        // Rutas para favoritos
         Route::get('/mis-favoritos', [ClienteController::class, 'misFavoritos'])->name('cliente.mis-favoritos');
         Route::post('/toggle-favorito', [ClienteController::class, 'toggleFavorito'])->name('cliente.toggle-favorito');
     });
@@ -94,10 +96,3 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/')->with('success', 'Sesión cerrada correctamente.');
 })->name('logout');
-
-// Ruta para editar gimcana
-Route::get('admin/gimcana/{id}/edit', [GimcanaController::class, 'edit'])->name('admin.gimcana.edit');
-Route::put('admin/gimcana/{id}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
-
-// Ruta para almacenar puntos del cliente
-Route::post('/cliente/puntos', [ClienteController::class, 'storePunto'])->middleware('auth');
