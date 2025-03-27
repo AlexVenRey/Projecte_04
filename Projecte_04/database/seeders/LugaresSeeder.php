@@ -95,8 +95,8 @@ class LugaresSeeder extends Seeder
             [
                 'nombre' => 'Sala Salamandra',
                 'descripcion' => 'Sala de conciertos y discoteca historica.',
-                'latitud' => 41.359436,
-                'longitud' => 2.1048567,
+                'latitud' => 41.360026,
+                'longitud' => 2.109545,
                 'color_marcador' => '#FF4500',
                 'creado_por' => 1,
                 'created_at' => now(),
@@ -161,6 +161,36 @@ class LugaresSeeder extends Seeder
                 'creado_por' => 1,
                 'created_at' => now(),
                 'updated_at' => now()
+            ],
+            [
+                'nombre' => 'Estadi Municipal de Futbol de L\'Hospitalet',
+                'descripcion' => 'Estadio municipal para partidos de fútbol y eventos deportivos.',
+                'latitud' => 41.347376,
+                'longitud' => 2.102355,
+                'color_marcador' => '#FF4500',
+                'creado_por' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'nombre' => 'Gaiper Extreme Padel',
+                'descripcion' => 'Centro deportivo especializado en pádel.',
+                'latitud' => 41.351882,
+                'longitud' => 2.102700,
+                'color_marcador' => '#8A2BE2',
+                'creado_por' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'nombre' => 'Mercadona',
+                'descripcion' => 'Supermercado con productos frescos y de calidad.',
+                'latitud' => 41.3469278,
+                'longitud' => 2.1078082,
+                'color_marcador' => '#32CD32',
+                'creado_por' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ]
         ];
 
@@ -194,7 +224,10 @@ class LugaresSeeder extends Seeder
             ['lugar_id' => 12, 'etiqueta_id' => $deportes], // Pàdel Top Club
             ['lugar_id' => 13, 'etiqueta_id' => $restaurantes], // Frankfurt del Centre
             ['lugar_id' => 14, 'etiqueta_id' => $educacion], // Escola Canigó
-            ['lugar_id' => 15, 'etiqueta_id' => $ocio] // Capitolio
+            ['lugar_id' => 15, 'etiqueta_id' => $ocio], // Capitolio
+            ['lugar_id' => 16, 'etiqueta_id' => $deportes], // Estadi Municipal de Futbol de L'Hospitalet
+            ['lugar_id' => 17, 'etiqueta_id' => $deportes], // Gaiper Extreme Padel
+            ['lugar_id' => 18, 'etiqueta_id' => $compras]  // Mercadona
         ];
 
         DB::table('lugar_etiqueta')->insert($lugar_etiqueta);
