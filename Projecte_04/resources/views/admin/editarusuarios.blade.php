@@ -22,9 +22,9 @@
                 </div>
                 <ul class="nav-links">
                     <li><a href="{{ url('admin/index') }}">Inicio</a></li>
-                    <li><a href="{{ url('admin/puntos') }}">Puntos de Interés</a></li>
+                    <li><a href="{{ url('admin/puntos') }}">Puntos de interés</a></li>
                     <li><a href="{{ url('admin/gimcana') }}">Gimcana</a></li>
-                    <li><a href="{{ url('admin/usuarios') }}">Usuarios</a></li>
+                    <li><a href="{{ url('admin/usuarios') }}">Usuarios</a></li>                        
                 </ul>
             </nav>
         </header>
@@ -63,5 +63,11 @@
     </div>    
 
     <script src="{{ asset('js/editarusuario.js') }}"></script>
+    <script>
+            function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+    </script>
 </body>
 </html>
