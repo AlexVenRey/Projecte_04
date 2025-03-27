@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Lugar;
 use App\Models\Favorito;
 use App\Models\Etiqueta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ClienteController extends Controller
 {
@@ -57,32 +59,62 @@ class ClienteController extends Controller
     public function getFavoritos()
     {
         $usuario = Auth::user();
-        $favoritos = Lugar::whereHas('favoritos', function($query) use ($usuario) {
+        $favoritos = Lugar::whereHas('usuarios', function ($query) use ($usuario) {
             $query->where('usuario_id', $usuario->id);
         })->with(['etiquetas', 'creador'])->get();
         
         return response()->json($favoritos);
     }
 
-    public function toggleFavorito(Lugar $lugar)
+    public function misFavoritos()
     {
-        $usuario = Auth::user();
-        $favorito = Favorito::where('usuario_id', $usuario->id)
-                           ->where('lugar_id', $lugar->id)
-                           ->first();
+        try {
+            $usuario = Auth::user();
+            
+            if (!$usuario) {
+                return response()->json(['error' => 'Usuario no autenticado'], 401);
+            }
 
-        if ($favorito) {
-            $favorito->delete();
-            $esFavorito = false;
-        } else {
-            Favorito::create([
-                'usuario_id' => $usuario->id,
-                'lugar_id' => $lugar->id
-            ]);
-            $esFavorito = true;
+            $favoritos = $usuario->favoritos()
+                ->with('etiquetas')
+                ->get();
+
+            return response()->json($favoritos);
+        } catch (\Exception $e) {
+            Log::error('Error en misFavoritos: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
 
-        return response()->json(['esFavorito' => $esFavorito]);
+    public function toggleFavorito(Request $request)
+    {
+        try {
+            $lugar_id = $request->lugar_id;
+            $usuario = Auth::user();
+            
+            // Verificar si ya es favorito
+            $esFavorito = $usuario->favoritos()->where('lugar_id', $lugar_id)->exists();
+            
+            if ($esFavorito) {
+                $usuario->favoritos()->detach($lugar_id);
+                $esFavorito = false;
+            } else {
+                $usuario->favoritos()->attach($lugar_id);
+                $esFavorito = true;
+            }
+            
+            return response()->json([
+                'success' => true,
+                'esFavorito' => $esFavorito,
+                'message' => $esFavorito ? 'Añadido a favoritos' : 'Eliminado de favoritos'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error toggle favorito: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar favorito'
+            ], 500);
+        }
     }
 
     public function buscarCercanos(Request $request)
@@ -121,10 +153,45 @@ class ClienteController extends Controller
         $r = 6371000;
         $p = pi() / 180;
 
-        $a = 0.5 - cos(($lat2 - $lat1) * $p) / 2 + 
-             cos($lat1 * $p) * cos($lat2 * $p) * 
-             (1 - cos(($lon2 - $lon1) * $p)) / 2;
+        $a = 0.5 - cos(($lat2 - $lat1) * $p) / 2 +
+            cos($lat1 * $p) * cos($lat2 * $p) *
+            (1 - cos(($lon2 - $lon1) * $p)) / 2;
 
         return 2 * $r * asin(sqrt($a));
+    }
+
+    public function storePunto(Request $request)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'latitud' => 'required|numeric',
+            'longitud' => 'required|numeric',
+            'etiquetas' => 'required|array',
+            'color_marcador' => 'required|string',
+        ]);
+
+        try {
+            $usuario = Auth::user();
+            
+            // Crear el punto en la tabla lugares
+            $lugar = Lugar::create([
+                'nombre' => $request->nombre,
+                'latitud' => $request->latitud,
+                'longitud' => $request->longitud,
+                'color_marcador' => $request->color_marcador,
+                'creado_por' => $usuario->id
+            ]);
+
+            // Asociar etiquetas al punto
+            $lugar->etiquetas()->attach($request->etiquetas);
+
+            // Asociar el punto al usuario
+            $usuario->puntos()->attach($lugar->id);
+
+            return response()->json(['success' => true, 'lugar' => $lugar]);
+        } catch (\Exception $e) {
+            Log::error('Error creando punto: ' . $e->getMessage());
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 }

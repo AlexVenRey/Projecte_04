@@ -19,16 +19,28 @@
             <h2>Regístrate</h2>
             <form action="{{ route('register.store') }}" method="POST">
                 @csrf
-                <input type="text" name="nombre" placeholder="Nombre completo" required>
-                <input type="email" name="email" placeholder="Correo electrónico" required>
-                <input type="password" name="password" placeholder="Contraseña" required>
-                <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required>
+                <input type="text" name="nombre" placeholder="Nombre completo" value="{{ old('nombre') }}">
+                @if ($errors->has('nombre'))
+                    <span class="error-message">{{ $errors->first('nombre') }}</span>
+                @endif
+
+                <input type="email" name="email" placeholder="Correo electrónico" value="{{ old('email') }}">
+                @if ($errors->has('email'))
+                    <span class="error-message">{{ $errors->first('email') }}</span>
+                @endif
+
+                <input type="password" name="password" placeholder="Contraseña">
+                @if ($errors->has('password'))
+                    <span class="error-message">{{ $errors->first('password') }}</span>
+                @endif
+
+                <input type="password" name="password_confirmation" placeholder="Confirmar contraseña">
+                @if ($errors->has('password_confirmation'))
+                    <span class="error-message">{{ $errors->first('password_confirmation') }}</span>
+                @endif
+
                 <button type="submit">Registrarse</button>
             </form>
-
-            @if ($errors->any())
-                <p class="error-message">{{ $errors->first() }}</p>
-            @endif
 
             <!-- Enlace para volver al login -->
             <p class="register-text">¿Ya tienes cuenta? <a href="{{ url('/') }}">Inicia sesión</a></p>

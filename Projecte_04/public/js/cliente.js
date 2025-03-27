@@ -9,7 +9,7 @@ let activeFilters = {
     favoritos: false,
     cercanos: false
 };
-let favoritos = new Set(JSON.parse(localStorage.getItem('favoritos') || '[]'));
+let favoritos = new Set(); // La inicializamos vacía
 
 // Inicializar el mapa cuando se carga la página
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,17 +21,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Inicializar el mapa
 function initMap() {
-    map = L.map('mapa').setView([41.3479, 2.1045], 14);
+    map = L.map('mapa').setView([41.3879, 2.16992], 13); // Coordenadas iniciales
+
+    // Cargar el mapa base
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        maxZoom: 19,
     }).addTo(map);
+
+    // Evento para capturar clics en el mapa
+    map.on('click', function (e) {
+        const { lat, lng } = e.latlng;
+
+        // Mostrar el modal y rellenar los campos de latitud y longitud
+        document.getElementById('pointLat').value = lat.toFixed(6);
+        document.getElementById('pointLng').value = lng.toFixed(6);
+        const addPointModal = new bootstrap.Modal(document.getElementById('addPointModal'));
+        addPointModal.show();
+    });
 
     // Obtener la ubicación del usuario
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             position => {
                 currentPosition = [position.coords.latitude, position.coords.longitude];
-                
+
                 // Añadir marcador de ubicación actual
                 const userMarker = L.marker(currentPosition, {
                     icon: L.divIcon({
@@ -47,7 +60,7 @@ function initMap() {
                 map.setView(currentPosition, 15);
             },
             error => {
-                console.error('Error getting location:', error);
+                console.error('Error obteniendo la ubicación:', error);
                 alert('No se pudo obtener tu ubicación. Algunas funciones pueden no estar disponibles.');
             }
         );
@@ -294,6 +307,8 @@ function createPopupContent(lugar) {
             `;
         });
     }
+
+    const esFavorito = lugar.es_favorito; // Este dato vendrá del servidor
 
     return `
         <div class="popup-content">

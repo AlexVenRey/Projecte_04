@@ -45,6 +45,11 @@
                         </a>
                     </li>
                     @endif
+                    <li class="nav-item">
+                        <a href="{{ route('cliente.gimcanas') }}" class="nav-link">
+                            <i class="fas fa-trophy"></i> Gimcanas
+                        </a>
+                    </li>
                 </ul>
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex align-items-center">
@@ -108,6 +113,47 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i> Cerrar
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para añadir un punto -->
+    <div class="modal fade" id="addPointModal" tabindex="-1" aria-labelledby="addPointModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPointModalLabel">Añadir Punto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPointForm">
+                        <div class="mb-3">
+                            <label for="pointName" class="form-label">Nombre del Punto</label>
+                            <input type="text" class="form-control" id="pointName" placeholder="Introduce un nombre">
+                        </div>
+                        <div class="mb-3">
+                            <label for="pointLat" class="form-label">Latitud</label>
+                            <input type="text" class="form-control" id="pointLat" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pointLng" class="form-label">Longitud</label>
+                            <input type="text" class="form-control" id="pointLng" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pointTags" class="form-label">Etiquetas</label>
+                            <select multiple class="form-select" id="pointTags">
+                                @foreach($etiquetas as $etiqueta)
+                                    <option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pointColor" class="form-label">Color del Punto</label>
+                            <input type="color" class="form-control form-control-color" id="pointColor" value="#FF0000">
+                        </div>
+                        <button type="button" class="btn btn-primary" id="savePoint">Guardar Punto</button>
+                    </form>
                 </div>
             </div>
         </div>

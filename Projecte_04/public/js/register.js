@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     form.addEventListener('submit', function (event) {
         // Obtener los valores de los campos
-        const name = document.querySelector('input[name="name"]');
+        const nombre = document.querySelector('input[name="nombre"]');
         const email = document.querySelector('input[name="email"]');
         const password = document.querySelector('input[name="password"]');
         const passwordConfirmation = document.querySelector('input[name="password_confirmation"]');
@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', function () {
         let isValid = true;
 
         // Validar el campo de nombre
-        if (name.value.trim() === '') {
-            showError(name, 'El nombre completo es obligatorio');
+        if (nombre.value.trim() === '') {
+            showError(nombre, 'El nombre completo es obligatorio');
             isValid = false;
         }
 

@@ -28,7 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Validar selección de "Lugares"
         if (lugares.length === 0) {
-            const lugaresContainer = document.querySelector('label[for="lugares"]').parentElement;
+            // Obtenemos el contenedor donde se encuentran los lugares
+            const lugaresContainer = document.querySelector('.etiquetas-grid');
             mostrarError(lugaresContainer, "Debes seleccionar al menos un punto de interés.");
             isValid = false;
         }
@@ -46,8 +47,13 @@ document.addEventListener("DOMContentLoaded", function () {
         error.style.color = "red";
         error.style.fontSize = "14px";
         error.style.marginTop = "5px";
+        error.style.marginBottom = "10px"; // Un pequeño margen después del mensaje de error
         error.textContent = mensaje;
-        elemento.style.borderColor = "red";
-        elemento.parentElement.appendChild(error);
+        elemento.style.borderColor = "red"; // Cambiar borde si es necesario
+
+        // Agregar el mensaje de error al contenedor del elemento
+        if (elemento && elemento.parentElement) {
+            elemento.parentElement.appendChild(error);
+        }
     }
 });
