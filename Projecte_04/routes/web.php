@@ -12,6 +12,8 @@ use App\Http\Controllers\UserMakerController;
 use Illuminate\Http\Request;
 use App\Models\Lugar;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ClienteGimcanaController;
+use App\Http\Controllers\ClienteGrupoController;
 
 // Rutas públicas
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
@@ -77,6 +79,21 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/marcadores/{lugar}', [UserMakerController::class, 'destroy'])->name('cliente.marcadores.destroy');
 
         Route::post('/puntos', [ClienteController::class, 'storePunto']);
+
+        // Ruta para obtener los grupos y sus miembros
+        Route::get('/grupos/{gimcana_id}/miembros', [ClienteGrupoController::class, 'obtenerGrupos'])
+            ->name('cliente.grupos.miembros');
+        
+        Route::post('/crear-grupo', [ClienteGrupoController::class, 'crearGrupo'])
+            ->name('cliente.crear-grupo');
+        Route::post('/unirse-grupo', [ClienteGrupoController::class, 'unirseGrupo'])
+            ->name('cliente.unirse-grupo');
+        
+        // Mantener la ruta de gimcanas dentro del grupo de cliente
+        Route::get('/gimcanas', [ClienteGimcanaController::class, 'index'])->name('cliente.gimcanas');
+
+        Route::get('/mis-favoritos', [ClienteController::class, 'misFavoritos'])->name('cliente.mis-favoritos');
+        Route::post('/toggle-favorito', [ClienteController::class, 'toggleFavorito'])->name('cliente.toggle-favorito');
     });
 });
 
