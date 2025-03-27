@@ -42,10 +42,10 @@ class ClienteController extends Controller
     public function getFavoritos()
     {
         $usuario = Auth::user();
-        $favoritos = Lugar::whereHas('favoritos', function($query) use ($usuario) {
+        $favoritos = Lugar::whereHas('usuarios', function ($query) use ($usuario) {
             $query->where('usuario_id', $usuario->id);
-        })->with(['etiquetas', 'creador'])->get();
-        
+        })->with('etiquetas')->get();
+
         return response()->json($favoritos);
     }
 
@@ -100,45 +100,37 @@ class ClienteController extends Controller
         }
     }
 
-    public function buscarCercanos(Request $request)
+    public function getLugaresCercanos(Request $request)
     {
         $lat = $request->input('lat');
         $lng = $request->input('lng');
-        $distancia = $request->input('distancia', 1000);
-        $user = Auth::user();
+        $distancia = $request->input('distancia', 1000); // metros
 
-        $grados = $distancia / 111000;
+        // Convertir distancia a grados (aproximadamente)
+        $grados = $distancia / 111000; // 1 grado ≈ 111 km
 
-        $lugares = Lugar::with(['etiquetas', 'creador'])
-            ->when($user->rol === 'usuario', function($query) use ($user) {
-                return $query->where('creado_por', $user->id)
-                    ->orWhereHas('creador', function($q) {
-                        $q->where('rol', 'admin');
-                    });
-            })
+        $lugares = Lugar::with('etiquetas')
             ->whereBetween('latitud', [$lat - $grados, $lat + $grados])
             ->whereBetween('longitud', [$lng - $grados, $lng + $grados])
-            ->get()
-            ->filter(function($lugar) use ($lat, $lng, $distancia) {
-                $distanciaReal = $this->calcularDistancia($lat, $lng, $lugar->latitud, $lugar->longitud);
-                return $distanciaReal <= $distancia;
-            })
-            ->map(function($lugar) use ($user) {
-                $lugar->es_propietario = $lugar->creado_por === $user->id;
-                return $lugar;
-            });
+            ->get();
 
-        return response()->json($lugares->values());
+        // Filtrar por distancia exacta usando la fórmula de Haversine
+        $lugaresFiltrados = $lugares->filter(function ($lugar) use ($lat, $lng, $distancia) {
+            $distanciaReal = $this->calcularDistancia($lat, $lng, $lugar->latitud, $lugar->longitud);
+            return $distanciaReal <= $distancia;
+        });
+
+        return response()->json($lugaresFiltrados->values());
     }
 
     private function calcularDistancia($lat1, $lon1, $lat2, $lon2)
     {
-        $r = 6371000;
+        $r = 6371000; // Radio de la Tierra en metros
         $p = pi() / 180;
 
-        $a = 0.5 - cos(($lat2 - $lat1) * $p) / 2 + 
-             cos($lat1 * $p) * cos($lat2 * $p) * 
-             (1 - cos(($lon2 - $lon1) * $p)) / 2;
+        $a = 0.5 - cos(($lat2 - $lat1) * $p) / 2 +
+            cos($lat1 * $p) * cos($lat2 * $p) *
+            (1 - cos(($lon2 - $lon1) * $p)) / 2;
 
         return 2 * $r * asin(sqrt($a));
     }

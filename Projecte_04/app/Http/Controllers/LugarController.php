@@ -14,15 +14,13 @@ class LugarController extends Controller
 {
     public function index()
     {
-        $lugares = Lugar::with('etiquetas')->get(); // Obtener todos los puntos
+        $lugares = Lugar::with('etiquetas')->get();
         return view('admin.puntos', compact('lugares'));
     }
 
     public function showMap()
     {
-        $lugares = Lugar::where('creado_por', Auth::id())
-                      ->with('etiquetas')
-                      ->get();
+        $lugares = Lugar::with('etiquetas')->get();
         return view('admin.index', compact('lugares'));
     }
 
@@ -33,21 +31,15 @@ class LugarController extends Controller
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
             'descripcion' => 'required|string',
-            'icono' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'color_marcador' => 'required|string',
             'etiquetas' => 'required|array',
         ]);
-
-        $icono = $request->file('icono');
-        $iconoName = time() . '_' . $icono->getClientOriginalName();
-        $icono->move(public_path('img/lugares'), $iconoName);
 
         $lugar = Lugar::create([
             'nombre' => $request->nombre,
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
             'descripcion' => $request->descripcion,
-            'icono' => 'lugares/' . $iconoName,
             'color_marcador' => $request->color_marcador,
             'creado_por' => Auth::id(),
         ]);
@@ -59,9 +51,7 @@ class LugarController extends Controller
 
     public function edit($id)
     {
-        $punto = Lugar::where('creado_por', Auth::id())
-                     ->with('etiquetas')
-                     ->findOrFail($id);
+        $punto = Lugar::with('etiquetas')->findOrFail($id);
         $etiquetas = Etiqueta::all();
         return view('admin.editarpunto', compact('punto', 'etiquetas'));
     }
@@ -73,30 +63,18 @@ class LugarController extends Controller
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
             'descripcion' => 'required|string',
-            'icono' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'color_marcador' => 'required|string',
             'etiquetas' => 'required|array',
         ]);
 
-        $punto = Lugar::where('creado_por', Auth::id())
-                     ->findOrFail($id);
-
-        if ($request->hasFile('icono')) {
-            if ($punto->icono && File::exists(public_path('img/' . $punto->icono))) {
-                File::delete(public_path('img/' . $punto->icono));
-            }
-
-            $icono = $request->file('icono');
-            $iconoName = time() . '_' . $icono->getClientOriginalName();
-            $icono->move(public_path('img/lugares'), $iconoName);
-            $punto->icono = 'lugares/' . $iconoName;
-        }
+        $punto = Lugar::findOrFail($id);
 
         $punto->nombre = $request->nombre;
         $punto->latitud = $request->latitud;
         $punto->longitud = $request->longitud;
         $punto->descripcion = $request->descripcion;
         $punto->color_marcador = $request->color_marcador;
+
         $punto->save();
         $punto->etiquetas()->sync($request->etiquetas);
 
@@ -105,9 +83,9 @@ class LugarController extends Controller
 
     public function destroy($id)
     {
-        $punto = Lugar::where('creado_por', Auth::id())
-                     ->findOrFail($id);
+        $punto = Lugar::findOrFail($id);
 
+        // Eliminar el icono si existe
         if ($punto->icono && File::exists(public_path('img/' . $punto->icono))) {
             File::delete(public_path('img/' . $punto->icono));
         }
