@@ -82,32 +82,6 @@
         </div>
     </div>
 
-    <!-- Modal de detalles -->
-    <div class="modal fade" id="detallesModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Los detalles se cargarán dinámicamente -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" id="btnFavorito">
-                        <i class="fas fa-heart"></i> <span>Añadir a favoritos</span>
-                    </button>
-                    <button type="button" class="btn btn-primary" id="btnRuta">
-                        <i class="fas fa-route"></i> Ver ruta
-                    </button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times"></i> Cerrar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal para añadir un punto -->
     <div class="modal fade" id="addPointModal" tabindex="-1" aria-labelledby="addPointModalLabel" aria-hidden="true">
         <div class="modal-dialog">

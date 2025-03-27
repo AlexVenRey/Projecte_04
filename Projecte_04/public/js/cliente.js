@@ -91,7 +91,7 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
     const φ1 = lat1 * Math.PI / 180;
     const φ2 = lat2 * Math.PI / 180;
     const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lon2 - lon1) * Math.PI / 180;
+    const Δλ = (lon1 - lon2) * Math.PI / 180;
 
     const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
              Math.cos(φ1) * Math.cos(φ2) *
@@ -262,7 +262,10 @@ function mostrarLugares(lugares) {
 // Agregar marcador al mapa
 function agregarMarcador(lugar) {
     const marker = L.marker([lugar.latitud, lugar.longitud], {
-        icon: createCustomMarker(lugar)
+        icon: createCustomMarker(lugar),
+        lugarId: lugar.id, // Identificador único del lugar
+        lugarData: lugar,  // Datos del lugar para actualizar el popup
+        color: lugar.color_marcador // Color del marcador
     });
 
     marker.bindPopup(createPopupContent(lugar));
@@ -309,9 +312,12 @@ function createPopupContent(lugar) {
             <div class="etiquetas">
                 ${etiquetasHtml}
             </div>
-            <button onclick="toggleFavorito(${lugar.id})" class="btn btn-sm ${esFavorito ? 'btn-success' : 'btn-outline-danger'}">
-                <i class="fas ${esFavorito ? 'fa-check' : 'fa-heart'}"></i> 
-                ${esFavorito ? 'Añadido a favoritos' : 'Añadir a favoritos'}
+            <button onclick="toggleFavorito(${lugar.id})" class="btn btn-sm ${esFavorito ? 'btn-danger' : 'btn-outline-success'}">
+                <i class="fas ${esFavorito ? 'fa-times' : 'fa-heart'}"></i> 
+                ${esFavorito ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+            </button>
+            <button type="button" class="btn btn-primary" id="btnRuta" onclick="mostrarRuta(${lugar.id})">
+                <i class="fas fa-route"></i> Ver ruta
             </button>
         </div>
     `;
@@ -392,9 +398,15 @@ async function toggleFavorito(lugarId) {
         const data = await response.json();
         
         if (data.success) {
-            // Actualizar el estado del botón
-            actualizarBotonFavorito(lugarId, data.esFavorito);
-            
+            // Actualizar el marcador en el mapa
+            actualizarMarcadorFavorito(lugarId, data.esFavorito);
+
+            // Actualizar el contenido del popup
+            actualizarPopup(lugarId, data.esFavorito);
+
+            // Actualizar el contenido del modal
+            actualizarModalContent(lugarId, data.esFavorito);
+
             Swal.fire({
                 icon: 'success',
                 title: data.esFavorito ? '¡Añadido!' : 'Eliminado',
@@ -402,11 +414,6 @@ async function toggleFavorito(lugarId) {
                 timer: 1500,
                 showConfirmButton: false
             });
-
-            // Si estamos en la vista de favoritos, actualizar la lista
-            if (activeFilters.favoritos) {
-                cargarFavoritos();
-            }
         }
     } catch (error) {
         console.error('Error:', error);
@@ -418,6 +425,7 @@ async function toggleFavorito(lugarId) {
     }
 }
 
+// Actualizar el botón de favorito en el modal
 function actualizarBotonFavorito(lugarId, esFavorito) {
     const btnFavorito = document.getElementById('btnFavorito');
     if (btnFavorito) {
@@ -432,6 +440,36 @@ function actualizarBotonFavorito(lugarId, esFavorito) {
         if (texto) {
             texto.textContent = esFavorito ? 'Añadido a favoritos' : 'Añadir a favoritos';
         }
+    }
+}
+
+// Actualizar el marcador en el mapa para reflejar el estado de favorito
+function actualizarMarcadorFavorito(lugarId, esFavorito) {
+    const marker = markers.find(m => m.options.lugarId === lugarId);
+    if (marker) {
+        const iconHtml = `
+            <div class="custom-marker" style="background-color: ${marker.options.color}">
+                <i class="fas ${esFavorito ? 'fa-heart' : 'fa-map-marker-alt'}"></i>
+            </div>
+        `;
+        marker.setIcon(L.divIcon({
+            html: iconHtml,
+            className: 'custom-marker-container',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30]
+        }));
+    }
+}
+
+function actualizarPopup(lugarId, esFavorito) {
+    const marker = markers.find(m => m.options.lugarId === lugarId);
+    if (marker) {
+        const popupContent = createPopupContent({
+            ...marker.options.lugarData,
+            es_favorito: esFavorito
+        });
+        marker.getPopup().setContent(popupContent);
     }
 }
 
