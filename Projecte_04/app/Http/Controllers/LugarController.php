@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class LugarController extends Controller
 {
@@ -35,16 +36,18 @@ class LugarController extends Controller
             'etiquetas' => 'required|array',
         ]);
 
-        $lugar = Lugar::create([
-            'nombre' => $request->nombre,
-            'latitud' => $request->latitud,
-            'longitud' => $request->longitud,
-            'descripcion' => $request->descripcion,
-            'color_marcador' => $request->color_marcador,
-            'creado_por' => Auth::id(),
-        ]);
+        DB::transaction(function () use ($request) {
+            $lugar = Lugar::create([
+                'nombre' => $request->nombre,
+                'latitud' => $request->latitud,
+                'longitud' => $request->longitud,
+                'descripcion' => $request->descripcion,
+                'color_marcador' => $request->color_marcador,
+                'creado_por' => Auth::id(),
+            ]);
 
-        $lugar->etiquetas()->attach($request->etiquetas);
+            $lugar->etiquetas()->attach($request->etiquetas);
+        });
 
         return redirect()->route('admin.puntos')->with('success', 'Punto de interés añadido correctamente.');
     }
@@ -67,31 +70,36 @@ class LugarController extends Controller
             'etiquetas' => 'required|array',
         ]);
 
-        $punto = Lugar::findOrFail($id);
+        DB::transaction(function () use ($request, $id) {
+            $punto = Lugar::findOrFail($id);
 
-        $punto->nombre = $request->nombre;
-        $punto->latitud = $request->latitud;
-        $punto->longitud = $request->longitud;
-        $punto->descripcion = $request->descripcion;
-        $punto->color_marcador = $request->color_marcador;
+            $punto->update([
+                'nombre' => $request->nombre,
+                'latitud' => $request->latitud,
+                'longitud' => $request->longitud,
+                'descripcion' => $request->descripcion,
+                'color_marcador' => $request->color_marcador,
+            ]);
 
-        $punto->save();
-        $punto->etiquetas()->sync($request->etiquetas);
+            $punto->etiquetas()->sync($request->etiquetas);
+        });
 
         return redirect()->route('admin.puntos')->with('success', 'Punto de interés actualizado correctamente.');
     }
 
     public function destroy($id)
     {
-        $punto = Lugar::findOrFail($id);
+        DB::transaction(function () use ($id) {
+            $punto = Lugar::findOrFail($id);
 
-        // Eliminar el icono si existe
-        if ($punto->icono && File::exists(public_path('img/' . $punto->icono))) {
-            File::delete(public_path('img/' . $punto->icono));
-        }
+            // Eliminar el icono si existe
+            if ($punto->icono && File::exists(public_path('img/' . $punto->icono))) {
+                File::delete(public_path('img/' . $punto->icono));
+            }
 
-        $punto->etiquetas()->detach();
-        $punto->delete();
+            $punto->etiquetas()->detach();
+            $punto->delete();
+        });
 
         return redirect()->route('admin.puntos')->with('success', 'Punto de interés eliminado correctamente.');
     }
