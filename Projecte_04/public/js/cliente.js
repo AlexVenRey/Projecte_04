@@ -237,6 +237,10 @@ async function cargarFavoritos() {
             throw new Error('Error al cargar favoritos');
         }
         const lugares = await response.json();
+
+        // Asegurarse de que cada lugar tenga el estado `es_favorito` como `true`
+        lugares.forEach(lugar => lugar.es_favorito = true);
+
         mostrarLugares(lugares);
     } catch (error) {
         console.error('Error cargando favoritos:', error);
@@ -303,7 +307,11 @@ function createPopupContent(lugar) {
         `;
     });
 
+    // Determinar el texto y estilo del botón según el estado `es_favorito`
     const esFavorito = lugar.es_favorito; // Este dato vendrá del servidor
+    const botonFavoritoTexto = esFavorito ? 'Quitar de favoritos' : 'Añadir a favoritos';
+    const botonFavoritoClase = esFavorito ? 'btn-danger' : 'btn-outline-success';
+    const botonFavoritoIcono = esFavorito ? 'fa-times' : 'fa-heart';
 
     return `
         <div class="popup-content">
@@ -312,9 +320,8 @@ function createPopupContent(lugar) {
             <div class="etiquetas">
                 ${etiquetasHtml}
             </div>
-            <button onclick="toggleFavorito(${lugar.id})" class="btn btn-sm ${esFavorito ? 'btn-danger' : 'btn-outline-success'}">
-                <i class="fas ${esFavorito ? 'fa-times' : 'fa-heart'}"></i> 
-                ${esFavorito ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+            <button onclick="toggleFavorito(${lugar.id})" class="btn btn-sm ${botonFavoritoClase}">
+                <i class="fas ${botonFavoritoIcono}"></i> ${botonFavoritoTexto}
             </button>
             <button type="button" class="btn btn-primary" onclick="mostrarRuta(${lugar.id})">
                 <i class="fas fa-route"></i> Ver ruta
