@@ -9,6 +9,9 @@ use Database\Seeders\UserSeeder;
 use Database\Seeders\GruposSeeder;
 use Database\Seeders\EtiquetasSeeder;
 use Database\Seeders\LugaresSeeder;
+use Database\Seeders\LugarEtiquetaSeeder;
+use Database\Seeders\PuntosControlSeeder;
+use Database\Seeders\GimcanasSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +25,9 @@ class DatabaseSeeder extends Seeder
             GruposSeeder::class,
             EtiquetasSeeder::class,
             LugaresSeeder::class,
+            LugarEtiquetaSeeder::class,
+            GimcanasSeeder::class,
+            PuntosControlSeeder::class,
         ]);
     }
 }
