@@ -15,8 +15,8 @@ class LugaresSeeder extends Seeder
             [
                 'nombre' => 'Hospital Universitari de Bellvitge',
                 'descripcion' => 'Hospital universitario de referencia',
-                'latitud' => 41.344406,
-                'longitud' => 2.104528,
+                'latitud' => 41.335737,
+                'longitud' => 2.044587,
                 'color_marcador' => '#FF0000',
                 'creado_por' => 1,
                 'created_at' => now(),
@@ -25,8 +25,8 @@ class LugaresSeeder extends Seeder
             [
                 'nombre' => 'Institut Joan XXIII',
                 'descripcion' => 'Centro educativo de formación profesional',
-                'latitud' => 41.349684,
-                'longitud' => 2.107894,
+                'latitud' => 41.335737,
+                'longitud' => 2.044587,
                 'color_marcador' => '#0000FF',
                 'creado_por' => 1,
                 'created_at' => now(),
@@ -35,8 +35,8 @@ class LugaresSeeder extends Seeder
             [
                 'nombre' => 'Parc de Bellvitge',
                 'descripcion' => 'Parque público con áreas verdes y zonas de recreo',
-                'latitud' => 41.348142,
-                'longitud' => 2.111358,
+                'latitud' => 41.335737,
+                'longitud' => 2.044587,
                 'color_marcador' => '#00FF00',
                 'creado_por' => 1,
                 'created_at' => now(),
@@ -45,8 +45,8 @@ class LugaresSeeder extends Seeder
             [
                 'nombre' => 'Estación de Metro Bellvitge',
                 'descripcion' => 'Estación de la línea 1 del metro de Barcelona',
-                'latitud' => 41.350718,
-                'longitud' => 2.110901,
+                'latitud' => 41.335737,
+                'longitud' => 2.044587,
                 'color_marcador' => '#FFA500',
                 'creado_por' => 1,
                 'created_at' => now(),

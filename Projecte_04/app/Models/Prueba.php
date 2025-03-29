@@ -11,11 +11,15 @@ class Prueba extends Model
     protected $table = 'pruebas';
     
     protected $fillable = [
-        'titulo',
+        'punto_control_id',
         'descripcion',
-        'pista',
-        'lugar_id'
+        'respuesta'
     ];
+
+    public function puntoControl()
+    {
+        return $this->belongsTo(PuntoControl::class);
+    }
 
     public function lugar(): BelongsTo
     {

@@ -22,12 +22,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            GruposSeeder::class,
             EtiquetasSeeder::class,
             LugaresSeeder::class,
-            LugarEtiquetaSeeder::class,
+            GruposSeeder::class,
             GimcanasSeeder::class,
             PuntosControlSeeder::class,
+            LugarEtiquetaSeeder::class,
         ]);
     }
 }

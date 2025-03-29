@@ -12,6 +12,7 @@ let gimcanaId = null;
 let puntoControlActual = null;
 let radioProximidad = 25; // Radio en metros para detectar llegada a punto de control
 let siguiendoUsuario = true;
+let ultimaAlertaMostrada = 0; // Variable global para controlar el tiempo entre alertas
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
@@ -43,7 +44,7 @@ function iniciarSeguimientoUbicacion() {
         iconAnchor: [10, 10]
     });
 
-    navigator.geolocation.watchPosition(
+    watchId = navigator.geolocation.watchPosition(
         function(position) {
             const { latitude, longitude } = position.coords;
 
@@ -69,9 +70,9 @@ function iniciarSeguimientoUbicacion() {
                 mapa.setView([latitude, longitude]);
             }
 
-            // Verificar proximidad y enviar posición
+            // Verificar proximidad y actualizar posición
             verificarProximidadPuntoControl(latitude, longitude);
-            enviarPosicionAlServidor(latitude, longitude);
+            actualizarPosicionUsuario(latitude, longitude);
         },
         function(error) {
             mostrarError("Error al obtener ubicación: " + error.message);
@@ -84,6 +85,73 @@ function iniciarSeguimientoUbicacion() {
     );
 }
 
+// Función para actualizar la posición del usuario en el servidor
+function actualizarPosicionUsuario(latitud, longitud) {
+    if (!gimcanaId) return;
+
+    fetch('/cliente/actualizar-posicion', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+            gimcana_id: gimcanaId,
+            latitud: latitud,
+            longitud: longitud
+        })
+    }).catch(error => console.error('Error al actualizar posición:', error));
+}
+
+function cargarInformacionGrupo() {
+    if (!gimcanaId) return;
+    
+    fetch(`/cliente/gimcanas/${gimcanaId}/grupo-actual`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.grupo) {
+                grupoActual = data.grupo;
+                actualizarPanelGrupo();
+            }
+        })
+        .catch(error => console.error('Error al cargar grupo:', error));
+}
+
+function cargarPuntoControlActual() {
+    if (!gimcanaId) return;
+    
+    fetch(`/cliente/gimcanas/${gimcanaId}/siguiente-punto`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.data) {
+                puntoControlActual = {
+                    id: data.data.id,
+                    latitud: data.data.lugar.latitud,
+                    longitud: data.data.lugar.longitud,
+                    nombre: data.data.lugar.nombre,
+                    pista: data.data.pista,
+                    prueba: data.data.prueba
+                };
+                mostrarPuntosControlEnMapa();
+                actualizarProgresoGimcana();
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar punto de control:', error);
+            mostrarError('Error al cargar el punto de control');
+        });
+}
+
 function verificarProximidadPuntoControl(latitud, longitud) {
     if (!puntoControlActual) return;
 
@@ -94,68 +162,55 @@ function verificarProximidadPuntoControl(latitud, longitud) {
         puntoControlActual.longitud
     );
 
-    // Si estamos dentro del radio de proximidad y no hemos mostrado la pista aún
-    if (distancia <= radioProximidad && !puntoControlActual.pistaVista) {
-        puntoControlActual.pistaVista = true; // Evitar mostrar la pista múltiples veces
+    // Si estamos dentro del radio de proximidad y ha pasado suficiente tiempo desde la última alerta
+    const ahora = Date.now();
+    if (distancia <= radioProximidad && (ahora - ultimaAlertaMostrada) > 10000) { // 10 segundos entre alertas
+        ultimaAlertaMostrada = ahora;
         mostrarPistaYPrueba(puntoControlActual);
     }
 }
 
-function cargarPuntoControlActual() {
-    if (!gimcanaId) return;
-    
-    fetch(`/cliente/gimcanas/${gimcanaId}/siguiente-punto`)
-        .then(response => response.json())
-        .then(data => {
-            if (data && data.lugar) {
-                puntoControlActual = {
-                    id: data.id,
-                    latitud: data.lugar.latitud,
-                    longitud: data.lugar.longitud,
-                    nombre: data.lugar.nombre,
-                    pista: data.pista || 'Busca pistas en los alrededores...',
-                    prueba: data.prueba || {
-                        descripcion: '¿Qué lugar es este?',
-                        respuesta: data.lugar.nombre
-                    }
-                };
-                mostrarPuntosControlEnMapa();
-                actualizarProgresoGimcana();
-            }
-        })
-        .catch(error => console.error('Error al cargar punto de control:', error));
-}
-
 function mostrarPistaYPrueba(puntoControl) {
-    // Mostrar el modal con SweetAlert2
     Swal.fire({
         title: '¡Has llegado a un punto de control!',
         html: `
             <div class="text-start">
-                <h5>Ubicación actual:</h5>
-                <p>${puntoControl.nombre}</p>
+                <h5 class="mb-3">Ubicación actual:</h5>
+                <p class="mb-4">${puntoControl.nombre}</p>
                 
-                <h5>Pista:</h5>
-                <p>${puntoControl.pista}</p>
+                <h5 class="mb-3">Pista para el siguiente punto:</h5>
+                <p class="mb-4">${puntoControl.pista}</p>
                 
-                <h5>Prueba:</h5>
-                <p>${puntoControl.prueba.descripcion}</p>
+                <h5 class="mb-3">Prueba a resolver:</h5>
+                <p class="mb-4">${puntoControl.prueba.descripcion}</p>
+
+                <div class="form-group">
+                    <label for="respuestaPrueba" class="form-label">Tu respuesta:</label>
+                    <input type="text" class="form-control" id="respuestaPrueba" required>
+                </div>
             </div>
         `,
         showCancelButton: true,
-        confirmButtonText: 'Resolver prueba',
+        confirmButtonText: 'Enviar respuesta',
         cancelButtonText: 'Cerrar',
-        width: '600px'
+        confirmButtonColor: '#28a745',
+        width: '600px',
+        preConfirm: () => {
+            const respuesta = document.getElementById('respuestaPrueba').value;
+            if (!respuesta) {
+                Swal.showValidationMessage('Por favor, introduce una respuesta');
+                return false;
+            }
+            return respuesta;
+        }
     }).then((result) => {
         if (result.isConfirmed) {
-            mostrarFormularioPrueba(puntoControl);
+            verificarRespuesta(result.value);
         }
     });
 }
 
-function verificarRespuesta() {
-    const respuesta = document.getElementById('respuesta-prueba').value;
-
+function verificarRespuesta(respuesta) {
     fetch('/cliente/gimcanas/verificar-prueba', {
         method: 'POST',
         headers: {
@@ -173,23 +228,68 @@ function verificarRespuesta() {
         if (data.success) {
             Swal.fire({
                 icon: 'success',
-                title: '¡Correcto!',
-                text: 'Has superado esta prueba. ¡Continúa hacia el siguiente punto!'
+                title: '¡Respuesta correcta!',
+                text: 'Has superado esta prueba. ¡Sigue hacia el siguiente punto!',
+                confirmButtonColor: '#28a745'
             }).then(() => {
                 if (data.gimcana_completada) {
-                    mostrarGimcanaCompletada();
+                    if (data.grupo_ganador) {
+                        mostrarGrupoGanador(data.grupo_ganador);
+                    } else {
+                        mostrarGimcanaCompletada();
+                    }
                 } else {
-                    // Cargar el siguiente punto
                     cargarPuntoControlActual();
                 }
             });
         } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Incorrecto',
-                text: 'Inténtalo de nuevo'
+                title: 'Respuesta incorrecta',
+                text: 'Inténtalo de nuevo',
+                confirmButtonColor: '#dc3545'
+            }).then(() => {
+                // Volver a mostrar el formulario de prueba
+                mostrarPistaYPrueba(puntoControlActual);
             });
         }
+    });
+}
+
+function mostrarGrupoGanador(grupoGanador) {
+    Swal.fire({
+        icon: 'success',
+        title: '¡Felicidades!',
+        html: `
+            <div class="text-center">
+                <h3 class="mb-4">¡El grupo "${grupoGanador.nombre}" ha ganado la gimcana!</h3>
+                <p class="mb-3">Miembros del grupo ganador:</p>
+                <div class="mb-4">
+                    ${grupoGanador.usuarios.map(usuario => 
+                        `<span class="badge bg-success me-2 mb-2">${usuario.nombre}</span>`
+                    ).join('')}
+                </div>
+                <p>Tiempo total: ${grupoGanador.tiempo_total}</p>
+            </div>
+        `,
+        confirmButtonText: 'Volver al inicio',
+        confirmButtonColor: '#28a745',
+        allowOutsideClick: false
+    }).then(() => {
+        window.location.href = '/cliente/gimcanas';
+    });
+}
+
+function mostrarGimcanaCompletada() {
+    Swal.fire({
+        icon: 'success',
+        title: '¡Has completado la gimcana!',
+        text: 'Tu grupo ha completado todos los puntos de control.',
+        confirmButtonText: 'Finalizar',
+        confirmButtonColor: '#28a745',
+        allowOutsideClick: false
+    }).then(() => {
+        window.location.href = '/cliente/gimcanas';
     });
 }
 
@@ -213,17 +313,6 @@ function mostrarError(mensaje) {
         icon: 'error',
         title: 'Error',
         text: mensaje
-    });
-}
-
-function mostrarGimcanaCompletada() {
-    Swal.fire({
-        title: '¡Felicidades!',
-        text: 'Tu grupo ha completado la gimcana',
-        icon: 'success',
-        confirmButtonText: 'Finalizar'
-    }).then(() => {
-        window.location.href = '/cliente/gimcanas';
     });
 }
 
@@ -293,19 +382,6 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// Función para cargar información del grupo
-function cargarInformacionGrupo() {
-    fetch(`/cliente/gimcanas/${gimcanaId}/grupo-actual`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                grupoActual = data.grupo;
-                actualizarPanelGrupo();
-            }
-        })
-        .catch(error => console.error('Error al cargar grupo:', error));
-}
 
 // Función para mostrar el formulario de la prueba
 function mostrarFormularioPrueba(puntoControl) {
@@ -459,12 +535,18 @@ function actualizarProgresoGimcana() {
         })
         .then(data => {
             if (data.success) {
-                const lugaresCompletados = document.getElementById('lugares-completados');
-                const totalLugares = document.getElementById('total-lugares');
-                if (lugaresCompletados && totalLugares) {
+                const lugaresCompletados = document.getElementById('puntos-completados');
+                const totalLugares = document.getElementById('total-puntos');
+                const barraProgreso = document.getElementById('barra-progreso');
+                
+                if (lugaresCompletados && totalLugares && barraProgreso) {
                     lugaresCompletados.textContent = data.completados;
                     totalLugares.textContent = data.total;
-                    lugarActual = data.completados;
+                    
+                    // Actualizar barra de progreso
+                    const porcentaje = (data.completados / data.total) * 100;
+                    barraProgreso.style.width = `${porcentaje}%`;
+                    barraProgreso.setAttribute('aria-valuenow', porcentaje);
                 }
             }
         })

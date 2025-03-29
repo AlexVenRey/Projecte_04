@@ -9,14 +9,18 @@ class AddRespuestaToPruebasTable extends Migration
     public function up()
     {
         Schema::table('pruebas', function (Blueprint $table) {
-            $table->string('respuesta')->after('descripcion'); // Añadimos la columna respuesta después de descripción
+            if (!Schema::hasColumn('pruebas', 'respuesta')) {
+                $table->string('respuesta')->after('descripcion');
+            }
         });
     }
 
     public function down()
     {
         Schema::table('pruebas', function (Blueprint $table) {
-            $table->dropColumn('respuesta');
+            if (Schema::hasColumn('pruebas', 'respuesta')) {
+                $table->dropColumn('respuesta');
+            }
         });
     }
 } 

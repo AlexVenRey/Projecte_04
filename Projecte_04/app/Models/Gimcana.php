@@ -14,9 +14,8 @@ class Gimcana extends Model
     protected $fillable = [
         'nombre',
         'descripcion',
-        'estado',
-        'fecha_inicio',
-        'fecha_fin'
+        'creado_por',
+        'estado'
     ];
 
     protected $casts = [
@@ -29,7 +28,7 @@ class Gimcana extends Model
      */
     public function lugares()
     {
-        return $this->belongsToMany(Lugar::class, 'gimcana_lugar', 'gimcana_id', 'lugar_id');
+        return $this->belongsToMany(Lugar::class, 'gimcana_lugar');
     }
 
     public function usuarios()
@@ -50,5 +49,10 @@ class Gimcana extends Model
     public function puntos()
     {
         return $this->hasMany(Punto::class);
+    }
+
+    public function puntosControl()
+    {
+        return $this->hasManyThrough(PuntoControl::class, Lugar::class);
     }
 }

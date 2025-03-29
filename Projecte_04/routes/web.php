@@ -69,12 +69,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/gimcanas/{gimcana_id}/verificar-todos-listos', [ClienteGrupoController::class, 'verificarTodosListos']);
         Route::post('/gimcanas/{gimcana_id}/iniciar', [ClienteGrupoController::class, 'iniciarGimcana']);
         
-        // Rutas para la funcionalidad live
-        Route::post('/actualizar-posicion', [ClienteGrupoController::class, 'actualizarPosicion']);
-        Route::get('/gimcanas/{gimcana_id}/posiciones-usuarios', [ClienteGrupoController::class, 'obtenerPosicionesUsuarios']);
-        Route::post('/gimcanas/marcar-lugar', [ClienteGrupoController::class, 'marcarLugarCompletado']);
-        Route::get('/gimcanas/{gimcana_id}/progreso', [ClienteGrupoController::class, 'obtenerProgreso']);
-        Route::get('/gimcanas/{gimcana_id}/grupo-actual', [ClienteGrupoController::class, 'obtenerGrupoActual']);
+        // Rutas para la funcionalidad de gimcanas
+        Route::post('/actualizar-posicion', [ClienteGimcanaController::class, 'actualizarPosicion']);
+        Route::get('/gimcanas/{gimcana_id}/grupo-actual', [ClienteGimcanaController::class, 'obtenerGrupoActual']);
+        Route::get('/gimcanas/{gimcana_id}/siguiente-punto', [ClienteGimcanaController::class, 'siguientePunto']);
+        Route::post('/gimcanas/verificar-prueba', [ClienteGimcanaController::class, 'verificarPrueba']);
+        Route::get('/gimcanas/{gimcana}/progreso', [ClienteGimcanaController::class, 'progreso']);
 
         // Rutas para grupos
         Route::get('/grupos/{gimcana_id}/miembros', [ClienteGrupoController::class, 'obtenerGrupos'])->name('cliente.grupos.miembros');
