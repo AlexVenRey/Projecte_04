@@ -49,13 +49,9 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'ubicacion_actual' => 'array'
-        ];
-    }
+    protected $casts = [
+        'ubicacion_actual' => 'array'
+    ];
 
     /**
      * Get the table associated with the model.

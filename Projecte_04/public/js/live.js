@@ -100,7 +100,14 @@ function actualizarPosicionUsuario(latitud, longitud) {
             latitud: latitud,
             longitud: longitud
         })
-    }).catch(error => console.error('Error al actualizar posición:', error));
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        return response.json();
+    })
+    .catch(error => console.error('Error al actualizar posición:', error));
 }
 
 function cargarInformacionGrupo() {
@@ -128,7 +135,9 @@ function cargarPuntoControlActual() {
     fetch(`/cliente/gimcanas/${gimcanaId}/siguiente-punto`)
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error en la respuesta del servidor');
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Error en la respuesta del servidor');
+                });
             }
             return response.json();
         })
@@ -136,30 +145,35 @@ function cargarPuntoControlActual() {
             if (data.success && data.data) {
                 puntoControlActual = {
                     id: data.data.id,
-                    latitud: data.data.lugar.latitud,
-                    longitud: data.data.lugar.longitud,
-                    nombre: data.data.lugar.nombre,
+                    lugar: data.data.lugar,
                     pista: data.data.pista,
                     prueba: data.data.prueba
                 };
                 mostrarPuntosControlEnMapa();
                 actualizarProgresoGimcana();
+            } else if (data.success && !data.data) {
+                // La gimcana está completada
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Felicidades!',
+                    text: 'Has completado todos los puntos de control'
+                });
             }
         })
         .catch(error => {
             console.error('Error al cargar punto de control:', error);
-            mostrarError('Error al cargar el punto de control');
+            mostrarError('Error al cargar el punto de control: ' + error.message);
         });
 }
 
 function verificarProximidadPuntoControl(latitud, longitud) {
-    if (!puntoControlActual) return;
+    if (!puntoControlActual || !puntoControlActual.lugar) return;
 
     const distancia = calcularDistancia(
         latitud, 
         longitud, 
-        puntoControlActual.latitud, 
-        puntoControlActual.longitud
+        puntoControlActual.lugar.latitud,
+        puntoControlActual.lugar.longitud
     );
 
     // Si estamos dentro del radio de proximidad y ha pasado suficiente tiempo desde la última alerta
@@ -176,7 +190,7 @@ function mostrarPistaYPrueba(puntoControl) {
         html: `
             <div class="text-start">
                 <h5 class="mb-3">Ubicación actual:</h5>
-                <p class="mb-4">${puntoControl.nombre}</p>
+                <p class="mb-4">${puntoControl.lugar.nombre}</p>
                 
                 <h5 class="mb-3">Pista para el siguiente punto:</h5>
                 <p class="mb-4">${puntoControl.pista}</p>
@@ -211,6 +225,18 @@ function mostrarPistaYPrueba(puntoControl) {
 }
 
 function verificarRespuesta(respuesta) {
+    if (!puntoControlActual || !puntoControlActual.id || !gimcanaId) {
+        console.error('Datos de punto de control no válidos');
+        mostrarError('Error: Datos de punto de control no válidos');
+        return;
+    }
+
+    console.log('Enviando respuesta:', {
+        punto_control_id: puntoControlActual.id,
+        respuesta: respuesta,
+        gimcana_id: gimcanaId
+    });
+
     fetch('/cliente/gimcanas/verificar-prueba', {
         method: 'POST',
         headers: {
@@ -223,7 +249,14 @@ function verificarRespuesta(respuesta) {
             gimcana_id: gimcanaId
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.message || 'Error en la respuesta del servidor');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             Swal.fire({
@@ -246,13 +279,16 @@ function verificarRespuesta(respuesta) {
             Swal.fire({
                 icon: 'error',
                 title: 'Respuesta incorrecta',
-                text: 'Inténtalo de nuevo',
+                text: data.message || 'Inténtalo de nuevo',
                 confirmButtonColor: '#dc3545'
             }).then(() => {
-                // Volver a mostrar el formulario de prueba
                 mostrarPistaYPrueba(puntoControlActual);
             });
         }
+    })
+    .catch(error => {
+        console.error('Error al verificar respuesta:', error);
+        mostrarError('Error al verificar la respuesta: ' + error.message);
     });
 }
 
@@ -320,8 +356,11 @@ function mostrarError(mensaje) {
 function mostrarPuntosControlEnMapa() {
     limpiarMarcadores();
 
-    if (puntoControlActual) {
-        const marcador = L.marker([puntoControlActual.latitud, puntoControlActual.longitud], {
+    if (puntoControlActual && puntoControlActual.lugar) {
+        const marcador = L.marker([
+            puntoControlActual.lugar.latitud,
+            puntoControlActual.lugar.longitud
+        ], {
             icon: L.divIcon({
                 className: 'punto-control-marker',
                 html: `<div class="marcador-punto">
@@ -332,6 +371,14 @@ function mostrarPuntosControlEnMapa() {
             })
         }).addTo(mapa);
         marcadores.push(marcador);
+
+        // Centrar el mapa en el punto de control si no hay marcador de usuario
+        if (!marcadorUsuario) {
+            mapa.setView([
+                puntoControlActual.lugar.latitud,
+                puntoControlActual.lugar.longitud
+            ], 15);
+        }
     }
 }
 

@@ -79,12 +79,13 @@ class ClienteGimcanaController extends Controller
         }
     }
 
-    public function siguientePunto(Request $request, $gimcana_id)
+    public function siguientePunto($gimcana_id)
     {
         try {
+            // Obtener el usuario y la gimcana
             $usuario = auth()->user();
             $gimcana = Gimcana::findOrFail($gimcana_id);
-
+            
             // Verificar si el usuario pertenece a un grupo en esta gimcana
             $grupo = $usuario->grupos()
                 ->whereHas('gimcanas', function($q) use ($gimcana_id) {
@@ -93,52 +94,63 @@ class ClienteGimcanaController extends Controller
 
             if (!$grupo) {
                 return response()->json([
-                    'error' => 'No perteneces a ningún grupo en esta gimcana'
+                    'success' => false,
+                    'message' => 'No perteneces a ningún grupo en esta gimcana'
                 ], 403);
             }
 
-            // Obtener puntos ya completados
+            // Obtener los lugares de la gimcana
+            $lugaresGimcana = $gimcana->lugares()->pluck('lugares.id');
+            
+            // Obtener puntos de control ya completados
             $puntosCompletados = DB::table('progreso_gimcana')
                 ->where('usuario_id', $usuario->id)
                 ->pluck('punto_control_id');
 
-            // Obtener todos los puntos de control de la gimcana
-            $puntosControl = PuntoControl::whereHas('lugar', function($query) use ($gimcana) {
-                $query->whereHas('gimcanas', function($q) use ($gimcana) {
-                    $q->where('gimcanas.id', $gimcana->id);
-                });
-            })
-            ->whereNotIn('id', $puntosCompletados)
-            ->with(['lugar', 'prueba'])
-            ->first();
+            // Obtener el siguiente punto de control
+            $siguientePunto = PuntoControl::whereIn('lugar_id', $lugaresGimcana)
+                ->whereNotIn('id', $puntosCompletados)
+                ->with(['lugar', 'prueba'])
+                ->first();
 
-            if (!$puntosControl) {
+            if (!$siguientePunto) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Has completado todos los puntos de control',
-                    'data' => null
+                    'data' => null,
+                    'message' => 'Has completado todos los puntos de control'
                 ]);
+            }
+
+            // Asegurarse de que el punto de control tiene una prueba asociada
+            if (!$siguientePunto->prueba) {
+                // Crear una prueba por defecto si no existe
+                $prueba = Prueba::create([
+                    'punto_control_id' => $siguientePunto->id,
+                    'descripcion' => "¿Cuál es el código que ves en {$siguientePunto->lugar->nombre}?",
+                    'respuesta' => '123'
+                ]);
+                $siguientePunto->load('prueba');
             }
 
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'id' => $puntosControl->id,
+                    'id' => $siguientePunto->id,
                     'lugar' => [
-                        'id' => $puntosControl->lugar->id,
-                        'nombre' => $puntosControl->lugar->nombre,
-                        'latitud' => $puntosControl->lugar->latitud,
-                        'longitud' => $puntosControl->lugar->longitud
+                        'id' => $siguientePunto->lugar->id,
+                        'nombre' => $siguientePunto->lugar->nombre,
+                        'latitud' => $siguientePunto->lugar->latitud,
+                        'longitud' => $siguientePunto->lugar->longitud
                     ],
-                    'pista' => $puntosControl->pista,
+                    'pista' => $siguientePunto->pista ?? "Encuentra {$siguientePunto->lugar->nombre}",
                     'prueba' => [
-                        'descripcion' => $puntosControl->prueba->descripcion,
-                        'respuesta' => $puntosControl->prueba->respuesta
+                        'descripcion' => $siguientePunto->prueba->descripcion
                     ]
                 ]
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Error en siguientePunto: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener el siguiente punto: ' . $e->getMessage()
@@ -149,9 +161,27 @@ class ClienteGimcanaController extends Controller
     public function verificarPrueba(Request $request)
     {
         try {
+            // Validar los datos de entrada
+            $request->validate([
+                'punto_control_id' => 'required|exists:puntos_control,id',
+                'respuesta' => 'required|string',
+                'gimcana_id' => 'required|exists:gimcanas,id'
+            ]);
+
+            // Obtener el punto de control con su prueba
             $puntoControl = PuntoControl::with(['prueba', 'lugar'])->findOrFail($request->punto_control_id);
+            
+            if (!$puntoControl->prueba) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No hay prueba asociada a este punto de control'
+                ], 400);
+            }
+
+            // Obtener el grupo actual del usuario
+            $usuario = auth()->user();
             $gimcana = Gimcana::findOrFail($request->gimcana_id);
-            $grupoActual = auth()->user()->grupos()
+            $grupoActual = $usuario->grupos()
                 ->whereHas('gimcanas', function($q) use ($gimcana) {
                     $q->where('gimcanas.id', $gimcana->id);
                 })->first();
@@ -164,8 +194,8 @@ class ClienteGimcanaController extends Controller
             }
 
             // Verificar la respuesta
-            $prueba = $puntoControl->prueba;
-            $respuestaCorrecta = strtolower(trim($prueba->respuesta)) === strtolower(trim($request->respuesta));
+            $respuestaCorrecta = strtolower(trim($puntoControl->prueba->respuesta)) === 
+                                strtolower(trim($request->respuesta));
 
             if (!$respuestaCorrecta) {
                 return response()->json([
@@ -174,61 +204,46 @@ class ClienteGimcanaController extends Controller
                 ]);
             }
 
-            // Registrar progreso
-            DB::table('progreso_gimcana')->insert([
-                'usuario_id' => auth()->id(),
-                'punto_control_id' => $puntoControl->id,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+            // Registrar el progreso
+            DB::beginTransaction();
+            try {
+                DB::table('progreso_gimcana')->insert([
+                    'usuario_id' => $usuario->id,
+                    'punto_control_id' => $puntoControl->id,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
 
-            // Verificar si el grupo ha completado la gimcana
-            $puntosControlTotal = $gimcana->lugares()->count();
-            $usuariosGrupo = $grupoActual->usuarios()->count();
-            
-            $puntosCompletadosGrupo = DB::table('progreso_gimcana')
-                ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
-                ->where('usuarios_grupos.grupo_id', $grupoActual->id)
-                ->count();
+                // Verificar si el grupo ha completado la gimcana
+                $puntosControlTotal = $gimcana->lugares()->count();
+                $usuariosGrupo = $grupoActual->usuarios()->count();
+                
+                $puntosCompletadosGrupo = DB::table('progreso_gimcana')
+                    ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
+                    ->where('usuarios_grupos.grupo_id', $grupoActual->id)
+                    ->count();
 
-            $gimcanaCompletada = false;
-            $grupoGanador = null;
-            $tiempoTotal = null;
+                $gimcanaCompletada = $puntosCompletadosGrupo >= ($puntosControlTotal * $usuariosGrupo);
 
-            if ($puntosCompletadosGrupo >= $puntosControlTotal * $usuariosGrupo) {
-                $gimcanaCompletada = true;
+                DB::commit();
 
-                if ($gimcana->estado !== 'completada') {
-                    $grupoGanador = $grupoActual;
-                    
-                    // Calcular tiempo total
-                    $primerPunto = DB::table('progreso_gimcana')
-                        ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
-                        ->where('usuarios_grupos.grupo_id', $grupoActual->id)
-                        ->min('created_at');
-                    
-                    $ultimoPunto = DB::table('progreso_gimcana')
-                        ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
-                        ->where('usuarios_grupos.grupo_id', $grupoActual->id)
-                        ->max('created_at');
+                return response()->json([
+                    'success' => true,
+                    'gimcana_completada' => $gimcanaCompletada,
+                    'grupo_ganador' => $gimcanaCompletada ? [
+                        'nombre' => $grupoActual->nombre,
+                        'usuarios' => $grupoActual->usuarios,
+                        'tiempo_total' => 'Completado'
+                    ] : null
+                ]);
 
-                    $tiempoTotal = Carbon::parse($primerPunto)->diffForHumans(Carbon::parse($ultimoPunto));
-                    
-                    $gimcana->update(['estado' => 'completada']);
-                }
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
             }
 
-            return response()->json([
-                'success' => true,
-                'gimcana_completada' => $gimcanaCompletada,
-                'grupo_ganador' => $grupoGanador ? [
-                    'nombre' => $grupoGanador->nombre,
-                    'usuarios' => $grupoGanador->usuarios,
-                    'tiempo_total' => $tiempoTotal
-                ] : null
-            ]);
-
         } catch (\Exception $e) {
+            \Log::error('Error en verificarPrueba: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al verificar la prueba: ' . $e->getMessage()
@@ -239,25 +254,29 @@ class ClienteGimcanaController extends Controller
     public function actualizarPosicion(Request $request)
     {
         try {
+            $usuario = auth()->user();
+            
+            // Validar los datos recibidos
             $request->validate([
                 'latitud' => 'required|numeric',
                 'longitud' => 'required|numeric',
                 'gimcana_id' => 'required|exists:gimcanas,id'
             ]);
 
-            $usuario = auth()->user();
+            // Actualizar la ubicación del usuario como JSON
             $usuario->update([
-                'ubicacion_actual' => DB::raw("POINT({$request->longitud}, {$request->latitud})")
+                'ubicacion_actual' => json_encode([
+                    'latitud' => $request->latitud,
+                    'longitud' => $request->longitud
+                ])
             ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Posición actualizada correctamente'
-            ]);
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
+            Log::error('Error actualizando posición: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar la posición: ' . $e->getMessage()
+                'error' => 'Error al actualizar la posición'
             ], 500);
         }
     }

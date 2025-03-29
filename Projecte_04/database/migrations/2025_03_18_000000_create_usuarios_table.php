@@ -13,8 +13,8 @@ class CreateUsuariosTable extends Migration
             $table->string('nombre', 100);
             $table->string('email', 100)->unique();
             $table->string('password');
-            $table->string('rol', 50)->check('rol IN ("admin", "usuario")');
-            $table->geometry('ubicacion_actual')->nullable(); // Cambiado a 'geometry' en lugar de 'point'
+            $table->string('rol', 50);
+            $table->json('ubicacion_actual')->nullable();
             $table->timestamps();
         });
     }

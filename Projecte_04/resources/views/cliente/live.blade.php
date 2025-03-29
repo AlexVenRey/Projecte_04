@@ -95,11 +95,6 @@
                 <span id="puntos-completados">0</span>/<span id="total-puntos">4</span>
             </small>
         </div>
-
-        <div id="punto-actual" class="mt-3">
-            <h6>Punto Actual:</h6>
-            <p id="nombre-punto" class="text-muted">Cargando...</p>
-        </div>
     </div>
 
     <!-- Modal para pruebas -->
