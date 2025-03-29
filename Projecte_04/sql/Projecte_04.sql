@@ -1,29 +1,35 @@
--- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1    Database: projecte_04
--- ------------------------------------------------------
--- Server version	8.3.0
+-- Servidor: 127.0.0.1:3306
+-- Tiempo de generación: 29-03-2025 a las 18:43:34
+-- Versión del servidor: 9.1.0
+-- Versión de PHP: 8.3.14
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Table structure for table `etiquetas`
+-- Base de datos: `projecte_04`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `etiquetas`
 --
 
 DROP TABLE IF EXISTS `etiquetas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `etiquetas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `etiquetas` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
   `icono` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'fa-tag',
   `created_at` timestamp NULL DEFAULT NULL,
@@ -31,531 +37,449 @@ CREATE TABLE `etiquetas` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `etiquetas_nombre_unique` (`nombre`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `etiquetas`
+-- Volcado de datos para la tabla `etiquetas`
 --
 
-LOCK TABLES `etiquetas` WRITE;
-/*!40000 ALTER TABLE `etiquetas` DISABLE KEYS */;
-INSERT INTO `etiquetas` VALUES (1,'Cultura','fa-landmark','2025-03-27 15:59:29','2025-03-27 15:59:29'),(2,'Educación','fa-graduation-cap','2025-03-27 15:59:29','2025-03-27 15:59:29'),(3,'Parques','fa-tree','2025-03-27 15:59:29','2025-03-27 15:59:29'),(4,'Transporte','fa-train','2025-03-27 15:59:29','2025-03-27 15:59:29'),(5,'Compras','fa-shopping-cart','2025-03-27 15:59:29','2025-03-27 15:59:29'),(6,'Ocio','fa-ticket-alt','2025-03-27 15:59:29','2025-03-27 15:59:29'),(7,'Sanidad','fa-hospital','2025-03-27 15:59:29','2025-03-27 15:59:29'),(8,'Deportes','fa-futbol','2025-03-27 15:59:29','2025-03-27 15:59:29'),(9,'Restaurantes','fa-utensils','2025-03-27 15:59:29','2025-03-27 15:59:29');
-/*!40000 ALTER TABLE `etiquetas` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `etiquetas` (`id`, `nombre`, `icono`, `created_at`, `updated_at`) VALUES
+(1, 'Cultura', 'fa-landmark', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(2, 'Educación', 'fa-graduation-cap', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(3, 'Parques', 'fa-tree', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(4, 'Transporte', 'fa-train', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(5, 'Compras', 'fa-shopping-cart', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(6, 'Ocio', 'fa-ticket-alt', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(7, 'Sanidad', 'fa-hospital', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(8, 'Deportes', 'fa-futbol', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(9, 'Restaurantes', 'fa-utensils', '2025-03-29 16:54:40', '2025-03-29 16:54:40');
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `favoritos`
+-- Estructura de tabla para la tabla `favoritos`
 --
 
 DROP TABLE IF EXISTS `favoritos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `favoritos` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint unsigned NOT NULL,
-  `lugar_id` bigint unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `favoritos` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint UNSIGNED NOT NULL,
+  `lugar_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `favoritos_usuario_id_foreign` (`usuario_id`),
-  KEY `favoritos_lugar_id_foreign` (`lugar_id`),
-  CONSTRAINT `favoritos_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `favoritos_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  KEY `favoritos_lugar_id_foreign` (`lugar_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `favoritos`
---
-
-LOCK TABLES `favoritos` WRITE;
-/*!40000 ALTER TABLE `favoritos` DISABLE KEYS */;
-/*!40000 ALTER TABLE `favoritos` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `gimcana_grupo`
---
-
-DROP TABLE IF EXISTS `gimcana_grupo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `gimcana_grupo` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `gimcana_id` bigint unsigned NOT NULL,
-  `grupo_id` bigint unsigned NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `gimcana_grupo_gimcana_id_foreign` (`gimcana_id`),
-  KEY `gimcana_grupo_grupo_id_foreign` (`grupo_id`),
-  CONSTRAINT `gimcana_grupo_gimcana_id_foreign` FOREIGN KEY (`gimcana_id`) REFERENCES `gimcanas` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `gimcana_grupo_grupo_id_foreign` FOREIGN KEY (`grupo_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `gimcana_grupo`
---
-
-LOCK TABLES `gimcana_grupo` WRITE;
-/*!40000 ALTER TABLE `gimcana_grupo` DISABLE KEYS */;
-INSERT INTO `gimcana_grupo` VALUES (1,1,3,NULL,NULL),(2,1,4,NULL,NULL);
-/*!40000 ALTER TABLE `gimcana_grupo` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `gimcana_lugar`
---
-
-DROP TABLE IF EXISTS `gimcana_lugar`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `gimcana_lugar` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `gimcana_id` bigint unsigned NOT NULL,
-  `lugar_id` bigint unsigned NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `gimcana_lugar_gimcana_id_foreign` (`gimcana_id`),
-  KEY `gimcana_lugar_lugar_id_foreign` (`lugar_id`),
-  CONSTRAINT `gimcana_lugar_gimcana_id_foreign` FOREIGN KEY (`gimcana_id`) REFERENCES `gimcanas` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `gimcana_lugar_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `gimcana_lugar`
---
-
-LOCK TABLES `gimcana_lugar` WRITE;
-/*!40000 ALTER TABLE `gimcana_lugar` DISABLE KEYS */;
-INSERT INTO `gimcana_lugar` VALUES (1,1,1,NULL,NULL),(2,1,2,NULL,NULL),(3,1,3,NULL,NULL);
-/*!40000 ALTER TABLE `gimcana_lugar` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `gimcana_usuario`
---
-
-DROP TABLE IF EXISTS `gimcana_usuario`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `gimcana_usuario` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `gimcana_id` bigint unsigned NOT NULL,
-  `usuario_id` bigint unsigned NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `gimcana_usuario_gimcana_id_foreign` (`gimcana_id`),
-  KEY `gimcana_usuario_usuario_id_foreign` (`usuario_id`),
-  CONSTRAINT `gimcana_usuario_gimcana_id_foreign` FOREIGN KEY (`gimcana_id`) REFERENCES `gimcanas` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `gimcana_usuario_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `gimcana_usuario`
---
-
-LOCK TABLES `gimcana_usuario` WRITE;
-/*!40000 ALTER TABLE `gimcana_usuario` DISABLE KEYS */;
-/*!40000 ALTER TABLE `gimcana_usuario` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `gimcanas`
+-- Estructura de tabla para la tabla `gimcanas`
 --
 
 DROP TABLE IF EXISTS `gimcanas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `gimcanas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `gimcanas` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `descripcion` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  `creado_por` bigint unsigned NOT NULL,
+  `creado_por` bigint UNSIGNED NOT NULL,
   `estado` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'pendiente',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `gimcanas_creado_por_foreign` (`creado_por`),
-  CONSTRAINT `gimcanas_creado_por_foreign` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  KEY `gimcanas_creado_por_foreign` (`creado_por`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `gimcanas`
+-- Volcado de datos para la tabla `gimcanas`
 --
 
-LOCK TABLES `gimcanas` WRITE;
-/*!40000 ALTER TABLE `gimcanas` DISABLE KEYS */;
-INSERT INTO `gimcanas` VALUES (1,'qweQWE123','qweQWE123',7,'en_progreso','2025-03-27 16:00:20','2025-03-27 16:04:18');
-/*!40000 ALTER TABLE `gimcanas` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `gimcanas` (`id`, `nombre`, `descripcion`, `creado_por`, `estado`, `created_at`, `updated_at`) VALUES
+(1, '3546', '3546', 2, 'en_progreso', '2025-03-29 16:55:41', '2025-03-29 16:57:23');
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `grupos`
+-- Estructura de tabla para la tabla `gimcana_grupo`
+--
+
+DROP TABLE IF EXISTS `gimcana_grupo`;
+CREATE TABLE IF NOT EXISTS `gimcana_grupo` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `gimcana_id` bigint UNSIGNED NOT NULL,
+  `grupo_id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `gimcana_grupo_gimcana_id_foreign` (`gimcana_id`),
+  KEY `gimcana_grupo_grupo_id_foreign` (`grupo_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `gimcana_grupo`
+--
+
+INSERT INTO `gimcana_grupo` (`id`, `gimcana_id`, `grupo_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 3, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `gimcana_lugar`
+--
+
+DROP TABLE IF EXISTS `gimcana_lugar`;
+CREATE TABLE IF NOT EXISTS `gimcana_lugar` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `gimcana_id` bigint UNSIGNED NOT NULL,
+  `lugar_id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `gimcana_lugar_gimcana_id_foreign` (`gimcana_id`),
+  KEY `gimcana_lugar_lugar_id_foreign` (`lugar_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `gimcana_lugar`
+--
+
+INSERT INTO `gimcana_lugar` (`id`, `gimcana_id`, `lugar_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, NULL, NULL),
+(2, 1, 2, NULL, NULL),
+(3, 1, 3, NULL, NULL),
+(4, 1, 4, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `gimcana_usuario`
+--
+
+DROP TABLE IF EXISTS `gimcana_usuario`;
+CREATE TABLE IF NOT EXISTS `gimcana_usuario` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `gimcana_id` bigint UNSIGNED NOT NULL,
+  `usuario_id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `gimcana_usuario_gimcana_id_foreign` (`gimcana_id`),
+  KEY `gimcana_usuario_usuario_id_foreign` (`usuario_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `grupos`
 --
 
 DROP TABLE IF EXISTS `grupos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `grupos` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `grupos` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
   `descripcion` text COLLATE utf8mb3_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
--- Dumping data for table `grupos`
+-- Volcado de datos para la tabla `grupos`
 --
 
-LOCK TABLES `grupos` WRITE;
-/*!40000 ALTER TABLE `grupos` DISABLE KEYS */;
-INSERT INTO `grupos` VALUES (1,'Grupo A','Este es el grupo A','2025-03-27 15:59:29','2025-03-27 15:59:29'),(2,'Grupo B','Este es el grupo B','2025-03-27 15:59:29','2025-03-27 15:59:29'),(3,'qweQWE123','Grupo para la gimcana 1','2025-03-27 16:00:31','2025-03-27 16:00:31'),(4,'qweQWE1231212','Grupo para la gimcana 1','2025-03-27 16:04:12','2025-03-27 16:04:12');
-/*!40000 ALTER TABLE `grupos` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `grupos` (`id`, `nombre`, `descripcion`, `created_at`, `updated_at`) VALUES
+(1, 'Grupo A', 'Este es el grupo A', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(2, 'Grupo B', 'Este es el grupo B', '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(3, 'qweQWE123', 'Grupo para la gimcana 1', '2025-03-29 16:57:15', '2025-03-29 16:57:15');
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `logs`
+-- Estructura de tabla para la tabla `logs`
 --
 
 DROP TABLE IF EXISTS `logs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `logs` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `logs` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint UNSIGNED NOT NULL,
   `accion` text COLLATE utf8mb3_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `logs_usuario_id_foreign` (`usuario_id`),
-  CONSTRAINT `logs_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  KEY `logs_usuario_id_foreign` (`usuario_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `logs`
---
-
-LOCK TABLES `logs` WRITE;
-/*!40000 ALTER TABLE `logs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `logs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `lugar_etiqueta`
---
-
-DROP TABLE IF EXISTS `lugar_etiqueta`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `lugar_etiqueta` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `lugar_id` bigint unsigned NOT NULL,
-  `etiqueta_id` bigint unsigned NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `lugar_etiqueta_lugar_id_foreign` (`lugar_id`),
-  KEY `lugar_etiqueta_etiqueta_id_foreign` (`etiqueta_id`),
-  CONSTRAINT `lugar_etiqueta_etiqueta_id_foreign` FOREIGN KEY (`etiqueta_id`) REFERENCES `etiquetas` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `lugar_etiqueta_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `lugar_etiqueta`
---
-
-LOCK TABLES `lugar_etiqueta` WRITE;
-/*!40000 ALTER TABLE `lugar_etiqueta` DISABLE KEYS */;
-INSERT INTO `lugar_etiqueta` VALUES (1,1,7,NULL,NULL),(2,2,2,NULL,NULL),(3,3,3,NULL,NULL),(4,4,4,NULL,NULL),(5,5,5,NULL,NULL),(6,5,6,NULL,NULL);
-/*!40000 ALTER TABLE `lugar_etiqueta` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `lugares`
+-- Estructura de tabla para la tabla `lugares`
 --
 
 DROP TABLE IF EXISTS `lugares`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `lugares` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `lugares` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `latitud` decimal(10,8) NOT NULL,
   `longitud` decimal(10,8) NOT NULL,
   `descripcion` text COLLATE utf8mb3_unicode_ci NOT NULL,
   `color_marcador` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT '#3388ff',
-  `creado_por` bigint unsigned NOT NULL,
+  `creado_por` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `lugares_creado_por_foreign` (`creado_por`),
-  CONSTRAINT `lugares_creado_por_foreign` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  KEY `lugares_creado_por_foreign` (`creado_por`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
--- Dumping data for table `lugares`
+-- Volcado de datos para la tabla `lugares`
 --
 
-LOCK TABLES `lugares` WRITE;
-/*!40000 ALTER TABLE `lugares` DISABLE KEYS */;
-INSERT INTO `lugares` VALUES (1,'Hospital Universitari de Bellvitge',41.34420000,2.10190000,'Hospital universitario de referencia','#FF0000',1,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(2,'Institut Joan XXIII',41.34790000,2.10450000,'Centro educativo de formación profesional','#0000FF',1,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(3,'Parc de Bellvitge',41.34670000,2.10670000,'Parque público con áreas verdes y zonas de recreo','#00FF00',1,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(4,'Estación de Metro Bellvitge',41.36110000,2.11270000,'Estación de la línea 1 del metro de Barcelona','#FFA500',1,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(5,'Centro Comercial Gran Via 2',41.35890000,2.12890000,'Centro comercial con tiendas, restaurantes y cine','#800080',1,'2025-03-27 15:59:29','2025-03-27 15:59:29');
-/*!40000 ALTER TABLE `lugares` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `lugares` (`id`, `nombre`, `latitud`, `longitud`, `descripcion`, `color_marcador`, `creado_por`, `created_at`, `updated_at`) VALUES
+(1, 'Hospital Universitari de Bellvitge', 41.34440600, 2.10452800, 'Hospital universitario de referencia', '#FF0000', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(2, 'Institut Joan XXIII', 41.34968400, 2.10789400, 'Centro educativo de formación profesional', '#0000FF', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(3, 'Parc de Bellvitge', 41.34814200, 2.11135800, 'Parque público con áreas verdes y zonas de recreo', '#00FF00', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(4, 'Estación de Metro Bellvitge', 41.35071800, 2.11090100, 'Estación de la línea 1 del metro de Barcelona', '#FFA500', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(5, 'Centro Comercial Gran Via 2', 41.35786600, 2.12933600, 'Centro comercial con tiendas, restaurantes y cine', '#800080', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(6, 'GolaGol', 41.35049100, 2.09964110, 'Centro deportivo especializado en fútbol sala.', '#FF6347', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(7, 'Museu de L’Hospitalet', 41.36106850, 2.09723650, 'Museo dedicado a la historia y cultura de L’Hospitalet.', '#FFD700', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(8, 'La Farga', 41.36295930, 2.10461660, 'Centro comercial con tiendas, restaurantes y eventos.', '#4B0082', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(9, 'Sala Salamandra', 41.36002600, 2.10954500, 'Sala de conciertos y discoteca historica.', '#FF4500', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(10, 'Auditori Barradas', 41.36147930, 2.10247930, 'Auditorio para eventos culturales y musicales.', '#4682B4', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(11, 'Parque Can Boixeres', 41.36495280, 2.09637640, 'Parque urbano con amplias áreas verdes cerca de Rambla Just Oliveres.', '#32CD32', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(12, 'Pàdel Top Club', 41.35799630, 2.11235310, 'Club deportivo especializado en pádel cerca del Zoco.', '#8A2BE2', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(13, 'Frankfurt del Centre', 41.36199010, 2.10165850, 'Restaurante especializado en comida rápida y frankfurts ubicado cerca de Rambla Just Oliveres.', '#FF69B4', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(14, 'Escola Canigó', 41.36205260, 2.10076420, 'Centro educativo de primaria y secundaria.', '#1E90FF', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(15, 'Capitolio', 41.35572790, 2.09584460, 'Discoteca Latinoamarecina en Hospitalet.', '#FF8C00', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(16, 'Estadi Municipal de Futbol de L\'Hospitalet', 41.34737600, 2.10235500, 'Estadio municipal para partidos de fútbol y eventos deportivos.', '#FF4500', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(17, 'Gaiper Extreme Padel', 41.35188200, 2.10270000, 'Centro deportivo especializado en pádel.', '#8A2BE2', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(18, 'Mercadona', 41.34692780, 2.10780820, 'Supermercado con productos frescos y de calidad.', '#32CD32', 1, '2025-03-29 16:54:40', '2025-03-29 16:54:40');
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `lugares_etiquetas`
+-- Estructura de tabla para la tabla `lugares_etiquetas`
 --
 
 DROP TABLE IF EXISTS `lugares_etiquetas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `lugares_etiquetas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `lugar_id` bigint unsigned NOT NULL,
-  `etiqueta_id` bigint unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `lugares_etiquetas` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lugar_id` bigint UNSIGNED NOT NULL,
+  `etiqueta_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `lugares_etiquetas_lugar_id_foreign` (`lugar_id`),
-  KEY `lugares_etiquetas_etiqueta_id_foreign` (`etiqueta_id`),
-  CONSTRAINT `lugares_etiquetas_etiqueta_id_foreign` FOREIGN KEY (`etiqueta_id`) REFERENCES `etiquetas` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `lugares_etiquetas_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE
+  KEY `lugares_etiquetas_etiqueta_id_foreign` (`etiqueta_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `lugares_etiquetas`
+-- Estructura de tabla para la tabla `lugar_etiqueta`
 --
 
-LOCK TABLES `lugares_etiquetas` WRITE;
-/*!40000 ALTER TABLE `lugares_etiquetas` DISABLE KEYS */;
-/*!40000 ALTER TABLE `lugares_etiquetas` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `lugar_etiqueta`;
+CREATE TABLE IF NOT EXISTS `lugar_etiqueta` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lugar_id` bigint UNSIGNED NOT NULL,
+  `etiqueta_id` bigint UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lugar_etiqueta_lugar_id_foreign` (`lugar_id`),
+  KEY `lugar_etiqueta_etiqueta_id_foreign` (`etiqueta_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
--- Table structure for table `migrations`
+-- Volcado de datos para la tabla `lugar_etiqueta`
+--
+
+INSERT INTO `lugar_etiqueta` (`id`, `lugar_id`, `etiqueta_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 7, NULL, NULL),
+(2, 2, 2, NULL, NULL),
+(3, 3, 3, NULL, NULL),
+(4, 4, 4, NULL, NULL),
+(5, 5, 5, NULL, NULL),
+(6, 5, 6, NULL, NULL),
+(7, 6, 8, NULL, NULL),
+(8, 7, 1, NULL, NULL),
+(9, 8, 5, NULL, NULL),
+(10, 9, 6, NULL, NULL),
+(11, 10, 1, NULL, NULL),
+(12, 11, 3, NULL, NULL),
+(13, 12, 8, NULL, NULL),
+(14, 13, 9, NULL, NULL),
+(15, 14, 2, NULL, NULL),
+(16, 15, 6, NULL, NULL),
+(17, 16, 8, NULL, NULL),
+(18, 17, 8, NULL, NULL),
+(19, 18, 5, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `migrations`
 --
 
 DROP TABLE IF EXISTS `migrations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `migrations` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `migrations` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `migration` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `migrations`
+-- Volcado de datos para la tabla `migrations`
 --
 
-LOCK TABLES `migrations` WRITE;
-/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'2025_03_18_000000_create_usuarios_table',1),(2,'2025_03_18_000001_create_grupos_table',1),(3,'2025_03_18_000002_create_usuarios_grupos_table',1),(4,'2025_03_18_000003_create_etiquetas_table',1),(5,'2025_03_18_000004_create_lugares_table',1),(6,'2025_03_18_000005_create_lugares_etiquetas_table',1),(7,'2025_03_18_000006_create_favoritos_table',1),(8,'2025_03_18_000007_create_puntos_control_table',1),(9,'2025_03_18_000008_create_pruebas_table',1),(10,'2025_03_18_000009_create_rutas_table',1),(11,'2025_03_18_000010_create_progreso_gimcana_table',1),(12,'2025_03_18_000011_create_logs_table',1),(13,'2025_03_18_000012_create_sessions_table',1),(14,'2025_03_18_000013_create_gimcanas_table',1),(15,'2025_03_18_000014_create_gimcana_lugar_table',1),(16,'2025_03_24_150640_create_lugar_etiqueta_table',1),(17,'2025_03_25_162156_create_puntos_usuarios_table',1),(18,'2025_03_25_183648_create_gimcana_usuario_table',1),(19,'2025_03_25_185412_create_gimcana_grupo_table',1),(20,'2025_03_26_185238_add_esta_listo_to_usuarios_grupos_table',1);
-/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '2025_03_18_000000_create_usuarios_table', 1),
+(2, '2025_03_18_000001_create_grupos_table', 1),
+(3, '2025_03_18_000002_create_usuarios_grupos_table', 1),
+(4, '2025_03_18_000003_create_etiquetas_table', 1),
+(5, '2025_03_18_000004_create_lugares_table', 1),
+(6, '2025_03_18_000005_create_lugares_etiquetas_table', 1),
+(7, '2025_03_18_000006_create_favoritos_table', 1),
+(8, '2025_03_18_000007_create_puntos_control_table', 1),
+(9, '2025_03_18_000008_create_pruebas_table', 1),
+(10, '2025_03_18_000009_create_rutas_table', 1),
+(11, '2025_03_18_000010_create_progreso_gimcana_table', 1),
+(12, '2025_03_18_000011_create_logs_table', 1),
+(13, '2025_03_18_000012_create_sessions_table', 1),
+(14, '2025_03_18_000013_create_gimcanas_table', 1),
+(15, '2025_03_18_000014_create_gimcana_lugar_table', 1),
+(16, '2025_03_24_150640_create_lugar_etiqueta_table', 1),
+(17, '2025_03_25_162156_create_puntos_usuarios_table', 1),
+(18, '2025_03_25_183648_create_gimcana_usuario_table', 1),
+(19, '2025_03_25_185412_create_gimcana_grupo_table', 1),
+(20, '2025_03_26_185238_add_esta_listo_to_usuarios_grupos_table', 1);
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `progreso_gimcana`
+-- Estructura de tabla para la tabla `progreso_gimcana`
 --
 
 DROP TABLE IF EXISTS `progreso_gimcana`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `progreso_gimcana` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint unsigned NOT NULL,
-  `punto_control_id` bigint unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `progreso_gimcana` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint UNSIGNED NOT NULL,
+  `punto_control_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `progreso_gimcana_usuario_id_foreign` (`usuario_id`),
-  KEY `progreso_gimcana_punto_control_id_foreign` (`punto_control_id`),
-  CONSTRAINT `progreso_gimcana_punto_control_id_foreign` FOREIGN KEY (`punto_control_id`) REFERENCES `puntos_control` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `progreso_gimcana_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  KEY `progreso_gimcana_punto_control_id_foreign` (`punto_control_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `progreso_gimcana`
---
-
-LOCK TABLES `progreso_gimcana` WRITE;
-/*!40000 ALTER TABLE `progreso_gimcana` DISABLE KEYS */;
-/*!40000 ALTER TABLE `progreso_gimcana` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `pruebas`
+-- Estructura de tabla para la tabla `pruebas`
 --
 
 DROP TABLE IF EXISTS `pruebas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `pruebas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `punto_control_id` bigint unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `pruebas` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `punto_control_id` bigint UNSIGNED NOT NULL,
   `descripcion` text COLLATE utf8mb3_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `pruebas_punto_control_id_foreign` (`punto_control_id`),
-  CONSTRAINT `pruebas_punto_control_id_foreign` FOREIGN KEY (`punto_control_id`) REFERENCES `puntos_control` (`id`) ON DELETE CASCADE
+  KEY `pruebas_punto_control_id_foreign` (`punto_control_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `pruebas`
---
-
-LOCK TABLES `pruebas` WRITE;
-/*!40000 ALTER TABLE `pruebas` DISABLE KEYS */;
-/*!40000 ALTER TABLE `pruebas` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `puntos_control`
+-- Estructura de tabla para la tabla `puntos_control`
 --
 
 DROP TABLE IF EXISTS `puntos_control`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `puntos_control` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `lugar_id` bigint unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `puntos_control` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lugar_id` bigint UNSIGNED NOT NULL,
   `pista` text COLLATE utf8mb3_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `puntos_control_lugar_id_foreign` (`lugar_id`),
-  CONSTRAINT `puntos_control_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE
+  KEY `puntos_control_lugar_id_foreign` (`lugar_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `puntos_control`
---
-
-LOCK TABLES `puntos_control` WRITE;
-/*!40000 ALTER TABLE `puntos_control` DISABLE KEYS */;
-/*!40000 ALTER TABLE `puntos_control` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `puntos_usuarios`
+-- Estructura de tabla para la tabla `puntos_usuarios`
 --
 
 DROP TABLE IF EXISTS `puntos_usuarios`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `puntos_usuarios` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint unsigned NOT NULL,
-  `lugar_id` bigint unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `puntos_usuarios` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint UNSIGNED NOT NULL,
+  `lugar_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `puntos_usuarios_usuario_id_foreign` (`usuario_id`),
-  KEY `puntos_usuarios_lugar_id_foreign` (`lugar_id`),
-  CONSTRAINT `puntos_usuarios_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `puntos_usuarios_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  KEY `puntos_usuarios_lugar_id_foreign` (`lugar_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `puntos_usuarios`
---
-
-LOCK TABLES `puntos_usuarios` WRITE;
-/*!40000 ALTER TABLE `puntos_usuarios` DISABLE KEYS */;
-/*!40000 ALTER TABLE `puntos_usuarios` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `rutas`
+-- Estructura de tabla para la tabla `rutas`
 --
 
 DROP TABLE IF EXISTS `rutas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `rutas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `rutas` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint UNSIGNED NOT NULL,
   `origen` geometry NOT NULL,
   `destino` geometry NOT NULL,
   `tiempo_estimado` int NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `rutas_usuario_id_foreign` (`usuario_id`),
-  CONSTRAINT `rutas_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  KEY `rutas_usuario_id_foreign` (`usuario_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `rutas`
---
-
-LOCK TABLES `rutas` WRITE;
-/*!40000 ALTER TABLE `rutas` DISABLE KEYS */;
-/*!40000 ALTER TABLE `rutas` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sessions`
+-- Estructura de tabla para la tabla `sessions`
 --
 
 DROP TABLE IF EXISTS `sessions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `sessions` (
+CREATE TABLE IF NOT EXISTS `sessions` (
   `id` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `user_id` bigint unsigned DEFAULT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
   `ip_address` varchar(45) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `user_agent` text COLLATE utf8mb3_unicode_ci,
   `payload` longtext COLLATE utf8mb3_unicode_ci NOT NULL,
   `last_activity` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `sessions_user_id_foreign` (`user_id`),
-  KEY `sessions_last_activity_index` (`last_activity`),
-  CONSTRAINT `sessions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  KEY `sessions_last_activity_index` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `sessions`
+-- Volcado de datos para la tabla `sessions`
 --
 
-LOCK TABLES `sessions` WRITE;
-/*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('8TECScOd41rSQuOpOAKA6s1kvWW5vmZfSh0tU8gs',5,'127.0.0.1','Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiMnFuamVDUE1tMUZab1F6NzlDTnp0OGd1MHlNOGVXc3ZkTVlLSU80TSI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czo0NzoiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2NsaWVudGUvZ3J1cG9zLzEvbWllbWJyb3MiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo1MToiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2NsaWVudGUvZ2ltY2FuYXMvbnVsbC9sdWdhcmVzIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NTt9',1743095062),('L6aoLis2srULKJDv21KONbCVZAzshNLo53kbRaZS',7,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoibTFud2Nlc1o1M1B6QnAxZkFWSU1UaU1TOU9aV0ZGcXBkUkd6eG03WCI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozNToiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2FkbWluL2dpbWNhbmEiO31zOjk6Il9wcmV2aW91cyI7YToxOntzOjM6InVybCI7czo1MToiaHR0cDovL2xvY2FsaG9zdDo4MDAwL2NsaWVudGUvZ2ltY2FuYXMvbnVsbC9sdWdhcmVzIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Nzt9',1743095060);
-/*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('5fZcZfmomfLVXpnrfDR2AjfY3HDODrtsX7nKL1EY', 7, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiMUlKbGdDelVCZERDNUZxRFhFQWxOMkliNHhKaXdtRVpDQlpJSmViMSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTM6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9jbGllbnRlL2dpbWNhbmFzLzEvZ3J1cG8tYWN0dWFsIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Nzt9', 1743273510);
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `usuarios`
+-- Estructura de tabla para la tabla `usuarios`
 --
 
 DROP TABLE IF EXISTS `usuarios`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `usuarios` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `usuarios` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
   `email` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
@@ -566,57 +490,157 @@ CREATE TABLE `usuarios` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `usuarios_email_unique` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `usuarios`
+-- Volcado de datos para la tabla `usuarios`
 --
 
-LOCK TABLES `usuarios` WRITE;
-/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Alejandro González','alejandro@admin.com','$2y$12$pgqfAl45Jl3l0Alzfb.x0OdsSOaXmIXmUa/gKqGLssqIlMAtPatIi','admin',NULL,'2025-03-27 15:59:28','2025-03-27 15:59:28'),(2,'Sergi Masip','sergi@admin.com','$2y$12$U7Ct3bXytVY/vs06Kda3Oe9reLIUPZer4DNPO.J1RksnD9L5PuG9G','admin',NULL,'2025-03-27 15:59:28','2025-03-27 15:59:28'),(3,'Adrián Vazquez','adrian@admin.com','$2y$12$d5dmc4NzTQsrLO7WmUrjMu18R0un.3QjnIm.V.1U2IjIWWvmIOUxa','admin',NULL,'2025-03-27 15:59:28','2025-03-27 15:59:28'),(4,'Àlex Ventura','alex@admin.com','$2y$12$5Kt12urRbC5pC.BVHbn8Xey.oBDA8UWQk8pOluUmpgksMzabADtwO','admin',NULL,'2025-03-27 15:59:28','2025-03-27 15:59:28'),(5,'María García','maria@example.com','$2y$12$PV.9.n1jeo9KBxlZc16UiO/Wn5b5F5pU2Q4T2aekpsMx17TfunbWe','usuario',NULL,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(6,'Juan Rodríguez','juan@example.com','$2y$12$2FE0GDMZZpHouzLNWcVWdOKR3uQKk7Ac44onhJc467wVndg9XrCHu','usuario',NULL,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(7,'Laura Martínez','laura@example.com','$2y$12$ArcASjRaANiH12xOoE12/eXjWgbt4cN08AJ2GNbBPLPB/MgeRQPhe','usuario',NULL,'2025-03-27 15:59:29','2025-03-27 15:59:29'),(8,'Carlos López','carlos@example.com','$2y$12$PysVGB0BaUGrD8zt8Uj2RO8VktvkmqgNfNJFm8.VgROXws/1qNeRm','usuario',NULL,'2025-03-27 15:59:29','2025-03-27 15:59:29');
-/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `usuarios` (`id`, `nombre`, `email`, `password`, `rol`, `ubicacion_actual`, `created_at`, `updated_at`) VALUES
+(1, 'Alejandro González', 'alejandro@admin.com', '$2y$12$GXCd0ArT/7eXsic.4UWr5.r9qtKJQgXsg0gneWdQp.dv4cL2hMPbG', 'admin', NULL, '2025-03-29 16:54:38', '2025-03-29 16:54:38'),
+(2, 'Sergi Masip', 'sergi@admin.com', '$2y$12$GDoEyoEVNYLh156yvMUJHuTmaJ1eC5yLCwZhDqh9FN6y3CTrjlDiS', 'admin', NULL, '2025-03-29 16:54:38', '2025-03-29 16:54:38'),
+(3, 'Adrián Vazquez', 'adrian@admin.com', '$2y$12$jTtkzOJsRexLImABIqk4kOLMnLNj/DsDkaA6yWfRA54siAd.W0c/W', 'admin', NULL, '2025-03-29 16:54:38', '2025-03-29 16:54:38'),
+(4, 'Àlex Ventura', 'alex@admin.com', '$2y$12$p58wcSsFsKoTtLzSDDHPTeGENQQJzOtd4KUD3OsxKFuDuKVzix3eu', 'admin', NULL, '2025-03-29 16:54:38', '2025-03-29 16:54:38'),
+(5, 'María García', 'maria@example.com', '$2y$12$Uqga2l3X8S/89HYiRlPArOY1bFRATVe9EeXtRKuG7ReUijWtFBzYy', 'usuario', NULL, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(6, 'Juan Rodríguez', 'juan@example.com', '$2y$12$xO/hcglE2JF9q2qcX5EGd.CFSPARKBWPdBpaBMQxI7Gs8PJDeSQ8S', 'usuario', NULL, '2025-03-29 16:54:40', '2025-03-29 16:54:40'),
+(7, 'Laura Martínez', 'laura@example.com', '$2y$12$09TnOde1Qx2tad3QGFYl7ulS3BPLBO8JJgtXPzX0T5b/F5g1Flvka', 'usuario', 0x000000000101000000a23e6e64c33f014097a4d70baab24440, '2025-03-29 16:54:40', '2025-03-29 16:59:21'),
+(8, 'Carlos López', 'carlos@example.com', '$2y$12$8QNkYbZPXsr2VaNRfsG8suwqNvQUGHODS24AG.QlIF17m03n3Zusu', 'usuario', NULL, '2025-03-29 16:54:40', '2025-03-29 16:54:40');
+
+-- --------------------------------------------------------
 
 --
--- Table structure for table `usuarios_grupos`
+-- Estructura de tabla para la tabla `usuarios_grupos`
 --
 
 DROP TABLE IF EXISTS `usuarios_grupos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `usuarios_grupos` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `usuario_id` bigint unsigned NOT NULL,
-  `grupo_id` bigint unsigned NOT NULL,
+CREATE TABLE IF NOT EXISTS `usuarios_grupos` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `usuario_id` bigint UNSIGNED NOT NULL,
+  `grupo_id` bigint UNSIGNED NOT NULL,
   `esta_listo` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el usuario está listo para comenzar la gimcana',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `usuarios_grupos_usuario_id_foreign` (`usuario_id`),
-  KEY `usuarios_grupos_grupo_id_foreign` (`grupo_id`),
-  CONSTRAINT `usuarios_grupos_grupo_id_foreign` FOREIGN KEY (`grupo_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `usuarios_grupos_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  KEY `usuarios_grupos_grupo_id_foreign` (`grupo_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
--- Dumping data for table `usuarios_grupos`
+-- Volcado de datos para la tabla `usuarios_grupos`
 --
 
-LOCK TABLES `usuarios_grupos` WRITE;
-/*!40000 ALTER TABLE `usuarios_grupos` DISABLE KEYS */;
-INSERT INTO `usuarios_grupos` VALUES (1,5,3,1,'2025-03-27 16:00:31','2025-03-27 16:04:16'),(2,7,4,1,'2025-03-27 16:04:12','2025-03-27 16:04:18');
-/*!40000 ALTER TABLE `usuarios_grupos` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+INSERT INTO `usuarios_grupos` (`id`, `usuario_id`, `grupo_id`, `esta_listo`, `created_at`, `updated_at`) VALUES
+(1, 7, 3, 1, '2025-03-29 16:57:15', '2025-03-29 16:57:20');
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `favoritos`
+--
+ALTER TABLE `favoritos`
+  ADD CONSTRAINT `favoritos_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `favoritos_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `gimcanas`
+--
+ALTER TABLE `gimcanas`
+  ADD CONSTRAINT `gimcanas_creado_por_foreign` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `gimcana_grupo`
+--
+ALTER TABLE `gimcana_grupo`
+  ADD CONSTRAINT `gimcana_grupo_gimcana_id_foreign` FOREIGN KEY (`gimcana_id`) REFERENCES `gimcanas` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `gimcana_grupo_grupo_id_foreign` FOREIGN KEY (`grupo_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `gimcana_lugar`
+--
+ALTER TABLE `gimcana_lugar`
+  ADD CONSTRAINT `gimcana_lugar_gimcana_id_foreign` FOREIGN KEY (`gimcana_id`) REFERENCES `gimcanas` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `gimcana_lugar_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `gimcana_usuario`
+--
+ALTER TABLE `gimcana_usuario`
+  ADD CONSTRAINT `gimcana_usuario_gimcana_id_foreign` FOREIGN KEY (`gimcana_id`) REFERENCES `gimcanas` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `gimcana_usuario_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `logs`
+--
+ALTER TABLE `logs`
+  ADD CONSTRAINT `logs_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `lugares`
+--
+ALTER TABLE `lugares`
+  ADD CONSTRAINT `lugares_creado_por_foreign` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`);
+
+--
+-- Filtros para la tabla `lugares_etiquetas`
+--
+ALTER TABLE `lugares_etiquetas`
+  ADD CONSTRAINT `lugares_etiquetas_etiqueta_id_foreign` FOREIGN KEY (`etiqueta_id`) REFERENCES `etiquetas` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `lugares_etiquetas_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `lugar_etiqueta`
+--
+ALTER TABLE `lugar_etiqueta`
+  ADD CONSTRAINT `lugar_etiqueta_etiqueta_id_foreign` FOREIGN KEY (`etiqueta_id`) REFERENCES `etiquetas` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `lugar_etiqueta_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `progreso_gimcana`
+--
+ALTER TABLE `progreso_gimcana`
+  ADD CONSTRAINT `progreso_gimcana_punto_control_id_foreign` FOREIGN KEY (`punto_control_id`) REFERENCES `puntos_control` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `progreso_gimcana_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `pruebas`
+--
+ALTER TABLE `pruebas`
+  ADD CONSTRAINT `pruebas_punto_control_id_foreign` FOREIGN KEY (`punto_control_id`) REFERENCES `puntos_control` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `puntos_control`
+--
+ALTER TABLE `puntos_control`
+  ADD CONSTRAINT `puntos_control_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `puntos_usuarios`
+--
+ALTER TABLE `puntos_usuarios`
+  ADD CONSTRAINT `puntos_usuarios_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `puntos_usuarios_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `rutas`
+--
+ALTER TABLE `rutas`
+  ADD CONSTRAINT `rutas_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `sessions`
+--
+ALTER TABLE `sessions`
+  ADD CONSTRAINT `sessions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `usuarios_grupos`
+--
+ALTER TABLE `usuarios_grupos`
+  ADD CONSTRAINT `usuarios_grupos_grupo_id_foreign` FOREIGN KEY (`grupo_id`) REFERENCES `grupos` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `usuarios_grupos_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2025-03-27 18:07:43

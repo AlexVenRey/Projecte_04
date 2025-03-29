@@ -6,39 +6,36 @@ let lugares = [];
 let puntosControl = [];
 let grupoActual = null;
 let marcadorUsuario = null;
-let circuloPerimetro = null;
+let circuloProximidad = null;
 let watchId = null;
 let gimcanaId = null;
 let puntoControlActual = null;
-let radioProximidad = 20; // Radio en metros
+let radioProximidad = 25; // Radio en metros para detectar llegada a punto de control
 let siguiendoUsuario = true;
 
-// Inicializar el mapa cuando el DOM esté listo
+// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
+    // Obtener ID de la gimcana
     gimcanaId = document.querySelector('meta[name="gimcana-id"]').content;
-    if (!gimcanaId) {
-        mostrarError('No se ha encontrado el ID de la gimcana');
-        return;
-    }
-
-    // Inicializar el mapa
+    
+    // Inicializar mapa
     mapa = L.map('mapa').setView([41.3851, 2.1734], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(mapa);
 
-    cargarPuntosControl();
+    // Cargar información inicial
+    cargarInformacionGrupo();
+    cargarPuntoControlActual();
     iniciarSeguimientoUbicacion();
-    setInterval(actualizarPosicionesUsuarios, 5000);
 });
 
 function iniciarSeguimientoUbicacion() {
-    if (!("geolocation" in navigator)) {
+    if (!navigator.geolocation) {
         mostrarError("Tu navegador no soporta geolocalización");
         return;
     }
 
-    // Icono simple y profesional para el usuario
     const iconoUsuario = L.divIcon({
         className: 'usuario-marker',
         html: '<div class="marcador-usuario"></div>',
@@ -46,94 +43,48 @@ function iniciarSeguimientoUbicacion() {
         iconAnchor: [10, 10]
     });
 
-    const opcionesGeo = {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 5000
-    };
+    navigator.geolocation.watchPosition(
+        function(position) {
+            const { latitude, longitude } = position.coords;
 
-    function actualizarPosicion(position) {
-        const { latitude, longitude, accuracy } = position.coords;
+            // Actualizar marcador del usuario
+            if (!marcadorUsuario) {
+                marcadorUsuario = L.marker([latitude, longitude], {
+                    icon: iconoUsuario
+                }).addTo(mapa);
 
-        if (!marcadorUsuario) {
-            // Crear marcador del usuario
-            marcadorUsuario = L.marker([latitude, longitude], {
-                icon: iconoUsuario
-            }).addTo(mapa);
+                circuloProximidad = L.circle([latitude, longitude], {
+                    radius: radioProximidad,
+                    color: '#2196F3',
+                    fillOpacity: 0.1
+                }).addTo(mapa);
 
-            // Crear círculo de perímetro
-            circuloPerimetro = L.circle([latitude, longitude], {
-                radius: radioProximidad,
-                color: '#2196F3',
-                fillColor: '#2196F3',
-                fillOpacity: 0.1,
-                weight: 2
-            }).addTo(mapa);
-
-            mapa.setView([latitude, longitude], 18);
-        } else {
-            // Actualizar posición del marcador y círculo
-            marcadorUsuario.setLatLng([latitude, longitude]);
-            circuloPerimetro.setLatLng([latitude, longitude]);
-        }
-
-        // Si el seguimiento está activo, centrar el mapa en el usuario
-        if (siguiendoUsuario) {
-            mapa.setView([latitude, longitude]);
-        }
-
-        verificarProximidadPuntosControl(latitude, longitude);
-        enviarPosicionAlServidor(latitude, longitude);
-    }
-
-    function manejarError(error) {
-        let mensaje = "Error de ubicación: ";
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                mensaje += "Permiso denegado";
-                break;
-            case error.POSITION_UNAVAILABLE:
-                mensaje += "Ubicación no disponible";
-                break;
-            case error.TIMEOUT:
-                mensaje += "Tiempo de espera agotado";
-                break;
-            default:
-                mensaje += "Error desconocido";
-        }
-        mostrarError(mensaje);
-    }
-
-    // Iniciar seguimiento continuo
-    watchId = navigator.geolocation.watchPosition(
-        actualizarPosicion,
-        manejarError,
-        opcionesGeo
-    );
-
-    // Añadir botón para centrar en el usuario
-    const botonCentrar = L.control({position: 'bottomright'});
-    botonCentrar.onAdd = function() {
-        const div = L.DomUtil.create('div', 'boton-centrar');
-        div.innerHTML = '<button class="btn-centrar" title="Centrar en mi ubicación"><i class="fas fa-crosshairs"></i></button>';
-        div.onclick = function() {
-            siguiendoUsuario = true;
-            if (marcadorUsuario) {
-                const pos = marcadorUsuario.getLatLng();
-                mapa.setView(pos, 18);
+                mapa.setView([latitude, longitude], 18);
+            } else {
+                marcadorUsuario.setLatLng([latitude, longitude]);
+                circuloProximidad.setLatLng([latitude, longitude]);
             }
-        };
-        return div;
-    };
-    botonCentrar.addTo(mapa);
 
-    // Desactivar seguimiento cuando el usuario mueve el mapa
-    mapa.on('dragstart', function() {
-        siguiendoUsuario = false;
-    });
+            if (siguiendoUsuario) {
+                mapa.setView([latitude, longitude]);
+            }
+
+            // Verificar proximidad y enviar posición
+            verificarProximidadPuntoControl(latitude, longitude);
+            enviarPosicionAlServidor(latitude, longitude);
+        },
+        function(error) {
+            mostrarError("Error al obtener ubicación: " + error.message);
+        },
+        {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 5000
+        }
+    );
 }
 
-function verificarProximidadPuntosControl(latitud, longitud) {
+function verificarProximidadPuntoControl(latitud, longitud) {
     if (!puntoControlActual) return;
 
     const distancia = calcularDistancia(
@@ -143,23 +94,140 @@ function verificarProximidadPuntosControl(latitud, longitud) {
         puntoControlActual.longitud
     );
 
-    if (distancia <= radioProximidad) {
+    // Si estamos dentro del radio de proximidad y no hemos mostrado la pista aún
+    if (distancia <= radioProximidad && !puntoControlActual.pistaVista) {
+        puntoControlActual.pistaVista = true; // Evitar mostrar la pista múltiples veces
         mostrarPistaYPrueba(puntoControlActual);
     }
 }
 
-function cargarPuntosControl() {
+function cargarPuntoControlActual() {
+    if (!gimcanaId) return;
+    
     fetch(`/cliente/gimcanas/${gimcanaId}/siguiente-punto`)
         .then(response => response.json())
         .then(data => {
-            if (data) {
-                puntoControlActual = data;
+            if (data && data.lugar) {
+                puntoControlActual = {
+                    id: data.id,
+                    latitud: data.lugar.latitud,
+                    longitud: data.lugar.longitud,
+                    nombre: data.lugar.nombre,
+                    pista: data.pista || 'Busca pistas en los alrededores...',
+                    prueba: data.prueba || {
+                        descripcion: '¿Qué lugar es este?',
+                        respuesta: data.lugar.nombre
+                    }
+                };
                 mostrarPuntosControlEnMapa();
+                actualizarProgresoGimcana();
             }
         })
         .catch(error => console.error('Error al cargar punto de control:', error));
 }
 
+function mostrarPistaYPrueba(puntoControl) {
+    // Mostrar el modal con SweetAlert2
+    Swal.fire({
+        title: '¡Has llegado a un punto de control!',
+        html: `
+            <div class="text-start">
+                <h5>Ubicación actual:</h5>
+                <p>${puntoControl.nombre}</p>
+                
+                <h5>Pista:</h5>
+                <p>${puntoControl.pista}</p>
+                
+                <h5>Prueba:</h5>
+                <p>${puntoControl.prueba.descripcion}</p>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Resolver prueba',
+        cancelButtonText: 'Cerrar',
+        width: '600px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            mostrarFormularioPrueba(puntoControl);
+        }
+    });
+}
+
+function verificarRespuesta() {
+    const respuesta = document.getElementById('respuesta-prueba').value;
+
+    fetch('/cliente/gimcanas/verificar-prueba', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+            punto_control_id: puntoControlActual.id,
+            respuesta: respuesta,
+            gimcana_id: gimcanaId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Correcto!',
+                text: 'Has superado esta prueba. ¡Continúa hacia el siguiente punto!'
+            }).then(() => {
+                if (data.gimcana_completada) {
+                    mostrarGimcanaCompletada();
+                } else {
+                    // Cargar el siguiente punto
+                    cargarPuntoControlActual();
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Incorrecto',
+                text: 'Inténtalo de nuevo'
+            });
+        }
+    });
+}
+
+function calcularDistancia(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // Radio de la tierra en metros
+    const φ1 = lat1 * Math.PI/180;
+    const φ2 = lat2 * Math.PI/180;
+    const Δφ = (lat2-lat1) * Math.PI/180;
+    const Δλ = (lon2-lon1) * Math.PI/180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
+}
+
+function mostrarError(mensaje) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: mensaje
+    });
+}
+
+function mostrarGimcanaCompletada() {
+    Swal.fire({
+        title: '¡Felicidades!',
+        text: 'Tu grupo ha completado la gimcana',
+        icon: 'success',
+        confirmButtonText: 'Finalizar'
+    }).then(() => {
+        window.location.href = '/cliente/gimcanas';
+    });
+}
+
+// Función para mostrar los puntos de control en el mapa
 function mostrarPuntosControlEnMapa() {
     limpiarMarcadores();
 
@@ -239,26 +307,6 @@ function cargarInformacionGrupo() {
         .catch(error => console.error('Error al cargar grupo:', error));
 }
 
-// Función para mostrar pista y prueba
-function mostrarPistaYPrueba(puntoControl) {
-    Swal.fire({
-        title: '¡Has llegado a un punto de control!',
-        html: `
-            <h4>Pista:</h4>
-            <p>${puntoControl.pista}</p>
-            <h4>Prueba:</h4>
-            <p>${puntoControl.prueba.descripcion}</p>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'Resolver prueba',
-        cancelButtonText: 'Cerrar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            mostrarFormularioPrueba(puntoControl);
-        }
-    });
-}
-
 // Función para mostrar el formulario de la prueba
 function mostrarFormularioPrueba(puntoControl) {
     Swal.fire({
@@ -278,67 +326,8 @@ function mostrarFormularioPrueba(puntoControl) {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            verificarRespuestaPrueba(puntoControl.id, result.value);
+            verificarRespuesta();
         }
-    });
-}
-
-// Función para verificar la respuesta de la prueba
-function verificarRespuestaPrueba(puntoControlId, respuesta) {
-    fetch('/cliente/gimcanas/verificar-prueba', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({
-            punto_control_id: puntoControlId,
-            respuesta: respuesta,
-            gimcana_id: gimcanaId
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Correcto!',
-                text: 'Has superado esta prueba'
-            });
-            puntoControlActual++;
-            actualizarProgresoGimcana();
-            if (data.gimcana_completada) {
-                mostrarGimcanaCompletada();
-            }
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Incorrecto',
-                text: 'Inténtalo de nuevo'
-            });
-        }
-    });
-}
-
-// Función para mostrar los puntos de control en el mapa
-function mostrarPuntosControlEnMapa() {
-    limpiarMarcadores();
-
-    puntosControl.forEach((punto, index) => {
-        const esSiguientePunto = index === puntoControlActual;
-        const marcador = L.marker([punto.lugar.latitud, punto.lugar.longitud], {
-            icon: L.divIcon({
-                className: `marcador-gimcana ${esSiguientePunto ? 'lugar-siguiente' : ''}`,
-                html: `<div class="marcador" style="background-color: ${esSiguientePunto ? '#00ff00' : '#ff4444'}">
-                        <span class="numero">${index + 1}</span>
-                       </div>`,
-                iconSize: [40, 40],
-                iconAnchor: [20, 40]
-            })
-        });
-
-        marcador.addTo(mapa);
-        marcadores.push(marcador);
     });
 }
 
@@ -356,82 +345,6 @@ function actualizarPanelGrupo() {
             </span>
         `).join('');
     }
-}
-
-// Función para mostrar gimcana completada
-function mostrarGimcanaCompletada() {
-    Swal.fire({
-        title: '¡Felicidades!',
-        text: 'Has completado la gimcana con tu grupo',
-        icon: 'success',
-        confirmButtonText: 'Volver al inicio'
-    }).then(() => {
-        window.location.href = '/cliente/gimcanas';
-    });
-}
-
-// Función para enviar la posición al servidor
-function enviarPosicionAlServidor(latitude, longitude) {
-    if (!gimcanaId) return;
-
-    fetch('/cliente/actualizar-posicion', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({
-            latitud: latitude,
-            longitud: longitude,
-            gimcana_id: gimcanaId,
-            timestamp: new Date().toISOString()
-        })
-    }).catch(error => console.error('Error al actualizar posición:', error));
-}
-
-// Función para detener el seguimiento de ubicación
-function detenerSeguimientoUbicacion() {
-    if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-        watchId = null;
-    }
-    if (marcadorUsuario && marcadorUsuario.circle) {
-        mapa.removeLayer(marcadorUsuario.circle);
-    }
-    if (marcadorUsuario) {
-        mapa.removeLayer(marcadorUsuario);
-        marcadorUsuario = null;
-    }
-}
-
-// Asegurarse de detener el seguimiento cuando se cierre la página
-window.addEventListener('beforeunload', detenerSeguimientoUbicacion);
-
-// Función para calcular la distancia entre dos puntos
-function calcularDistancia(lat1, lon1, lat2, lon2) {
-    const R = 6371e3; // Radio de la tierra en metros
-    const φ1 = lat1 * Math.PI/180;
-    const φ2 = lat2 * Math.PI/180;
-    const Δφ = (lat2-lat1) * Math.PI/180;
-    const Δλ = (lon2-lon1) * Math.PI/180;
-
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ/2) * Math.sin(Δλ/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-    return R * c;
-}
-
-// Función para finalizar la gimcana
-function finalizarGimcana() {
-    Swal.fire({
-        title: '¡Felicidades!',
-        text: 'Has completado la gimcana',
-        icon: 'success'
-    }).then(() => {
-        window.location.href = '/cliente/gimcanas';
-    });
 }
 
 // Función para mostrar los lugares en el mapa
@@ -524,15 +437,6 @@ function limpiarMarcadores() {
 function limpiarRutas() {
     rutas.forEach(ruta => mapa.removeLayer(ruta));
     rutas = [];
-}
-
-// Función para mostrar errores
-function mostrarError(mensaje) {
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: mensaje
-    });
 }
 
 // Función para mostrar mensajes de éxito
