@@ -385,7 +385,7 @@ function mostrarRuta(lugarId) {
         routeWhileDragging: false,
         showAlternatives: false,
         fitSelectedRoute: true,
-        language: 'es',
+        language: 'es', // Configurar el idioma a español
         router: L.Routing.mapbox('pk.eyJ1IjoiZXZhcmlzdG82NyIsImEiOiJjbThuZm1xYjEwMDlxMnZzYWl4NG01dnU1In0.P3Jq6ts8g-gh3HjD611hcg', {
             profile: 'mapbox/walking'
         }),
@@ -422,6 +422,54 @@ function mostrarRuta(lugarId) {
             ]
         }
     }).addTo(map);
+
+    // Interceptar las instrucciones y traducirlas
+    routingControl.on('routesfound', function (e) {
+        const routes = e.routes;
+        const instructions = routes[0].instructions;
+
+        instructions.forEach(instruction => {
+            instruction.text = traducirTexto(instruction.text);
+        });
+    });
+}
+
+// Función para traducir texto (puedes personalizarla)
+function traducirTexto(texto) {
+    const traducciones = {
+        'Head': 'Dirígete',
+        'Turn right': 'Gira a la derecha',
+        'Turn left': 'Gira a la izquierda',
+        'Continue': 'Continúa',
+        'Take the roundabout': 'Toma la rotonda',
+        'onto': 'hacia',
+        'Keep right': 'Mantente a la derecha',
+        'Keep left': 'Mantente a la izquierda',
+        'You have arrived at your destination': 'Has llegado a tu destino',
+        'on the right': 'a la derecha',
+        'on the left': 'a la izquierda',
+        'west on': 'hacia el oeste en',
+        'east on': 'hacia el este en',
+        'north on': 'hacia el norte en',
+        'south on': 'hacia el sur en',
+        'to stay on': 'para continuar en',
+        'Make a slight right': 'Gira levemente a la derecha',
+        'Make a slight left': 'Gira levemente a la izquierda',
+        'towards': 'hacia',
+        'Stay on': 'Permanece en',
+        'Merge onto': 'Incorpórate a',
+        'Exit': 'Sal de',
+        'at the roundabout': 'en la rotonda',
+        'Take the exit': 'Toma la salida',
+        'meters': 'metros',
+        'kilometers': 'kilómetros'
+    };
+
+    for (const [ingles, espanol] of Object.entries(traducciones)) {
+        texto = texto.replace(new RegExp(ingles, 'g'), espanol);
+    }
+
+    return texto;
 }
 
 // Toggle favorito
