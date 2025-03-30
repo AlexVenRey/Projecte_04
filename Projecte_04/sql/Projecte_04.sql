@@ -39,7 +39,7 @@ CREATE TABLE `etiquetas` (
 
 LOCK TABLES `etiquetas` WRITE;
 /*!40000 ALTER TABLE `etiquetas` DISABLE KEYS */;
-INSERT INTO `etiquetas` VALUES (1,'Cultura','fa-landmark','2025-03-25 17:55:30','2025-03-25 17:55:30'),(2,'Educación','fa-graduation-cap','2025-03-25 17:55:30','2025-03-25 17:55:30'),(3,'Parques','fa-tree','2025-03-25 17:55:30','2025-03-25 17:55:30'),(4,'Transporte','fa-train','2025-03-25 17:55:30','2025-03-25 17:55:30'),(5,'Compras','fa-shopping-cart','2025-03-25 17:55:30','2025-03-25 17:55:30'),(6,'Ocio','fa-ticket-alt','2025-03-25 17:55:30','2025-03-25 17:55:30'),(7,'Sanidad','fa-hospital','2025-03-25 17:55:30','2025-03-25 17:55:30'),(8,'Deportes','fa-futbol','2025-03-25 17:55:30','2025-03-25 17:55:30'),(9,'Restaurantes','fa-utensils','2025-03-25 17:55:30','2025-03-25 17:55:30');
+INSERT INTO `etiquetas` VALUES (1,'Cultura','fa-landmark','2025-03-30 20:14:31','2025-03-30 20:14:31'),(2,'Educación','fa-graduation-cap','2025-03-30 20:14:31','2025-03-30 20:14:31'),(3,'Parques','fa-tree','2025-03-30 20:14:31','2025-03-30 20:14:31'),(4,'Transporte','fa-train','2025-03-30 20:14:31','2025-03-30 20:14:31'),(5,'Compras','fa-shopping-cart','2025-03-30 20:14:31','2025-03-30 20:14:31'),(6,'Ocio','fa-ticket-alt','2025-03-30 20:14:31','2025-03-30 20:14:31'),(7,'Sanidad','fa-hospital','2025-03-30 20:14:31','2025-03-30 20:14:31'),(8,'Deportes','fa-futbol','2025-03-30 20:14:31','2025-03-30 20:14:31'),(9,'Restaurantes','fa-utensils','2025-03-30 20:14:31','2025-03-30 20:14:31');
 /*!40000 ALTER TABLE `etiquetas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -121,7 +121,7 @@ CREATE TABLE `gimcana_lugar` (
   KEY `gimcana_lugar_lugar_id_foreign` (`lugar_id`),
   CONSTRAINT `gimcana_lugar_gimcana_id_foreign` FOREIGN KEY (`gimcana_id`) REFERENCES `gimcanas` (`id`) ON DELETE CASCADE,
   CONSTRAINT `gimcana_lugar_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +130,7 @@ CREATE TABLE `gimcana_lugar` (
 
 LOCK TABLES `gimcana_lugar` WRITE;
 /*!40000 ALTER TABLE `gimcana_lugar` DISABLE KEYS */;
-INSERT INTO `gimcana_lugar` VALUES (1,1,1,NULL,NULL),(2,1,2,NULL,NULL),(3,1,3,NULL,NULL);
+INSERT INTO `gimcana_lugar` VALUES (1,1,1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(2,1,2,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(3,1,3,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(4,1,4,'2025-03-30 20:14:31','2025-03-30 20:14:31');
 /*!40000 ALTER TABLE `gimcana_lugar` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -176,11 +176,16 @@ CREATE TABLE `gimcanas` (
   `nombre` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `descripcion` text COLLATE utf8mb3_unicode_ci NOT NULL,
   `creado_por` bigint unsigned NOT NULL,
+  `estado` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'pendiente',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `grupo_ganador_id` bigint unsigned DEFAULT NULL,
+  `fecha_finalizacion` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `gimcanas_creado_por_foreign` (`creado_por`),
-  CONSTRAINT `gimcanas_creado_por_foreign` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  KEY `gimcanas_grupo_ganador_id_foreign` (`grupo_ganador_id`),
+  CONSTRAINT `gimcanas_creado_por_foreign` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `gimcanas_grupo_ganador_id_foreign` FOREIGN KEY (`grupo_ganador_id`) REFERENCES `grupos` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -190,7 +195,7 @@ CREATE TABLE `gimcanas` (
 
 LOCK TABLES `gimcanas` WRITE;
 /*!40000 ALTER TABLE `gimcanas` DISABLE KEYS */;
-INSERT INTO `gimcanas` VALUES (1,'Botellon por Bellvitge!!! Untete el alcohol es gratis :D','Botellon por Bellvitge!!! Untete el alcohol es gratis :D',2,'2025-03-25 17:56:15','2025-03-25 17:56:15');
+INSERT INTO `gimcanas` VALUES (1,'Gimcana Bellvitge','Recorrido por los lugares emblemáticos de Bellvitge',1,'en_progreso','2025-03-30 20:14:31','2025-03-30 20:14:31',NULL,NULL);
 /*!40000 ALTER TABLE `gimcanas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -217,7 +222,7 @@ CREATE TABLE `grupos` (
 
 LOCK TABLES `grupos` WRITE;
 /*!40000 ALTER TABLE `grupos` DISABLE KEYS */;
-INSERT INTO `grupos` VALUES (1,'Grupo A','Este es el grupo A','2025-03-25 17:55:30','2025-03-25 17:55:30'),(2,'Grupo B','Este es el grupo B','2025-03-25 17:55:30','2025-03-25 17:55:30');
+INSERT INTO `grupos` VALUES (1,'Grupo A','Este es el grupo A','2025-03-30 20:14:31','2025-03-30 20:14:31'),(2,'Grupo B','Este es el grupo B','2025-03-30 20:14:31','2025-03-30 20:14:31');
 /*!40000 ALTER TABLE `grupos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -267,7 +272,7 @@ CREATE TABLE `lugar_etiqueta` (
   KEY `lugar_etiqueta_etiqueta_id_foreign` (`etiqueta_id`),
   CONSTRAINT `lugar_etiqueta_etiqueta_id_foreign` FOREIGN KEY (`etiqueta_id`) REFERENCES `etiquetas` (`id`) ON DELETE CASCADE,
   CONSTRAINT `lugar_etiqueta_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -276,7 +281,7 @@ CREATE TABLE `lugar_etiqueta` (
 
 LOCK TABLES `lugar_etiqueta` WRITE;
 /*!40000 ALTER TABLE `lugar_etiqueta` DISABLE KEYS */;
-INSERT INTO `lugar_etiqueta` VALUES (1,1,7,NULL,NULL),(2,2,2,NULL,NULL),(3,3,3,NULL,NULL),(4,4,4,NULL,NULL),(5,5,5,NULL,NULL),(6,5,6,NULL,NULL);
+INSERT INTO `lugar_etiqueta` VALUES (1,1,7,NULL,NULL),(2,2,2,NULL,NULL),(3,3,3,NULL,NULL),(4,4,4,NULL,NULL),(5,5,5,NULL,NULL),(6,5,6,NULL,NULL),(7,6,8,NULL,NULL),(8,7,1,NULL,NULL),(9,8,5,NULL,NULL),(10,9,6,NULL,NULL),(11,10,1,NULL,NULL),(12,11,3,NULL,NULL),(13,12,8,NULL,NULL),(14,13,9,NULL,NULL),(15,14,2,NULL,NULL),(16,15,6,NULL,NULL),(17,16,8,NULL,NULL),(18,17,8,NULL,NULL),(19,18,5,NULL,NULL),(20,1,8,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(21,2,7,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(22,3,1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(23,4,3,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(24,4,6,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(25,5,7,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(26,5,9,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(27,6,1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(28,6,9,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(29,7,4,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(30,7,9,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(31,8,6,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(32,8,7,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(33,8,8,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(34,9,8,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(35,10,1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(36,10,7,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(37,11,3,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(38,12,1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(39,13,8,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(40,14,3,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(41,14,9,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(42,15,5,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(43,15,6,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(44,16,1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(45,16,4,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(46,16,7,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(47,17,1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(48,17,4,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(49,18,6,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(50,18,8,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(51,18,9,'2025-03-30 20:14:31','2025-03-30 20:14:31');
 /*!40000 ALTER TABLE `lugar_etiqueta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -300,7 +305,7 @@ CREATE TABLE `lugares` (
   PRIMARY KEY (`id`),
   KEY `lugares_creado_por_foreign` (`creado_por`),
   CONSTRAINT `lugares_creado_por_foreign` FOREIGN KEY (`creado_por`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -309,7 +314,7 @@ CREATE TABLE `lugares` (
 
 LOCK TABLES `lugares` WRITE;
 /*!40000 ALTER TABLE `lugares` DISABLE KEYS */;
-INSERT INTO `lugares` VALUES (1,'Hospital Universitari de Bellvitge',41.34420000,2.10190000,'Hospital universitario de referencia','#FF0000',1,'2025-03-25 17:55:30','2025-03-25 17:55:30'),(2,'Institut Joan XXIII',41.34790000,2.10450000,'Centro educativo de formación profesional','#0000FF',1,'2025-03-25 17:55:30','2025-03-25 17:55:30'),(3,'Parc de Bellvitge',41.34670000,2.10670000,'Parque público con áreas verdes y zonas de recreo','#00FF00',1,'2025-03-25 17:55:30','2025-03-25 17:55:30'),(4,'Estación de Metro Bellvitge',41.36110000,2.11270000,'Estación de la línea 1 del metro de Barcelona','#FFA500',1,'2025-03-25 17:55:30','2025-03-25 17:55:30'),(5,'Centro Comercial Gran Via 2',41.35890000,2.12890000,'Centro comercial con tiendas, restaurantes y cine','#800080',1,'2025-03-25 17:55:30','2025-03-25 17:55:30');
+INSERT INTO `lugares` VALUES (1,'Institut Joan XXIII',41.34968400,2.10789400,'Centro educativo de formación profesional','#0000FF',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(2,'Parc de Bellvitge',41.34814200,2.11135800,'Parque público con áreas verdes y zonas de recreo','#00FF00',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(3,'Hospital Universitari de Bellvitge',41.34440600,2.10452800,'Hospital universitario de referencia','#FF0000',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(4,'Estación de Metro Bellvitge',41.35071800,2.11090100,'Estación de la línea 1 del metro de Barcelona','#FFA500',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(5,'Centro Comercial Gran Via 2',41.35786600,2.12933600,'Centro comercial con tiendas, restaurantes y cine','#800080',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(6,'GolaGol',41.35049100,2.09964110,'Centro deportivo especializado en fútbol sala.','#FF6347',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(7,'Museu de L\'Hospitalet',41.36106850,2.09723650,'Museo dedicado a la historia y cultura de L\'Hospitalet.','#FFD700',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(8,'La Farga',41.36295930,2.10461660,'Centro comercial con tiendas, restaurantes y eventos.','#4B0082',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(9,'Sala Salamandra',41.36002600,2.10954500,'Sala de conciertos y discoteca historica.','#FF4500',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(10,'Auditori Barradas',41.36147930,2.10247930,'Auditorio para eventos culturales y musicales.','#4682B4',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(11,'Parque Can Boixeres',41.36495280,2.09637640,'Parque urbano con amplias áreas verdes cerca de Rambla Just Oliveres.','#32CD32',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(12,'Pàdel Top Club',41.35799630,2.11235310,'Club deportivo especializado en pádel cerca del Zoco.','#8A2BE2',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(13,'Frankfurt del Centre',41.36199010,2.10165850,'Restaurante especializado en comida rápida y frankfurts ubicado cerca de Rambla Just Oliveres.','#FF69B4',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(14,'Escola Canigó',41.36205260,2.10076420,'Centro educativo de primaria y secundaria.','#1E90FF',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(15,'Capitolio',41.35572790,2.09584460,'Discoteca Latinoamarecina en Hospitalet.','#FF8C00',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(16,'Estadi Municipal de Futbol de L\'Hospitalet',41.34737600,2.10235500,'Estadio municipal para partidos de fútbol y eventos deportivos.','#FF4500',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(17,'Gaiper Extreme Padel',41.35188200,2.10270000,'Centro deportivo especializado en pádel.','#8A2BE2',1,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(18,'Mercadona',41.34692780,2.10780820,'Supermercado con productos frescos y de calidad.','#32CD32',1,'2025-03-30 20:14:31','2025-03-30 20:14:31');
 /*!40000 ALTER TABLE `lugares` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -355,7 +360,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -364,7 +369,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'2025_03_18_000000_create_usuarios_table',1),(2,'2025_03_18_000001_create_grupos_table',1),(3,'2025_03_18_000002_create_usuarios_grupos_table',1),(4,'2025_03_18_000003_create_etiquetas_table',1),(5,'2025_03_18_000004_create_lugares_table',1),(6,'2025_03_18_000005_create_lugares_etiquetas_table',1),(7,'2025_03_18_000006_create_favoritos_table',1),(8,'2025_03_18_000007_create_puntos_control_table',1),(9,'2025_03_18_000008_create_pruebas_table',1),(10,'2025_03_18_000009_create_rutas_table',1),(11,'2025_03_18_000010_create_progreso_gimcana_table',1),(12,'2025_03_18_000011_create_logs_table',1),(13,'2025_03_18_000012_create_sessions_table',1),(14,'2025_03_18_000013_create_gimcanas_table',1),(15,'2025_03_18_000014_create_gimcana_lugar_table',1),(16,'2025_03_24_150640_create_lugar_etiqueta_table',1),(17,'2025_03_25_162156_create_puntos_usuarios_table',1),(18,'2025_03_25_183648_create_gimcana_usuario_table',1),(19,'2025_03_25_185412_create_gimcana_grupo_table',1);
+INSERT INTO `migrations` VALUES (1,'2025_03_18_000000_create_usuarios_table',1),(2,'2025_03_18_000001_create_grupos_table',1),(3,'2025_03_18_000002_create_usuarios_grupos_table',1),(4,'2025_03_18_000003_create_etiquetas_table',1),(5,'2025_03_18_000004_create_lugares_table',1),(6,'2025_03_18_000005_create_lugares_etiquetas_table',1),(7,'2025_03_18_000006_create_favoritos_table',1),(8,'2025_03_18_000007_create_puntos_control_table',1),(9,'2025_03_18_000008_create_pruebas_table',1),(10,'2025_03_18_000009_create_rutas_table',1),(11,'2025_03_18_000010_create_progreso_gimcana_table',1),(12,'2025_03_18_000011_create_logs_table',1),(13,'2025_03_18_000012_create_sessions_table',1),(14,'2025_03_18_000013_create_gimcanas_table',1),(15,'2025_03_18_000014_create_gimcana_lugar_table',1),(16,'2025_03_24_150640_create_lugar_etiqueta_table',1),(17,'2025_03_25_162156_create_puntos_usuarios_table',1),(18,'2025_03_25_183648_create_gimcana_usuario_table',1),(19,'2025_03_25_185412_create_gimcana_grupo_table',1),(20,'2025_03_26_185238_add_esta_listo_to_usuarios_grupos_table',1),(21,'2025_03_29_000000_add_respuesta_to_pruebas_table',1),(22,'2025_03_30_220019_add_grupo_ganador_to_gimcanas_table',1);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -409,12 +414,13 @@ CREATE TABLE `pruebas` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `punto_control_id` bigint unsigned NOT NULL,
   `descripcion` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `respuesta` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `pruebas_punto_control_id_foreign` (`punto_control_id`),
   CONSTRAINT `pruebas_punto_control_id_foreign` FOREIGN KEY (`punto_control_id`) REFERENCES `puntos_control` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -423,6 +429,7 @@ CREATE TABLE `pruebas` (
 
 LOCK TABLES `pruebas` WRITE;
 /*!40000 ALTER TABLE `pruebas` DISABLE KEYS */;
+INSERT INTO `pruebas` VALUES (1,1,'De que color es la puerta del instituto?','blanca,blanco,Blanca,Blanco','2025-03-30 20:14:31','2025-03-30 20:14:31'),(2,2,'Hay un gimnasio al aire libre en el parque?','si,Si,SI,sí,Sí,SÍ','2025-03-30 20:14:31','2025-03-30 20:14:31'),(3,3,'De que color es el letrero del hospital que pone BELLVITGE','rojo,Rojo,ROJO,rojas,Rojas,ROJAS,roja,Roja,ROJA','2025-03-30 20:14:31','2025-03-30 20:14:31'),(4,4,'Que linea de metro es la que corresponde a esa parada','1,L1,l1,linea 1,línea 1,Linea 1,Línea 1','2025-03-30 20:14:31','2025-03-30 20:14:31');
 /*!40000 ALTER TABLE `pruebas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -442,7 +449,7 @@ CREATE TABLE `puntos_control` (
   PRIMARY KEY (`id`),
   KEY `puntos_control_lugar_id_foreign` (`lugar_id`),
   CONSTRAINT `puntos_control_lugar_id_foreign` FOREIGN KEY (`lugar_id`) REFERENCES `lugares` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -451,6 +458,7 @@ CREATE TABLE `puntos_control` (
 
 LOCK TABLES `puntos_control` WRITE;
 /*!40000 ALTER TABLE `puntos_control` DISABLE KEYS */;
+INSERT INTO `puntos_control` VALUES (1,1,'Encuentra Institut Joan XXIII','2025-03-30 20:14:31','2025-03-30 20:14:31'),(2,2,'Encuentra Parc de Bellvitge','2025-03-30 20:14:31','2025-03-30 20:14:31'),(3,3,'Encuentra Hospital Universitari de Bellvitge','2025-03-30 20:14:31','2025-03-30 20:14:31'),(4,4,'Encuentra Estación de Metro Bellvitge','2025-03-30 20:14:31','2025-03-30 20:14:31');
 /*!40000 ALTER TABLE `puntos_control` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -541,7 +549,6 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('3nS7f1KG7AzGQ61fCbC1cPSiAtj8JQDEK9NU40eQ',5,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36','YTo0OntzOjY6Il90b2tlbiI7czo0MDoiemYwZ3cxVXJYb01UdjJBdHRrSlNNcWFJRGxBdFpiY1lZUDExQ25OayI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9naW1jYW5hcyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjU7fQ==',1743005985),('i0S3pwa8M0hMHRJpxAsnH74d7Tu6xpIZq9hJEuBH',5,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36','YTo1OntzOjY6Il90b2tlbiI7czo0MDoiZGtEWlJnbjBZZ2VQYTFMMnlibVpmMmRSeWY1RDhUdmlETEdMZzZRSiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9naW1jYW5hcyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6MzoidXJsIjthOjE6e3M6ODoiaW50ZW5kZWQiO3M6MzU6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9jbGllbnRlL2luZGV4Ijt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NTt9',1742929580);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -558,7 +565,7 @@ CREATE TABLE `usuarios` (
   `email` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `rol` varchar(50) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `ubicacion_actual` geometry DEFAULT NULL,
+  `ubicacion_actual` json DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -572,7 +579,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Alejandro González','alejandro@admin.com','$2y$12$DOe/Lu8oc5C1xYKabr6i..GZuf60fU681tbbmn3s3kt2fyZrTMccW','admin',NULL,'2025-03-25 17:55:29','2025-03-25 17:55:29'),(2,'Sergi Masip','sergi@admin.com','$2y$12$JZovT9KgD6YT5q4JquqTIuLJTJySgMS35pK0yQkCbBpiBtmBLfLna','admin',NULL,'2025-03-25 17:55:29','2025-03-25 17:55:29'),(3,'Adrián Vazquez','adrian@admin.com','$2y$12$jHQgkuZawvAI5PidSwRcJetzm1xe3ymSh9CiYPgqfJTcCOdpO6No2','admin',NULL,'2025-03-25 17:55:29','2025-03-25 17:55:29'),(4,'Àlex Ventura','alex@admin.com','$2y$12$.YG/vTVgJO/1NqEOq7I7d.7nL8YpjQrCJGirPf9/6tX07YoLgYMsi','admin',NULL,'2025-03-25 17:55:29','2025-03-25 17:55:29'),(5,'María García','maria@example.com','$2y$12$Mf.hlcSmGABfXYkZDkFo1u1nhCEv/rckuwhtFpsA0AVsvnHIIRZ3G','usuario',NULL,'2025-03-25 17:55:30','2025-03-25 17:55:30'),(6,'Juan Rodríguez','juan@example.com','$2y$12$0G0BFq25ZkISwRRMGeAESOhpmP1n1I5O8n1FnghQNSQdRMS08pJAa','usuario',NULL,'2025-03-25 17:55:30','2025-03-25 17:55:30'),(7,'Laura Martínez','laura@example.com','$2y$12$evxDS5nvt59uNICggc4XYODAuyDoijZbGzJtQf8X1e64aJYy9Av2e','usuario',NULL,'2025-03-25 17:55:30','2025-03-25 17:55:30'),(8,'Carlos López','carlos@example.com','$2y$12$Hx/ANabrqLaTN1z3qJd7hehfEcK2CEKwlFQ5yAyF7D29uqgS5gjqK','usuario',NULL,'2025-03-25 17:55:30','2025-03-25 17:55:30');
+INSERT INTO `usuarios` VALUES (1,'Alejandro González','alejandro@admin.com','$2y$12$OOjlHkOLpb19HJvTZArPDed9hVNOfPYN4vEXCSWT7kfRQQRQMy.6C','admin',NULL,'2025-03-30 20:14:30','2025-03-30 20:14:30'),(2,'Sergi Masip','sergi@admin.com','$2y$12$JPh7hjScU2ZEeYLbIYkJYOcrR4qXd7Lq/rfBrrtjVA8pkn14U16Hy','admin',NULL,'2025-03-30 20:14:30','2025-03-30 20:14:30'),(3,'Adrián Vazquez','adrian@admin.com','$2y$12$9yd.4oxuQYaT7E4J/W1KOODD5LJdT0N.oZmszlibJZO7p8AVWMeMG','admin',NULL,'2025-03-30 20:14:30','2025-03-30 20:14:30'),(4,'Àlex Ventura','alex@admin.com','$2y$12$9cT2DSxeZCJZrfiMoFCrWumEDk/PyxXLyLqSaaLak3zafe/oXbWaC','admin',NULL,'2025-03-30 20:14:30','2025-03-30 20:14:30'),(5,'María García','maria@example.com','$2y$12$WhNVzD/D4N7Bk8y1F4Gzm.yFVupwe37OSMdF78AkqeZeTZ54aJBOe','usuario',NULL,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(6,'Juan Rodríguez','juan@example.com','$2y$12$XmNCtMSk0NkC/HypkqsHv.8lBFladc6iAdxiYzFXFZ2NttR.Qxr4W','usuario',NULL,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(7,'Laura Martínez','laura@example.com','$2y$12$3Vwgx2.JLMJN.4pcncXgrO8lX.Za9d3fe8FOPcPimvfRrdxUFJ9gS','usuario',NULL,'2025-03-30 20:14:31','2025-03-30 20:14:31'),(8,'Carlos López','carlos@example.com','$2y$12$Js6hZzRcGB5CVkGvqGOgLuOGEFbWUYUlyV8FMQ2vgEfUFu0ir1y4a','usuario',NULL,'2025-03-30 20:14:31','2025-03-30 20:14:31');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -587,6 +594,7 @@ CREATE TABLE `usuarios_grupos` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `usuario_id` bigint unsigned NOT NULL,
   `grupo_id` bigint unsigned NOT NULL,
+  `esta_listo` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -615,4 +623,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-26 17:23:26
+-- Dump completed on 2025-03-31  0:15:16

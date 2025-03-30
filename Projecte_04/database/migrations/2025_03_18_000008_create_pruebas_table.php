@@ -12,6 +12,7 @@ class CreatePruebasTable extends Migration
             $table->id();
             $table->foreignId('punto_control_id')->constrained('puntos_control')->onDelete('cascade');
             $table->text('descripcion');
+            $table->string('respuesta');
             $table->timestamps();
         });
     }

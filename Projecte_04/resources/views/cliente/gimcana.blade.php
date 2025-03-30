@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ Auth::id() }}">
     <title>Gimcanas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/cliente.css') }}">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -65,13 +66,28 @@
                                                     <h6>{{ $grupo->nombre }}</h6>
                                                     <div class="miembros-grupo">
                                                         @foreach($grupo->usuarios as $usuario)
-                                                            <span class="badge bg-secondary me-1">{{ $usuario->nombre }}</span>
+                                                            <span class="badge bg-secondary me-1">
+                                                                {{ $usuario->nombre }}
+                                                                @if($usuario->pivot && $usuario->pivot->esta_listo)
+                                                                    <i class="fas fa-check-circle text-success"></i>
+                                                                @endif
+                                                            </span>
                                                         @endforeach
                                                     </div>
                                                 </div>
-                                                <button class="btn btn-primary" onclick="unirseGrupo({{ $grupo->id }}, {{ $gimcana->id }})">
-                                                    Unirse al Grupo
-                                                </button>
+                                                <div class="d-flex gap-2">
+                                                    @if(Auth::user()->grupos->contains($grupo->id))
+                                                        <button id="btnListo{{ $grupo->id }}{{ $gimcana->id }}" class="btn btn-primary" onclick="marcarListo({{ $grupo->id }}, {{ $gimcana->id }})">
+                                                            <i class="fas fa-check"></i> Listo
+                                                        </button>
+                                                    @else
+                                                        <button class="btn btn-primary" 
+                                                                onclick="unirseGrupo({{ $grupo->id }}, {{ $gimcana->id }})"
+                                                                @if($grupo->usuarios->count() >= 5) disabled @endif>
+                                                            Unirse al Grupo
+                                                        </button>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </li>
                                     @endforeach
@@ -79,6 +95,13 @@
                                 <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#crearGrupoModal{{ $gimcana->id }}">
                                     Crear tu propio grupo
                                 </button>
+
+                                <!-- Contenedor para el botón de iniciar gimcana -->
+                                <div id="contenedorBotonIniciar{{ $gimcana->id }}" style="display: none;">
+                                    <button id="btnIniciarGimcana{{ $gimcana->id }}" class="btn btn-success">
+                                        <i class="fas fa-play"></i> ¡Iniciar Gimcana!
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

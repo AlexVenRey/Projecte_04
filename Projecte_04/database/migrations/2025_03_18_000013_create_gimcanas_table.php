@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nombre'); // Crea una columna para el nombre de la gimcana
             $table->text('descripcion'); // Crea una columna para la descripción de la gimcana
             $table->foreignId('creado_por')->constrained('usuarios')->onDelete('cascade'); // Creador de la gimcana (usuarios)
+            $table->string('estado')->default('pendiente'); // Crea una columna para el estado de la gimcana con valor por defecto 'pendiente'
             $table->timestamps(); // Crea las columnas created_at y updated_at
         });
     }

@@ -24,7 +24,9 @@ class Grupo extends Model
      */
     public function usuarios()
     {
-        return $this->belongsToMany(User::class, 'usuarios_grupos', 'grupo_id', 'usuario_id');
+        return $this->belongsToMany(User::class, 'usuarios_grupos', 'grupo_id', 'usuario_id')
+            ->withPivot('esta_listo')
+            ->withTimestamps();
     }
 
     /**
@@ -32,6 +34,11 @@ class Grupo extends Model
      */
     public function gimcanas()
     {
-        return $this->belongsToMany(Gimcana::class, 'gimcana_grupo', 'grupo_id', 'gimcana_id');
+        return $this->belongsToMany(Gimcana::class, 'gimcana_grupo');
+    }
+
+    public function grupos()
+    {
+        return $this->hasMany(Grupo::class);
     }
 }

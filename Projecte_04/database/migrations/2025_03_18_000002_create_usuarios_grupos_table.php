@@ -12,6 +12,7 @@ class CreateUsuariosGruposTable extends Migration
             $table->id();
             $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('cascade');
             $table->foreignId('grupo_id')->constrained('grupos')->onDelete('cascade');
+            $table->boolean('esta_listo')->default(false);
             $table->timestamps();
         });
     }

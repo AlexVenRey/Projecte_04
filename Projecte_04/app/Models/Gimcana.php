@@ -11,14 +11,26 @@ class Gimcana extends Model
 
     protected $table = 'gimcanas'; // Nombre de la tabla en la base de datos
 
-    protected $fillable = ['nombre', 'descripcion', 'creado_por'];
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+        'admin_id',
+        'grupo_ganador_id',
+        'fecha_finalizacion'
+    ];
+
+    protected $casts = [
+        'fecha_inicio' => 'datetime',
+        'fecha_fin' => 'datetime',
+        'fecha_finalizacion' => 'datetime'
+    ];
 
     /**
      * Relación Many-to-Many con los lugares.
      */
     public function lugares()
     {
-        return $this->belongsToMany(Lugar::class, 'gimcana_lugar', 'gimcana_id', 'lugar_id');
+        return $this->belongsToMany(Lugar::class, 'gimcana_lugar');
     }
 
     public function usuarios()
@@ -28,12 +40,31 @@ class Gimcana extends Model
 
     public function grupos()
     {
-        return $this->belongsToMany(Grupo::class, 'gimcana_grupo', 'gimcana_id', 'grupo_id')
-            ->withTimestamps();
+        return $this->belongsToMany(Grupo::class, 'gimcana_grupo');
     }
 
     public function creador()
     {
         return $this->belongsTo(User::class, 'creado_por');
+    }
+
+    public function puntos()
+    {
+        return $this->hasMany(PuntoControl::class);
+    }
+
+    public function puntosControl()
+    {
+        return $this->hasManyThrough(PuntoControl::class, Lugar::class);
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    public function grupoGanador()
+    {
+        return $this->belongsTo(Grupo::class, 'grupo_ganador_id');
     }
 }
