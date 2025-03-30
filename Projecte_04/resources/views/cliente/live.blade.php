@@ -8,14 +8,13 @@
     <meta name="user-id" content="{{ Auth::id() }}">
     <title>Gimcana en Vivo</title>
     
-    <!-- Estilos necesarios -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         #mapa {
-            height: calc(100vh - 56px);
+            height: calc(100dvh - 56px);
             width: 100%;
         }
 
@@ -59,47 +58,97 @@
             background: #f8f9fa;
             border-radius: 5px;
         }
+
+        @media (max-width: 767px) {
+            #mapa {
+                height: calc(100dvh - 110px);
+            }
+
+            .panel-info {
+                display: none;
+            }
+
+            .navbar-brand {
+                max-width: 60vw;
+                font-size: 0.9rem;
+            }
+
+            .marcador-punto {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8rem;
+            }
+        }
+
+        .movil-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .swal-movil .swal2-popup {
+            width: 90% !important;
+            max-width: 100%;
+        }
+
+        .btn-tactil {
+            min-width: 44px;
+            min-height: 44px;
+        }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-dark bg-dark py-2">
         <div class="container-fluid">
             <span class="navbar-brand">
-                <i class="fas fa-map-marked-alt"></i> 
-                Gimcana: {{ $gimcana->nombre }}
+                <i class="fas fa-map-marked-alt me-2"></i>
+                {{ Str::limit($gimcana->nombre, 25) }}
             </span>
+            <div class="text-white d-md-none">
+                <span id="puntos-completados">0</span>/<span id="total-puntos">0</span>
+            </div>
         </div>
     </nav>
 
-    <!-- Mapa -->
     <div id="mapa"></div>
 
-    <!-- Panel de información -->
-    <div class="panel-info">
+    <div class="panel-info d-none d-md-block">
         <h5>Grupo: <span id="nombre-grupo">Cargando...</span></h5>
-        
-        <div id="miembros-grupo" class="mb-3">
-            <!-- Los miembros se cargarán dinámicamente -->
-        </div>
-
+        <div id="miembros-grupo" class="mb-3"></div>
         <div class="progreso-grupo">
-            <h6>Progreso de la Gimcana</h6>
+            <h6>Progreso</h6>
             <div class="progress mb-2">
                 <div id="barra-progreso" class="progress-bar bg-success" 
-                     role="progressbar" style="width: 0%">
-                </div>
+                     role="progressbar" style="width: 0%"></div>
             </div>
-            <small>
-                Puntos visitados: 
-                <span id="puntos-completados">0</span>/<span id="total-puntos">4</span>
-            </small>
+            <small>Puntos: <span id="puntos-completados-desktop">0</span>/<span id="total-puntos-desktop">0</span></small>
         </div>
     </div>
 
-    <!-- Modal para pruebas -->
+    <div class="movil-panel d-md-none">
+        <div class="row align-items-center">
+            <div class="col-8">
+                <h6 class="mb-1"><i class="fas fa-users me-1"></i><span id="nombre-grupo-movil">...</span></h6>
+                <div class="progress" style="height: 5px;">
+                    <div id="barra-progreso-movil" class="progress-bar bg-success" style="width: 0%"></div>
+                </div>
+                <small class="text-muted"><span id="puntos-completados-movil">0</span>/<span id="total-puntos-movil">0</span> puntos</small>
+            </div>
+            <div class="col-4 text-end">
+                <button class="btn btn-primary btn-tactil rounded-circle" onclick="centrarMapa()">
+                    <i class="fas fa-location-arrow"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="modalPrueba" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Resolver Prueba</h5>
@@ -107,25 +156,28 @@
                 </div>
                 <div class="modal-body">
                     <p id="descripcion-prueba"></p>
-                    <div class="form-group">
-                        <label>Tu respuesta:</label>
-                        <input type="text" class="form-control" id="respuesta-prueba">
-                    </div>
+                    <input type="text" class="form-control" id="respuesta-prueba" placeholder="Escribe tu respuesta...">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="verificarRespuesta()">
-                        Enviar Respuesta
-                    </button>
+                    <button type="button" class="btn btn-primary" onclick="verificarRespuesta()">Enviar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts necesarios -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/live.js') }}"></script>
+    <script>
+        function centrarMapa() {
+            if (marcadorUsuario) {
+                const latlng = marcadorUsuario.getLatLng();
+                mapa.setView(latlng, 18);
+                siguiendoUsuario = true;
+            }
+        }
+    </script>
 </body>
 </html>

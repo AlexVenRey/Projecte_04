@@ -10,13 +10,13 @@ let circuloProximidad = null;
 let watchId = null;
 let gimcanaId = null;
 let puntoControlActual = null;
-let radioProximidad = 25; // Radio en metros para detectar llegada a punto de control
+let radioProximidad = 25;
 let siguiendoUsuario = true;
-let ultimaAlertaMostrada = 0; // Variable global para controlar el tiempo entre alertas
+let ultimaAlertaMostrada = 0;
+let modoPrueba = false; // Nueva variable para modo de prueba
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-    // Obtener ID de la gimcana
     gimcanaId = document.querySelector('meta[name="gimcana-id"]').content;
     
     // Inicializar mapa
@@ -25,12 +25,67 @@ document.addEventListener('DOMContentLoaded', function() {
         attribution: '© OpenStreetMap contributors'
     }).addTo(mapa);
 
+    // Evento de clic en el mapa para modo prueba
+    mapa.on('click', function(e) {
+        if (!modoPrueba) {
+            modoPrueba = confirm("¿Activar modo prueba? Al hacer clic establecerás tu ubicación.");
+            if (!modoPrueba) return;
+        }
+        
+        // Detener seguimiento GPS si está activo
+        if (watchId) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+        }
+        
+        actualizarUbicacionManual(e.latlng.lat, e.latlng.lng);
+    });
+
     // Cargar información inicial
     cargarInformacionGrupo();
     cargarPuntoControlActual();
     iniciarSeguimientoUbicacion();
 });
 
+// Función para actualizar ubicación manualmente
+function actualizarUbicacionManual(latitud, longitud) {
+    const iconoUsuario = L.divIcon({
+        className: 'usuario-marker',
+        html: '<div class="marcador-usuario"></div>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+    });
+
+    // Actualizar marcador del usuario
+    if (!marcadorUsuario) {
+        marcadorUsuario = L.marker([latitud, longitud], {
+            icon: iconoUsuario
+        }).addTo(mapa);
+
+        circuloProximidad = L.circle([latitud, longitud], {
+            radius: radioProximidad,
+            color: '#2196F3',
+            fillOpacity: 0.1
+        }).addTo(mapa);
+    } else {
+        marcadorUsuario.setLatLng([latitud, longitud]);
+        circuloProximidad.setLatLng([latitud, longitud]);
+    }
+
+    // Actualizar servidor y verificar proximidad
+    actualizarPosicionUsuario(latitud, longitud);
+    verificarProximidadPuntoControl(latitud, longitud);
+    
+    // Centrar vista
+    if (siguiendoUsuario) {
+        mapa.setView([latitud, longitud], 18);
+    }
+}
+
+// ... (el resto del código original permanece igual a partir de aquí)
+// [Todas las demás funciones se mantienen sin cambios]
+
+// Modificar la función iniciarSeguimientoUbicacion
 function iniciarSeguimientoUbicacion() {
     if (!navigator.geolocation) {
         mostrarError("Tu navegador no soporta geolocalización");
@@ -70,17 +125,19 @@ function iniciarSeguimientoUbicacion() {
                 mapa.setView([latitude, longitude]);
             }
 
-            // Verificar proximidad y actualizar posición
             verificarProximidadPuntoControl(latitude, longitude);
             actualizarPosicionUsuario(latitude, longitude);
         },
         function(error) {
-            mostrarError("Error al obtener ubicación: " + error.message);
+            // Solo mostrar error si no es timeout
+            if (error.code !== error.TIMEOUT) {
+                mostrarError("Error de geolocalización: " + error.message);
+            }
         },
         {
             enableHighAccuracy: true,
-            maximumAge: 0,
-            timeout: 5000
+            maximumAge: 30000,  // Aceptar posiciones en caché de hasta 30 segundos
+            timeout: 10000      // Aumentar timeout a 10 segundos
         }
     );
 }
@@ -571,31 +628,103 @@ function mostrarExito(mensaje) {
     });
 }
 
-// Función para actualizar el progreso de la gimcana
+// ... (variables globales anteriores se mantienen igual)
+
 function actualizarProgresoGimcana() {
     if (!gimcanaId) return;
 
     fetch(`/cliente/gimcanas/${gimcanaId}/progreso`)
-        .then(response => {
-            if (!response.ok) throw new Error('Error al obtener progreso');
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const lugaresCompletados = document.getElementById('puntos-completados');
-                const totalLugares = document.getElementById('total-puntos');
-                const barraProgreso = document.getElementById('barra-progreso');
+                // Actualizar todas las versiones
+                document.querySelectorAll('[id^="puntos-completados"]').forEach(el => {
+                    el.textContent = data.completados;
+                });
+                document.querySelectorAll('[id^="total-puntos"]').forEach(el => {
+                    el.textContent = data.total;
+                });
                 
-                if (lugaresCompletados && totalLugares && barraProgreso) {
-                    lugaresCompletados.textContent = data.completados;
-                    totalLugares.textContent = data.total;
-                    
-                    // Actualizar barra de progreso
-                    const porcentaje = (data.completados / data.total) * 100;
-                    barraProgreso.style.width = `${porcentaje}%`;
-                    barraProgreso.setAttribute('aria-valuenow', porcentaje);
-                }
+                // Actualizar todas las barras de progreso
+                const porcentaje = (data.completados / data.total) * 100;
+                document.querySelectorAll('.progress-bar').forEach(bar => {
+                    bar.style.width = `${porcentaje}%`;
+                });
             }
-        })
-        .catch(error => console.error('Error al actualizar progreso:', error));
+        });
 }
+
+function actualizarPanelGrupo() {
+    if (grupoActual) {
+        // Actualizar nombre en todas las vistas
+        document.querySelectorAll('#nombre-grupo, #nombre-grupo-movil').forEach(el => {
+            el.textContent = grupoActual.nombre;
+        });
+        
+        // Actualizar miembros del grupo
+        const miembrosHTML = grupoActual.usuarios.map(usuario => `
+            <span class="badge bg-secondary me-1 mb-1">
+                ${usuario.nombre}
+                ${usuario.pivot.esta_listo ? '<i class="fas fa-check-circle text-success ms-1"></i>' : ''}
+            </span>
+        `).join('');
+        
+        document.getElementById('miembros-grupo').innerHTML = miembrosHTML;
+    }
+}
+
+function verificarProximidadPuntoControl(latitud, longitud) {
+    if (!puntoControlActual?.lugar) return;
+
+    const distancia = calcularDistancia(
+        latitud, 
+        longitud, 
+        puntoControlActual.lugar.latitud,
+        puntoControlActual.lugar.longitud
+    );
+
+    if (distancia <= radioProximidad && (Date.now() - ultimaAlertaMostrada) > 10000) {
+        ultimaAlertaMostrada = Date.now();
+        
+        // Adaptar interfaz según dispositivo
+        if (window.innerWidth < 768) {
+            mostrarPistaMovil();
+        } else {
+            mostrarPistaYPrueba();
+        }
+    }
+}
+
+function mostrarPistaMovil() {
+    Swal.fire({
+        title: '¡Prueba!',
+        html: `
+            <div class="text-start">
+                <p class="mb-2 small">${puntoControlActual.pista}</p>
+                <p class="mb-3">${puntoControlActual.prueba.descripcion}</p>
+                <input type="text" 
+                       class="form-control" 
+                       placeholder="Escribe tu respuesta..."
+                       id="respuestaPruebaMovil"
+                       autocomplete="off">
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Enviar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            popup: 'swal-movil',
+            input: 'movil-input'
+        },
+        didOpen: () => {
+            document.getElementById('respuestaPruebaMovil').focus();
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const respuesta = document.getElementById('respuestaPruebaMovil').value;
+            verificarRespuesta(respuesta);
+        }
+    });
+}
+
+// ... (resto de funciones se mantienen igual hasta el final del archivo)
