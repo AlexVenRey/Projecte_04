@@ -171,6 +171,13 @@ class ClienteGimcanaController extends Controller
             // Obtener el punto de control con su prueba
             $puntoControl = PuntoControl::with(['prueba', 'lugar'])->findOrFail($request->punto_control_id);
             
+            // Log para depuración
+            \Log::info('Verificando prueba:', [
+                'punto_control_id' => $request->punto_control_id,
+                'respuesta_usuario' => $request->respuesta,
+                'respuesta_correcta' => $puntoControl->prueba->respuesta ?? 'No hay respuesta definida'
+            ]);
+            
             if (!$puntoControl->prueba) {
                 return response()->json([
                     'success' => false,
@@ -193,14 +200,35 @@ class ClienteGimcanaController extends Controller
                 ], 403);
             }
 
-            // Verificar la respuesta
-            $respuestaCorrecta = strtolower(trim($puntoControl->prueba->respuesta)) === 
-                                strtolower(trim($request->respuesta));
+            // Verificar si ya completó este punto
+            $yaCompletado = DB::table('progreso_gimcana')
+                ->where('usuario_id', $usuario->id)
+                ->where('punto_control_id', $puntoControl->id)
+                ->exists();
 
-            if (!$respuestaCorrecta) {
+            if ($yaCompletado) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Respuesta incorrecta'
+                    'message' => 'Ya has completado este punto de control'
+                ]);
+            }
+
+            // Normalizar y comparar respuestas
+            $respuestaUsuario = strtolower(trim($request->respuesta));
+            $respuestasValidas = array_map('trim', explode(',', strtolower($puntoControl->prueba->respuesta)));
+            
+            // Log de comparación
+            \Log::info('Comparando respuestas:', [
+                'respuesta_usuario' => $respuestaUsuario,
+                'respuestas_validas' => $respuestasValidas
+            ]);
+
+            $esCorrecta = in_array($respuestaUsuario, $respuestasValidas);
+
+            if (!$esCorrecta) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Respuesta incorrecta. Inténtalo de nuevo.'
                 ]);
             }
 
@@ -216,19 +244,24 @@ class ClienteGimcanaController extends Controller
 
                 // Verificar si el grupo ha completado la gimcana
                 $puntosControlTotal = $gimcana->lugares()->count();
-                $usuariosGrupo = $grupoActual->usuarios()->count();
-                
-                $puntosCompletadosGrupo = DB::table('progreso_gimcana')
-                    ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
-                    ->where('usuarios_grupos.grupo_id', $grupoActual->id)
+                $puntosCompletadosUsuario = DB::table('progreso_gimcana')
+                    ->where('usuario_id', $usuario->id)
                     ->count();
 
-                $gimcanaCompletada = $puntosCompletadosGrupo >= ($puntosControlTotal * $usuariosGrupo);
+                $gimcanaCompletada = $puntosCompletadosUsuario >= $puntosControlTotal;
 
                 DB::commit();
 
+                // Log de éxito
+                \Log::info('Prueba completada con éxito:', [
+                    'usuario_id' => $usuario->id,
+                    'punto_control_id' => $puntoControl->id,
+                    'gimcana_completada' => $gimcanaCompletada
+                ]);
+
                 return response()->json([
                     'success' => true,
+                    'message' => '¡Respuesta correcta! Has superado esta prueba.',
                     'gimcana_completada' => $gimcanaCompletada,
                     'grupo_ganador' => $gimcanaCompletada ? [
                         'nombre' => $grupoActual->nombre,
@@ -239,6 +272,7 @@ class ClienteGimcanaController extends Controller
 
             } catch (\Exception $e) {
                 DB::rollBack();
+                \Log::error('Error al registrar progreso: ' . $e->getMessage());
                 throw $e;
             }
 

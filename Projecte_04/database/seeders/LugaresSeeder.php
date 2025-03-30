@@ -13,16 +13,6 @@ class LugaresSeeder extends Seeder
     {
         $lugares = [
             [
-                'nombre' => 'Hospital Universitari de Bellvitge',
-                'descripcion' => 'Hospital universitario de referencia',
-                'latitud' => 41.344406,
-                'longitud' => 2.104528,
-                'color_marcador' => '#FF0000',
-                'creado_por' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
                 'nombre' => 'Institut Joan XXIII',
                 'descripcion' => 'Centro educativo de formación profesional',
                 'latitud' => 41.349684,
@@ -38,6 +28,16 @@ class LugaresSeeder extends Seeder
                 'latitud' => 41.348142,
                 'longitud' => 2.111358,
                 'color_marcador' => '#00FF00',
+                'creado_por' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'nombre' => 'Hospital Universitari de Bellvitge',
+                'descripcion' => 'Hospital universitario de referencia',
+                'latitud' => 41.344406,
+                'longitud' => 2.104528,
+                'color_marcador' => '#FF0000',
                 'creado_por' => 1,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -73,8 +73,8 @@ class LugaresSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'nombre' => 'Museu de L’Hospitalet',
-                'descripcion' => 'Museo dedicado a la historia y cultura de L’Hospitalet.',
+                'nombre' => 'Museu de L\'Hospitalet',
+                'descripcion' => 'Museo dedicado a la historia y cultura de L\'Hospitalet.',
                 'latitud' => 41.3610685,
                 'longitud' => 2.0972365,
                 'color_marcador' => '#FFD700',
@@ -216,7 +216,7 @@ class LugaresSeeder extends Seeder
             ['lugar_id' => 5, 'etiqueta_id' => $compras],
             ['lugar_id' => 5, 'etiqueta_id' => $ocio], // Centro comercial tiene dos etiquetas
             ['lugar_id' => 6, 'etiqueta_id' => $deportes], // GolaGol
-            ['lugar_id' => 7, 'etiqueta_id' => $cultura], // Museu de L’Hospitalet
+            ['lugar_id' => 7, 'etiqueta_id' => $cultura], // Museu de L'Hospitalet
             ['lugar_id' => 8, 'etiqueta_id' => $compras], // La Farga
             ['lugar_id' => 9, 'etiqueta_id' => $ocio], // Sala Salamandra
             ['lugar_id' => 10, 'etiqueta_id' => $cultura], // Auditori Barradas

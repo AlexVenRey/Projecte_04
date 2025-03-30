@@ -21,13 +21,13 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            UserSeeder::class,
-            EtiquetasSeeder::class,
-            LugaresSeeder::class,
-            GruposSeeder::class,
-            GimcanasSeeder::class,
-            PuntosControlSeeder::class,
-            LugarEtiquetaSeeder::class,
+            UserSeeder::class,            // 1. Primero usuarios
+            EtiquetasSeeder::class,       // 2. Luego etiquetas
+            LugaresSeeder::class,         // 3. Luego lugares
+            LugarEtiquetaSeeder::class,   // 4. Asociar etiquetas a lugares
+            GruposSeeder::class,          // 5. Crear grupos
+            GimcanasSeeder::class,        // 6. Crear gimcana y asociar lugares
+            PuntosControlSeeder::class,   // 7. Finalmente los puntos de control
         ]);
     }
 }

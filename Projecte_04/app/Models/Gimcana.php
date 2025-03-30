@@ -48,7 +48,7 @@ class Gimcana extends Model
 
     public function puntos()
     {
-        return $this->hasMany(Punto::class);
+        return $this->hasMany(PuntoControl::class);
     }
 
     public function puntosControl()

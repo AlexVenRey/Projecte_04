@@ -10,7 +10,7 @@ let circuloProximidad = null;
 let watchId = null;
 let gimcanaId = null;
 let puntoControlActual = null;
-let radioProximidad = 25;
+let radioProximidad = 50;
 let siguiendoUsuario = true;
 let ultimaAlertaMostrada = 0;
 let modoPrueba = false; // Nueva variable para modo de prueba
@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(mapa);
+
+    // Aumentar el radio de proximidad a 50 metros para mayor tolerancia
+    radioProximidad = 50;
 
     // Evento de clic en el mapa para modo prueba
     mapa.on('click', function(e) {
@@ -99,9 +102,16 @@ function iniciarSeguimientoUbicacion() {
         iconAnchor: [10, 10]
     });
 
+    const opcionesGPS = {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 5000
+    };
+
     watchId = navigator.geolocation.watchPosition(
         function(position) {
             const { latitude, longitude } = position.coords;
+            console.log('Nueva posición GPS:', latitude, longitude);
 
             // Actualizar marcador del usuario
             if (!marcadorUsuario) {
@@ -129,16 +139,12 @@ function iniciarSeguimientoUbicacion() {
             actualizarPosicionUsuario(latitude, longitude);
         },
         function(error) {
-            // Solo mostrar error si no es timeout
+            console.error('Error GPS:', error);
             if (error.code !== error.TIMEOUT) {
                 mostrarError("Error de geolocalización: " + error.message);
             }
         },
-        {
-            enableHighAccuracy: true,
-            maximumAge: 30000,  // Aceptar posiciones en caché de hasta 30 segundos
-            timeout: 10000      // Aumentar timeout a 10 segundos
-        }
+        opcionesGPS
     );
 }
 
@@ -224,7 +230,10 @@ function cargarPuntoControlActual() {
 }
 
 function verificarProximidadPuntoControl(latitud, longitud) {
-    if (!puntoControlActual || !puntoControlActual.lugar) return;
+    if (!puntoControlActual?.lugar) {
+        console.log('No hay punto de control actual o no tiene lugar asociado');
+        return;
+    }
 
     const distancia = calcularDistancia(
         latitud, 
@@ -233,23 +242,34 @@ function verificarProximidadPuntoControl(latitud, longitud) {
         puntoControlActual.lugar.longitud
     );
 
+    console.log('Distancia al punto de control:', distancia, 'metros');
+    console.log('Radio de proximidad:', radioProximidad, 'metros');
+    console.log('Tiempo desde última alerta:', Date.now() - ultimaAlertaMostrada, 'ms');
+
     // Si estamos dentro del radio de proximidad y ha pasado suficiente tiempo desde la última alerta
-    const ahora = Date.now();
-    if (distancia <= radioProximidad && (ahora - ultimaAlertaMostrada) > 10000) { // 10 segundos entre alertas
-        ultimaAlertaMostrada = ahora;
+    if (distancia <= radioProximidad && (Date.now() - ultimaAlertaMostrada) > 10000) {
+        console.log('Dentro del radio y tiempo suficiente desde última alerta');
+        ultimaAlertaMostrada = Date.now();
         mostrarPistaYPrueba(puntoControlActual);
     }
 }
 
 function mostrarPistaYPrueba(puntoControl) {
+    if (!puntoControl || !puntoControl.lugar || !puntoControl.prueba) {
+        console.error('Datos de punto de control incompletos:', puntoControl);
+        return;
+    }
+
+    console.log('Mostrando SweetAlert para punto de control:', puntoControl);
+
     Swal.fire({
-        title: '¡Has llegado a un punto de control!',
+        title: '¡Prueba!',
         html: `
             <div class="text-start">
                 <h5 class="mb-3">Ubicación actual:</h5>
                 <p class="mb-4">${puntoControl.lugar.nombre}</p>
                 
-                <h5 class="mb-3">Pista para el siguiente punto:</h5>
+                <h5 class="mb-3">Pista:</h5>
                 <p class="mb-4">${puntoControl.pista}</p>
                 
                 <h5 class="mb-3">Prueba a resolver:</h5>
@@ -266,6 +286,10 @@ function mostrarPistaYPrueba(puntoControl) {
         cancelButtonText: 'Cerrar',
         confirmButtonColor: '#28a745',
         width: '600px',
+        allowOutsideClick: false,
+        didOpen: () => {
+            document.getElementById('respuestaPrueba').focus();
+        },
         preConfirm: () => {
             const respuesta = document.getElementById('respuestaPrueba').value;
             if (!respuesta) {
@@ -315,11 +339,13 @@ function verificarRespuesta(respuesta) {
         return response.json();
     })
     .then(data => {
+        console.log('Respuesta del servidor:', data);
+        
         if (data.success) {
             Swal.fire({
                 icon: 'success',
-                title: '¡Respuesta correcta!',
-                text: 'Has superado esta prueba. ¡Sigue hacia el siguiente punto!',
+                title: '¡Correcto!',
+                text: data.message || '¡Has superado esta prueba!',
                 confirmButtonColor: '#28a745'
             }).then(() => {
                 if (data.gimcana_completada) {
@@ -330,6 +356,7 @@ function verificarRespuesta(respuesta) {
                     }
                 } else {
                     cargarPuntoControlActual();
+                    actualizarProgresoGimcana();
                 }
             });
         } else {
@@ -339,13 +366,21 @@ function verificarRespuesta(respuesta) {
                 text: data.message || 'Inténtalo de nuevo',
                 confirmButtonColor: '#dc3545'
             }).then(() => {
-                mostrarPistaYPrueba(puntoControlActual);
+                // Volver a mostrar la prueba solo si no está completada
+                if (!data.message?.includes('Ya has completado')) {
+                    mostrarPistaYPrueba(puntoControlActual);
+                }
             });
         }
     })
     .catch(error => {
         console.error('Error al verificar respuesta:', error);
-        mostrarError('Error al verificar la respuesta: ' + error.message);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Error al verificar la respuesta',
+            confirmButtonColor: '#dc3545'
+        });
     });
 }
 
@@ -670,28 +705,6 @@ function actualizarPanelGrupo() {
         `).join('');
         
         document.getElementById('miembros-grupo').innerHTML = miembrosHTML;
-    }
-}
-
-function verificarProximidadPuntoControl(latitud, longitud) {
-    if (!puntoControlActual?.lugar) return;
-
-    const distancia = calcularDistancia(
-        latitud, 
-        longitud, 
-        puntoControlActual.lugar.latitud,
-        puntoControlActual.lugar.longitud
-    );
-
-    if (distancia <= radioProximidad && (Date.now() - ultimaAlertaMostrada) > 10000) {
-        ultimaAlertaMostrada = Date.now();
-        
-        // Adaptar interfaz según dispositivo
-        if (window.innerWidth < 768) {
-            mostrarPistaMovil();
-        } else {
-            mostrarPistaYPrueba();
-        }
     }
 }
 
