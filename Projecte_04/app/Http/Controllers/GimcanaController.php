@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Lugar; // Importamos el modelo Lugar
 use App\Models\Gimcana; // Importamos el modelo Gimcana
 use Illuminate\Support\Facades\Auth; // Importamos la clase Auth para acceder al usuario autenticado
+use Illuminate\Support\Facades\DB; // Importamos la clase DB para transacciones
 
 class GimcanaController extends Controller
 {
@@ -28,37 +29,34 @@ class GimcanaController extends Controller
     // Método para guardar la nueva gimcana en la base de datos
     public function store(Request $request)
     {
-        // Validar los datos del formulario
         $request->validate([
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
-            'lugares' => 'required|array', // Validar que se envíen múltiples lugares
+            'lugares' => 'required|array',
         ]);
-    
-        // Crear una nueva gimcana
-        $gimcana = new Gimcana();
-        $gimcana->nombre = $request->nombre;
-        $gimcana->descripcion = $request->descripcion;
-        $gimcana->creado_por = Auth::id(); // Guardamos el ID del usuario autenticado
-        $gimcana->save(); // Guardamos la gimcana
-    
-        // Asociar los puntos de interés seleccionados a la gimcana
-        $gimcana->lugares()->attach($request->lugares);
-    
-        // Redirigir con un mensaje de éxito
+
+        DB::transaction(function () use ($request) {
+            $gimcana = Gimcana::create([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+                'creado_por' => Auth::id(),
+            ]);
+
+            $gimcana->lugares()->attach($request->lugares);
+        });
+
         return redirect()->route('admin.gimcana')->with('success', 'Gimcana creada correctamente.');
     }
 
     // Método para eliminar una gimcana
     public function destroy($gimcanaId)
     {
-        // Buscar la gimcana en la base de datos
-        $gimcana = Gimcana::findOrFail($gimcanaId);
+        DB::transaction(function () use ($gimcanaId) {
+            $gimcana = Gimcana::findOrFail($gimcanaId);
+            $gimcana->lugares()->detach();
+            $gimcana->delete();
+        });
 
-        // Eliminar la gimcana
-        $gimcana->delete();
-
-        // Redirigir con mensaje de éxito
         return redirect()->route('admin.gimcana')->with('success', 'Gimcana eliminada correctamente.');
     }
 
@@ -73,27 +71,23 @@ class GimcanaController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validación de los datos
         $request->validate([
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string',
-            'lugares' => 'array', // Asegura que se recibe un array de lugares
+            'lugares' => 'array',
         ]);
 
-        // Buscar la gimcana en la base de datos
-        $gimcana = Gimcana::findOrFail($id);
+        DB::transaction(function () use ($request, $id) {
+            $gimcana = Gimcana::findOrFail($id);
 
-        // Actualizar los datos de la gimcana
-        $gimcana->nombre = $request->nombre;
-        $gimcana->descripcion = $request->descripcion;
+            $gimcana->update([
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+            ]);
 
-        // Guardar cambios en la base de datos
-        $gimcana->save();
+            $gimcana->lugares()->sync($request->lugares);
+        });
 
-        // Actualizar la relación con los lugares
-        $gimcana->lugares()->sync($request->lugares);
-
-        // Redirigir con un mensaje de éxito
         return redirect()->route('admin.gimcana')->with('success', 'Gimcana actualizada correctamente.');
     }
 

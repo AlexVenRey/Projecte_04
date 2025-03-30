@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UsuarioController extends Controller
 {
@@ -28,12 +29,14 @@ class UsuarioController extends Controller
             'rol' => 'required|in:usuario,admin',
         ]);
 
-        User::create([
-            'nombre' => $request->nombre,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'rol' => $request->rol,
-        ]);
+        DB::transaction(function () use ($request) {
+            User::create([
+                'nombre' => $request->nombre,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'rol' => $request->rol,
+            ]);
+        });
 
         return redirect()->route('admin.usuarios.index')->with('success', 'Usuario creado correctamente.');
     }
@@ -46,29 +49,33 @@ class UsuarioController extends Controller
 
     public function update(Request $request, $id)
     {
-        $usuario = User::findOrFail($id);
-
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'email' => 'required|email|unique:usuarios,email,' . $usuario->id,
+            'email' => 'required|email|unique:usuarios,email,' . $id,
             'password' => 'nullable|string|min:8|confirmed',
             'rol' => 'required|in:usuario,admin',
         ]);
 
-        $usuario->update([
-            'nombre' => $request->nombre,
-            'email' => $request->email,
-            'password' => $request->password ? Hash::make($request->password) : $usuario->password,
-            'rol' => $request->rol,
-        ]);
+        DB::transaction(function () use ($request, $id) {
+            $usuario = User::findOrFail($id);
+
+            $usuario->update([
+                'nombre' => $request->nombre,
+                'email' => $request->email,
+                'password' => $request->password ? Hash::make($request->password) : $usuario->password,
+                'rol' => $request->rol,
+            ]);
+        });
 
         return redirect()->route('admin.usuarios.index')->with('success', 'Usuario actualizado correctamente.');
     }
 
     public function destroy($id)
     {
-        $usuario = User::findOrFail($id);
-        $usuario->delete();
+        DB::transaction(function () use ($id) {
+            $usuario = User::findOrFail($id);
+            $usuario->delete();
+        });
 
         return redirect()->route('admin.usuarios.index')->with('success', 'Usuario eliminado correctamente.');
     }
