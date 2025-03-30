@@ -11,15 +11,13 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ClienteGimcanaController;
 use App\Http\Controllers\ClienteGrupoController;
 
-// Ruta de inicio (login)
+// Rutas públicas
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-
-// Ruta de registro
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 
-// Rutas protegidas por autenticación
+// Rutas autenticadas
 Route::middleware(['auth'])->group(function () {
     // Rutas del admin
     Route::get('/admin/index', [LugarController::class, 'showMap'])->name('admin.index');
@@ -51,7 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/admin/gimcana/{gimcana}', [GimcanaController::class, 'update'])->name('admin.gimcana.update');
     Route::delete('/admin/gimcana/{gimcana}', [GimcanaController::class, 'destroy'])->name('admin.gimcana.delete');
 
-    // Todas las rutas del cliente agrupadas
+    // Rutas del cliente
     Route::prefix('cliente')->group(function () {
         // Rutas básicas del cliente
         Route::get('/index', [ClienteController::class, 'index'])->name('cliente.index');

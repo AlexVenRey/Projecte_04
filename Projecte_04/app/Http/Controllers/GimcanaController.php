@@ -9,7 +9,7 @@ use App\Models\PuntoControl;
 use App\Models\Prueba;
 use App\Models\Grupo;
 use Illuminate\Support\Facades\Auth; // Importamos la clase Auth para acceder al usuario autenticado
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB; // Importamos la clase DB para transacciones
 use Carbon\Carbon;
 
 class GimcanaController extends Controller
