@@ -342,4 +342,108 @@ class ClienteGimcanaController extends Controller
             ], 500);
         }
     }
+
+    public function verificarGanador($gimcana_id)
+    {
+        try {
+            $gimcana = Gimcana::findOrFail($gimcana_id);
+            
+            // Si la gimcana ya tiene un ganador, devolver esa información
+            if ($gimcana->grupo_ganador_id) {
+                $grupoGanador = $gimcana->grupos()
+                    ->with(['usuarios' => function($q) {
+                        $q->select('usuarios.id', 'usuarios.nombre');
+                    }])
+                    ->where('grupos.id', $gimcana->grupo_ganador_id)
+                    ->first();
+
+                if ($grupoGanador) {
+                    // Obtener el tiempo total del grupo ganador
+                    $primeraPrueba = DB::table('progreso_gimcana')
+                        ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
+                        ->where('usuarios_grupos.grupo_id', $grupoGanador->id)
+                        ->min('created_at');
+                        
+                    $ultimaPrueba = DB::table('progreso_gimcana')
+                        ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
+                        ->where('usuarios_grupos.grupo_id', $grupoGanador->id)
+                        ->max('created_at');
+                        
+                    $tiempoTotal = strtotime($ultimaPrueba) - strtotime($primeraPrueba);
+                    $tiempoFormateado = sprintf('%02d:%02d:%02d', 
+                        ($tiempoTotal/3600), 
+                        ($tiempoTotal/60%60), 
+                        $tiempoTotal%60);
+
+                    return response()->json([
+                        'success' => true,
+                        'grupo_ganador' => [
+                            'nombre' => $grupoGanador->nombre,
+                            'usuarios' => $grupoGanador->usuarios,
+                            'tiempo_total' => $tiempoFormateado
+                        ]
+                    ]);
+                }
+            }
+
+            // Si no hay ganador aún, buscar si algún grupo ha completado la gimcana
+            $puntosControlTotal = $gimcana->lugares()->count();
+
+            foreach ($gimcana->grupos as $grupo) {
+                // Contar puntos completados por todos los usuarios del grupo
+                $puntosCompletadosGrupo = DB::table('progreso_gimcana')
+                    ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
+                    ->where('usuarios_grupos.grupo_id', $grupo->id)
+                    ->count();
+
+                $usuariosGrupo = $grupo->usuarios()->count();
+                
+                // Si todos los usuarios del grupo han completado todos los puntos
+                if ($puntosCompletadosGrupo >= ($puntosControlTotal * $usuariosGrupo)) {
+                    // Marcar este grupo como ganador en la gimcana
+                    $gimcana->grupo_ganador_id = $grupo->id;
+                    $gimcana->fecha_finalizacion = now();
+                    $gimcana->save();
+
+                    // Obtener el tiempo total
+                    $primeraPrueba = DB::table('progreso_gimcana')
+                        ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
+                        ->where('usuarios_grupos.grupo_id', $grupo->id)
+                        ->min('created_at');
+                        
+                    $ultimaPrueba = DB::table('progreso_gimcana')
+                        ->join('usuarios_grupos', 'progreso_gimcana.usuario_id', '=', 'usuarios_grupos.usuario_id')
+                        ->where('usuarios_grupos.grupo_id', $grupo->id)
+                        ->max('created_at');
+                        
+                    $tiempoTotal = strtotime($ultimaPrueba) - strtotime($primeraPrueba);
+                    $tiempoFormateado = sprintf('%02d:%02d:%02d', 
+                        ($tiempoTotal/3600), 
+                        ($tiempoTotal/60%60), 
+                        $tiempoTotal%60);
+
+                    return response()->json([
+                        'success' => true,
+                        'grupo_ganador' => [
+                            'nombre' => $grupo->nombre,
+                            'usuarios' => $grupo->usuarios,
+                            'tiempo_total' => $tiempoFormateado
+                        ]
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'grupo_ganador' => null
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error al verificar ganador: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al verificar el ganador: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

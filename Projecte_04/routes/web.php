@@ -67,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/gimcanas/{gimcana_id}/lugares', [ClienteGimcanaController::class, 'getLugares']);
         Route::get('/gimcanas/{gimcana_id}/live', [ClienteGimcanaController::class, 'live'])->name('cliente.gimcanas.live');
         Route::get('/gimcanas/{gimcana_id}/verificar-todos-listos', [ClienteGrupoController::class, 'verificarTodosListos']);
+        Route::get('/gimcanas/{gimcana_id}/verificar-ganador', [ClienteGimcanaController::class, 'verificarGanador']);
         Route::post('/gimcanas/{gimcana_id}/iniciar', [ClienteGrupoController::class, 'iniciarGimcana']);
         
         // Rutas para la funcionalidad de gimcanas

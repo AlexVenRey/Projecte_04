@@ -13,7 +13,8 @@ let puntoControlActual = null;
 let radioProximidad = 50;
 let siguiendoUsuario = true;
 let ultimaAlertaMostrada = 0;
-let modoPrueba = false; // Nueva variable para modo de prueba
+let modoPrueba = false; // Variable para modo prueba
+let puntosCompletados = new Set(); // Conjunto para almacenar IDs de puntos completados
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
@@ -24,9 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(mapa);
-
-    // Aumentar el radio de proximidad a 50 metros para mayor tolerancia
-    radioProximidad = 50;
 
     // Evento de clic en el mapa para modo prueba
     mapa.on('click', function(e) {
@@ -44,13 +42,66 @@ document.addEventListener('DOMContentLoaded', function() {
         actualizarUbicacionManual(e.latlng.lat, e.latlng.lng);
     });
 
-    // Cargar información inicial
+    // Inicializar componentes
     cargarInformacionGrupo();
     cargarPuntoControlActual();
     iniciarSeguimientoUbicacion();
+    
+    // Verificar ganador cada 5 segundos
+    setInterval(verificarGrupoGanador, 5000);
+
+    // Verificar inmediatamente si hay un ganador al cargar
+    verificarGrupoGanador();
 });
 
-// Función para actualizar ubicación manualmente
+// Función para verificar si hay un grupo ganador
+function verificarGrupoGanador() {
+    if (!gimcanaId) return;
+
+    fetch(`/cliente/gimcanas/${gimcanaId}/verificar-ganador`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Verificación de ganador:', data);
+            if (data.success && data.grupo_ganador && !localStorage.getItem(`ganador_mostrado_${gimcanaId}`)) {
+                mostrarGrupoGanador(data.grupo_ganador);
+            }
+        })
+        .catch(error => {
+            console.error('Error al verificar grupo ganador:', error);
+        });
+}
+
+function mostrarGrupoGanador(grupoGanador) {
+    Swal.fire({
+        icon: 'success',
+        title: '¡Tenemos un ganador!',
+        html: `
+            <div class="text-center">
+                <h3 class="mb-4">¡El grupo "${grupoGanador.nombre}" ha ganado la gimcana!</h3>
+                <p class="mb-3">Miembros del grupo ganador:</p>
+                <div class="mb-4">
+                    ${grupoGanador.usuarios.map(usuario => 
+                        `<span class="badge bg-success me-2 mb-2">${usuario.nombre}</span>`
+                    ).join('')}
+                </div>
+                <p>Tiempo total: ${grupoGanador.tiempo_total}</p>
+            </div>
+        `,
+        confirmButtonText: 'Volver al inicio',
+        confirmButtonColor: '#28a745',
+        allowOutsideClick: false
+    }).then(() => {
+        localStorage.setItem(`ganador_mostrado_${gimcanaId}`, 'true');
+        window.location.href = '/cliente/gimcanas';
+    });
+}
+
+// Función para actualizar ubicación manualmente (modo prueba)
 function actualizarUbicacionManual(latitud, longitud) {
     const iconoUsuario = L.divIcon({
         className: 'usuario-marker',
@@ -79,14 +130,11 @@ function actualizarUbicacionManual(latitud, longitud) {
     actualizarPosicionUsuario(latitud, longitud);
     verificarProximidadPuntoControl(latitud, longitud);
     
-    // Centrar vista
+    // Centrar vista si estamos siguiendo al usuario
     if (siguiendoUsuario) {
         mapa.setView([latitud, longitud], 18);
     }
 }
-
-// ... (el resto del código original permanece igual a partir de aquí)
-// [Todas las demás funciones se mantienen sin cambios]
 
 // Modificar la función iniciarSeguimientoUbicacion
 function iniciarSeguimientoUbicacion() {
@@ -196,31 +244,28 @@ function cargarPuntoControlActual() {
     if (!gimcanaId) return;
     
     fetch(`/cliente/gimcanas/${gimcanaId}/siguiente-punto`)
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => {
-                    throw new Error(err.message || 'Error en la respuesta del servidor');
-                });
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            if (data.success && data.data) {
-                puntoControlActual = {
-                    id: data.data.id,
-                    lugar: data.data.lugar,
-                    pista: data.data.pista,
-                    prueba: data.data.prueba
-                };
-                mostrarPuntosControlEnMapa();
-                actualizarProgresoGimcana();
-            } else if (data.success && !data.data) {
-                // La gimcana está completada
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Felicidades!',
-                    text: 'Has completado todos los puntos de control'
-                });
+            if (data.success) {
+                if (data.data) {
+                    puntoControlActual = data.data;
+                    if (data.completado) {
+                        puntosCompletados.add(puntoControlActual.id);
+                    }
+                    mostrarPuntosControlEnMapa();
+                    actualizarProgresoGimcana();
+                } else {
+                    // La gimcana está completada
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Felicidades!',
+                        text: '¡Has completado todos los puntos de control!',
+                        confirmButtonColor: '#28a745',
+                        confirmButtonText: 'Volver al inicio'
+                    }).then(() => {
+                        window.location.href = '/cliente/gimcanas';
+                    });
+                }
             }
         })
         .catch(error => {
@@ -235,6 +280,12 @@ function verificarProximidadPuntoControl(latitud, longitud) {
         return;
     }
 
+    // Si el punto ya está completado, no mostrar el SweetAlert
+    if (puntosCompletados.has(puntoControlActual.id)) {
+        console.log('Punto ya completado:', puntoControlActual.id);
+        return;
+    }
+
     const distancia = calcularDistancia(
         latitud, 
         longitud, 
@@ -243,12 +294,9 @@ function verificarProximidadPuntoControl(latitud, longitud) {
     );
 
     console.log('Distancia al punto de control:', distancia, 'metros');
-    console.log('Radio de proximidad:', radioProximidad, 'metros');
-    console.log('Tiempo desde última alerta:', Date.now() - ultimaAlertaMostrada, 'ms');
 
-    // Si estamos dentro del radio de proximidad y ha pasado suficiente tiempo desde la última alerta
     if (distancia <= radioProximidad && (Date.now() - ultimaAlertaMostrada) > 10000) {
-        console.log('Dentro del radio y tiempo suficiente desde última alerta');
+        console.log('Mostrando prueba para punto:', puntoControlActual.id);
         ultimaAlertaMostrada = Date.now();
         mostrarPistaYPrueba(puntoControlActual);
     }
@@ -312,12 +360,6 @@ function verificarRespuesta(respuesta) {
         return;
     }
 
-    console.log('Enviando respuesta:', {
-        punto_control_id: puntoControlActual.id,
-        respuesta: respuesta,
-        gimcana_id: gimcanaId
-    });
-
     fetch('/cliente/gimcanas/verificar-prueba', {
         method: 'POST',
         headers: {
@@ -330,18 +372,14 @@ function verificarRespuesta(respuesta) {
             gimcana_id: gimcanaId
         })
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => {
-                throw new Error(err.message || 'Error en la respuesta del servidor');
-            });
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         console.log('Respuesta del servidor:', data);
         
         if (data.success) {
+            // Marcar el punto como completado
+            puntosCompletados.add(puntoControlActual.id);
+            
             Swal.fire({
                 icon: 'success',
                 title: '¡Correcto!',
@@ -349,11 +387,17 @@ function verificarRespuesta(respuesta) {
                 confirmButtonColor: '#28a745'
             }).then(() => {
                 if (data.gimcana_completada) {
-                    if (data.grupo_ganador) {
-                        mostrarGrupoGanador(data.grupo_ganador);
-                    } else {
-                        mostrarGimcanaCompletada();
-                    }
+                    // Si la gimcana está completada, mostrar mensaje final
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Felicidades!',
+                        text: '¡Has completado todos los puntos de control!',
+                        confirmButtonColor: '#28a745',
+                        confirmButtonText: 'Continuar'
+                    }).then(() => {
+                        // Redirigir a la lista de gimcanas
+                        window.location.href = '/cliente/gimcanas';
+                    });
                 } else {
                     cargarPuntoControlActual();
                     actualizarProgresoGimcana();
@@ -366,7 +410,6 @@ function verificarRespuesta(respuesta) {
                 text: data.message || 'Inténtalo de nuevo',
                 confirmButtonColor: '#dc3545'
             }).then(() => {
-                // Volver a mostrar la prueba solo si no está completada
                 if (!data.message?.includes('Ya has completado')) {
                     mostrarPistaYPrueba(puntoControlActual);
                 }
@@ -375,36 +418,7 @@ function verificarRespuesta(respuesta) {
     })
     .catch(error => {
         console.error('Error al verificar respuesta:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error.message || 'Error al verificar la respuesta',
-            confirmButtonColor: '#dc3545'
-        });
-    });
-}
-
-function mostrarGrupoGanador(grupoGanador) {
-    Swal.fire({
-        icon: 'success',
-        title: '¡Felicidades!',
-        html: `
-            <div class="text-center">
-                <h3 class="mb-4">¡El grupo "${grupoGanador.nombre}" ha ganado la gimcana!</h3>
-                <p class="mb-3">Miembros del grupo ganador:</p>
-                <div class="mb-4">
-                    ${grupoGanador.usuarios.map(usuario => 
-                        `<span class="badge bg-success me-2 mb-2">${usuario.nombre}</span>`
-                    ).join('')}
-                </div>
-                <p>Tiempo total: ${grupoGanador.tiempo_total}</p>
-            </div>
-        `,
-        confirmButtonText: 'Volver al inicio',
-        confirmButtonColor: '#28a745',
-        allowOutsideClick: false
-    }).then(() => {
-        window.location.href = '/cliente/gimcanas';
+        mostrarError('Error al verificar la respuesta: ' + error.message);
     });
 }
 
@@ -663,8 +677,6 @@ function mostrarExito(mensaje) {
     });
 }
 
-// ... (variables globales anteriores se mantienen igual)
-
 function actualizarProgresoGimcana() {
     if (!gimcanaId) return;
 
@@ -687,25 +699,6 @@ function actualizarProgresoGimcana() {
                 });
             }
         });
-}
-
-function actualizarPanelGrupo() {
-    if (grupoActual) {
-        // Actualizar nombre en todas las vistas
-        document.querySelectorAll('#nombre-grupo, #nombre-grupo-movil').forEach(el => {
-            el.textContent = grupoActual.nombre;
-        });
-        
-        // Actualizar miembros del grupo
-        const miembrosHTML = grupoActual.usuarios.map(usuario => `
-            <span class="badge bg-secondary me-1 mb-1">
-                ${usuario.nombre}
-                ${usuario.pivot.esta_listo ? '<i class="fas fa-check-circle text-success ms-1"></i>' : ''}
-            </span>
-        `).join('');
-        
-        document.getElementById('miembros-grupo').innerHTML = miembrosHTML;
-    }
 }
 
 function mostrarPistaMovil() {
@@ -739,5 +732,3 @@ function mostrarPistaMovil() {
         }
     });
 }
-
-// ... (resto de funciones se mantienen igual hasta el final del archivo)
