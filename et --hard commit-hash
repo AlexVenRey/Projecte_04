@@ -1,0 +1,128 @@
+[33mca7b430[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mSergi[m[33m, [m[1;31morigin/Sergi[m[33m)[m done
+[33m92a6d1b[m Guardar cambios en rama Sergi
+[33ma0bb64c[m logica gimcana echa, adaptar falta
+[33maa1eda0[m a medias again + cambio bd
+[33m7849cc7[m cambio BD
+[33md053d2a[m medio echo live.blade
+[33mf3e686d[m dale duro
+[33mdc6e8a0[m seeder y progreso logica
+[33m13419fc[m redireccion js y grupos funcional
+[33me8ea6b4[m gimcana.cliente + js funcional + validaciones
+[33md529197[m mirgrations change / basic gimcana.cliente
+[33m77d5ca2[m gimcana.cliente
+[33m8939b8c[m[33m ([m[1;32mmain[m[33m)[m Merge pull request #51 from AlexVenRey/Adri
+[33me1145d6[m Merge branch 'main' into Adri
+[33md8a35a2[m Cambios
+[33me07ed7a[m Merge pull request #50 from AlexVenRey/Alex
+[33m086156f[m Validacion JS del registro
+[33m1291e0b[m Merge pull request #49 from AlexVenRey/Alex
+[33m50b2eb5[m Pagina de Admin ACABADA
+[33md7516b7[m Merge pull request #48 from AlexVenRey/Alex
+[33m9c382a2[m Headers correctos en todas las paginas de admin
+[33m02ce4ea[m Pagina de admin casi acabada, falta retoque en el header
+[33m474286d[m Antes del pull de admin
+[33mded3ada[m Merge pull request #47 from AlexVenRey/Adri
+[33m46d585c[m Cambios Estilos
+[33m4bef3af[m Merge pull request #46 from AlexVenRey/Alex
+[33m55cdc9c[m Merge branch 'main' into Alex
+[33mef84557[m Merge pull request #45 from AlexVenRey/Adri
+[33mc595def[m Cambios Puntos de Interés
+[33maeb6615[m Estilos de los botones del editar gimcana
+[33m1c01010[m Cambios Puntos de Interés
+[33m632a70d[m Intento de estilos del boton cancelar
+[33m2864220[m Merge pull request #44 from AlexVenRey/Adri
+[33mc7b5df5[m Editar gimcana
+[33m119ee3a[m Pagina editar gimcana
+[33mb3da091[m Rutas Cliente
+[33m8ad5540[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04 into Alex
+[33me73fa91[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04
+[33m1c09d95[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04 into Alex
+[33md3b7d4c[m Merge pull request #43 from AlexVenRey/Adri
+[33m69402e3[m Cambios validaciones puntos de interés
+[33m4c1be6a[m mal2
+[33mf5ea733[m mal
+[33m7e08961[m Merge pull request #42 from AlexVenRey/Adri
+[33m2fcb555[m Cambios validaciones puntos de interés
+[33m9ec0a6b[m Buscar Cercanos
+[33m554aa2f[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04 into Adri
+[33m6d8d98e[m mis favoritos
+[33m9478f20[m Imagenes
+[33m795ca72[m Merge pull request #41 from AlexVenRey/Adri
+[33m1d4d6e1[m Marcadores
+[33mcbb6ae7[m Validacion JS en crear y editar Gimcana
+[33mf4da0bd[m Sección de favoritos implementada con mejoras
+[33me1514d0[m Responsive adaptado
+[33mdffba6b[m Editar Gimcana. CRUD de gimcana hecho
+[33m42c95d4[m Merge pull request #39 from AlexVenRey/Adri
+[33m169f6e2[m Marcadores Admin
+[33m6a53c21[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04 into Alejandro
+[33me7a30d8[m Merge pull request #38 from AlexVenRey/Alex
+[33m77f0510[m Estilos iguales en Puntos de interes y Gimcana
+[33m5578e1a[m Fallos en la visualizacion de marcadores corregido
+[33me644c6e[m Cambios seeders
+[33m9b92dda[m Merge pull request #37 from AlexVenRey/Alejandro
+[33m46f47ae[m Cambios en el CRUD de admin + cambios en la logica del cliente
+[33m08f99bf[m Cambios seeders
+[33mce38ee3[m Resuelto conflicto en web.php y eliminadas rutas duplicadas de gimcana
+[33me19e4eb[m Merge branch 'Adri' of https://github.com/AlexVenRey/Projecte_04 into Alejandro
+[33m92e3307[m Arregla la vista cliente/index para mostrar correctamente los marcadores en el mapa y elimina la salida de depuración
+[33md69c6df[m Sweet Alert para eliminar Gimcana
+[33mc0e2f4a[m Merge pull request #35 from AlexVenRey/Alex
+[33m957ee53[m Registro hecho
+[33me7dd789[m modificacion para guardar el id del usuario que crea una gimcana
+[33m80c05a4[m modificacion para guardar el id del usuario que crea un punto de interes
+[33m152e79c[m Merge pull request #34 from AlexVenRey/Adri
+[33mbfa5d70[m Merge pull request #33 from AlexVenRey/Alex
+[33m344cac2[m Responsive
+[33mfe481ed[m Merge branch 'main' into Alex
+[33m78a3f1b[m Merge pull request #32 from AlexVenRey/Adri
+[33m0dc6586[m CRUD Puntos de interés acabados y Logout
+[33mff47919[m Multiple seleccion en los puntos de interes de creacion de gimcana
+[33mda26e00[m Merge pull request #26 from AlexVenRey/Adri
+[33mf0e547d[m CRUD Puntos de interés acabados y Logout
+[33m843321f[m Validación JS en la creacion de una nueva Gimcana
+[33md6ed3db[m Creacion del formulario de la gimcana
+[33m3d76201[m Creación y redirecciones a la pagina de la Gimcana
+[33mf2882df[m Merge pull request #25 from AlexVenRey/Adri
+[33m5b3505f[m Cambios vista admin
+[33m008cebd[m Logica del Admin implementada
+[33m6393fd5[m Merge pull request #24 from AlexVenRey/Sergi
+[33md3e5a90[m seeders + hash funca
+[33mc51772d[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04 into Sergi
+[33m73e62d1[m Merge pull request #23 from AlexVenRey/Adri
+[33m3883bca[m Pagina inicio admin muestra puntos de interés
+[33me423842[m Merge pull request #22 from AlexVenRey/Adri
+[33ma00f006[m Pagina puntos de interes funcional
+[33m106c76a[m Merge pull request #21 from AlexVenRey/Adri
+[33m5afa570[m Cambios pagina index y puntos admin
+[33ma775019[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04 into Sergi
+[33m8777139[m Merge pull request #20 from AlexVenRey/Alex
+[33m0bf76e7[m Validacion JS del login y del register
+[33m8f6978d[m Merge pull request #19 from AlexVenRey/Adri
+[33m5daeb42[m Imagenes CRUD
+[33mfeef370[m Merge pull request #18 from AlexVenRey/Alex
+[33m3438649[m Merge branch 'main' into Alex
+[33medaaf30[m Proceso de autenticación i redirección a la pagina de admin y cliente dependiendo del rol
+[33m616f461[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04 into Sergi
+[33m81897ea[m seeders correction
+[33ma16148d[m seeder arreglo
+[33m9b2a323[m Seeders implementados
+[33mebf15d8[m migrations correct
+[33m9b2df37[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04
+[33mded7e26[m Migrations & .env
+[33m541c12b[m Merge pull request #15 from AlexVenRey/Alex
+[33md8550d2[m login y registro con CSS y Responsive
+[33me29f150[m Merge pull request #14 from AlexVenRey/Alex
+[33m5782062[m Merge pull request #12 from AlexVenRey/Adri
+[33m7a3fa52[m Logo
+[33m1b6463d[m Creacion del index simple
+[33m874da4b[m Merge branch 'main' of https://github.com/AlexVenRey/Projecte_04 into Alex
+[33m61c7eed[m Merge pull request #11 from AlexVenRey/Adri
+[33m9f2094a[m Cambios proyectos
+[33m9bd18cf[m Merge pull request #10 from AlexVenRey/Adri
+[33m870d8f9[m Imagenes
+[33m56a9528[m Creacion del proyecto laravel
+[33m4881900[m Prueba de la rama Alex
+[33m5314428[m Creació projecte Laravel
+[33m5818763[m README
+[33m1730ee3[m Initial commit
