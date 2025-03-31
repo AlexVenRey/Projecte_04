@@ -40,13 +40,11 @@ class GimcanaController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
-            $gimcana = Gimcana::create([
+            Gimcana::create([
                 'nombre' => $request->nombre,
                 'descripcion' => $request->descripcion,
-                'creado_por' => Auth::id(),
-            ]);
-
-            $gimcana->lugares()->attach($request->lugares);
+                'creado_por' => Auth::id(), // Asignar el ID del usuario autenticado
+            ])->lugares()->attach($request->lugares);
         });
 
         return redirect()->route('admin.gimcana')->with('success', 'Gimcana creada correctamente.');
@@ -87,6 +85,7 @@ class GimcanaController extends Controller
             $gimcana->update([
                 'nombre' => $request->nombre,
                 'descripcion' => $request->descripcion,
+                'updated_at' => now(), // Establecer explícitamente updated_at
             ]);
 
             $gimcana->lugares()->sync($request->lugares);
