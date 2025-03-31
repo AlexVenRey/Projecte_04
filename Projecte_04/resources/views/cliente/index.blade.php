@@ -91,32 +91,37 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addPointForm">
+                    <form id="addPointForm" action="{{ route('cliente.marcadores.store') }}" method="POST">
+                        @csrf
                         <div class="mb-3">
-                            <label for="pointName" class="form-label">Nombre del Punto</label>
-                            <input type="text" class="form-control" id="pointName" placeholder="Introduce un nombre">
+                            <label for="nombre" class="form-label">Nombre del Punto</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
                         </div>
                         <div class="mb-3">
-                            <label for="pointLat" class="form-label">Latitud</label>
-                            <input type="text" class="form-control" id="pointLat" readonly>
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="pointLng" class="form-label">Longitud</label>
-                            <input type="text" class="form-control" id="pointLng" readonly>
+                            <label for="latitud" class="form-label">Latitud</label>
+                            <input type="number" step="any" class="form-control" id="latitud" name="latitud" required>
                         </div>
                         <div class="mb-3">
-                            <label for="pointTags" class="form-label">Etiquetas</label>
-                            <select multiple class="form-select" id="pointTags">
+                            <label for="longitud" class="form-label">Longitud</label>
+                            <input type="number" step="any" class="form-control" id="longitud" name="longitud" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="color_marcador" class="form-label">Color del Punto</label>
+                            <input type="color" class="form-control form-control-color" id="color_marcador" name="color_marcador" value="#FF0000">
+                        </div>
+                        <div class="mb-3">
+                            <label for="etiquetas" class="form-label">Etiquetas</label>
+                            <select multiple class="form-select" id="etiquetas" name="etiquetas[]">
                                 @foreach($etiquetas as $etiqueta)
                                     <option value="{{ $etiqueta->id }}">{{ $etiqueta->nombre }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="pointColor" class="form-label">Color del Punto</label>
-                            <input type="color" class="form-control form-control-color" id="pointColor" value="#FF0000">
-                        </div>
-                        <button type="button" class="btn btn-primary" id="savePoint">Guardar Punto</button>
+                        <button type="submit" class="btn btn-primary">Guardar Punto</button>
                     </form>
                 </div>
             </div>

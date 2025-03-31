@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Inicializar el mapa
 function initMap() {
-    map = L.map('mapa').setView([41.3879, 2.16992], 13); // Coordenadas iniciales
+    map = L.map('mapa').setView([41.390205, 2.154007], 13); // Coordenadas iniciales
 
     // Cargar el mapa base
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -33,8 +33,8 @@ function initMap() {
         const { lat, lng } = e.latlng;
 
         // Mostrar el modal y rellenar los campos de latitud y longitud
-        document.getElementById('pointLat').value = lat.toFixed(6);
-        document.getElementById('pointLng').value = lng.toFixed(6);
+        document.getElementById('latitud').value = lat.toFixed(6);
+        document.getElementById('longitud').value = lng.toFixed(6);
         const addPointModal = new bootstrap.Modal(document.getElementById('addPointModal'));
         addPointModal.show();
     });
@@ -576,63 +576,65 @@ document.addEventListener("DOMContentLoaded", function () {
     initMap();
 
     // Guardar el punto al hacer clic en "Guardar Punto"
-    document.getElementById('savePoint').addEventListener('click', function () {
-        const name = document.getElementById('pointName').value.trim();
-        const lat = document.getElementById('pointLat').value;
-        const lng = document.getElementById('pointLng').value;
-        const tags = Array.from(document.getElementById('pointTags').selectedOptions).map(option => option.value);
-        const color = document.getElementById('pointColor').value;
-
-        // Limpiar mensajes de error previos
-        const errorContainer = document.getElementById('errorContainer');
-        if (errorContainer) {
-            errorContainer.remove();
-        }
-
-        // Validar campos
+    document.getElementById('addPointForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validar el formulario
+        const formData = new FormData(this);
         const errors = [];
-        if (!name) {
-            errors.push('El campo "Nombre del Punto" es obligatorio.');
+        
+        if (!formData.get('nombre').trim()) {
+            errors.push('El nombre es obligatorio');
         }
-        if (!lat || !lng) {
-            errors.push('Debe seleccionar una ubicación en el mapa.');
+        if (!formData.get('descripcion').trim()) {
+            errors.push('La descripción es obligatoria');
         }
-        if (tags.length === 0) {
-            errors.push('Debe seleccionar al menos una etiqueta.');
-        }
-        if (!color) {
-            errors.push('Debe seleccionar un color para el punto.');
+        if (!formData.get('latitud') || !formData.get('longitud')) {
+            errors.push('Las coordenadas son obligatorias');
         }
 
-        // Mostrar errores si los hay
         if (errors.length > 0) {
-            const modalBody = document.querySelector('#addPointModal .modal-body');
-            const errorDiv = document.createElement('div');
-            errorDiv.id = 'errorContainer';
-            errorDiv.className = 'alert alert-danger';
-            errorDiv.innerHTML = errors.join('<br>');
-            modalBody.prepend(errorDiv);
+            alert(errors.join('\n'));
             return;
         }
 
-        // Enviar el punto al servidor
-        fetch('/cliente/puntos', {
+        // Enviar el formulario
+        fetch(this.action, {
             method: 'POST',
+            body: formData,
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            },
-            body: JSON.stringify({ nombre: name, latitud: lat, longitud: lng, etiquetas: tags, color_marcador: color }),
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Punto añadido correctamente.');
-                    location.reload(); // Recargar la página para actualizar el mapa
-                } else {
-                    alert('Error al añadir el punto: ' + data.error);
-                }
-            })
-            .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Añadir el marcador al mapa
+                const marcador = L.marker([data.latitud, data.longitud], {
+                    icon: L.divIcon({
+                        className: 'custom-marker',
+                        html: `<div style="background-color: ${data.color_marcador}; width: 20px; height: 20px; border-radius: 50%;"></div>`,
+                        iconSize: [20, 20]
+                    })
+                }).addTo(map);
+
+                // Añadir popup al marcador
+                marcador.bindPopup(`
+                    <strong>${data.nombre}</strong><br>
+                    ${data.descripcion}
+                `);
+
+                // Cerrar el modal y limpiar el formulario
+                const addPointModal = new bootstrap.Modal(document.getElementById('addPointModal'));
+                addPointModal.hide();
+                this.reset();
+            } else {
+                alert('Error al guardar el marcador');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al guardar el marcador');
+        });
     });
 });
