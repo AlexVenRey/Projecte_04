@@ -16,7 +16,8 @@ class Gimcana extends Model
         'descripcion',
         'admin_id',
         'grupo_ganador_id',
-        'fecha_finalizacion'
+        'fecha_finalizacion',
+        'creado_por' // Agregar este campo
     ];
 
     protected $casts = [

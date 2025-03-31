@@ -159,7 +159,7 @@ body {
 }
 
 /* Estilos responsive */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .sidebar {
         height: 40vh;
         border-right: none;
